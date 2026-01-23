@@ -12,8 +12,8 @@ resource "azurerm_storage_account" "terraform" {
 }
 
 resource "azurerm_storage_container" "microservice" {
-  for_each = toset(var.microservice_names)
-  name                  = lower(replace(each.key, ".", "-"))  
+  for_each = toset(var.environments)
+  name                  = replace(lower("${var.solution_name}-${each.key}"), ".", "-")
   storage_account_name  = azurerm_storage_account.terraform.name
   container_access_type = "private"
 }
