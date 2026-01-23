@@ -15,6 +15,7 @@ variable "storage_account_name" {
 
 variable "solution_name" {
   description = "The solution name to use for naming the storage containers."
+  type = string
 }
 
 variable "environments" {
