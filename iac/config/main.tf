@@ -24,9 +24,15 @@ module "github_identity" {
 }
 
 # Give GitHub Contributor access to the resource group.
-resource "azurerm_role_assignment" "github_actions_resource_group_contributor" {
+resource "azurerm_role_assignment" "github_actions_build_resource_group_contributor" {
   scope                = azurerm_resource_group.solution.id
   role_definition_name = "Contributor"
-  principal_id         = module.github_identity.azure_principal_id
+  principal_id         = module.github_identity.azure_build_principal_id
+}
+
+resource "azurerm_role_assignment" "github_actions_deploy_resource_group_contributor" {
+  scope                = azurerm_resource_group.solution.id
+  role_definition_name = "Contributor"
+  principal_id         = module.github_identity.azure_deploy_principal_id
 }
 
