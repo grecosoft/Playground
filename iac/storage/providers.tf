@@ -5,7 +5,11 @@ terraform {
       version = "=4.1.0"
     }
   }
+  backend "azurerm" {
+    key = "storage.tfstate"
+  }
 }
+
 
 provider "azurerm" {
   subscription_id = var.subscription_id
