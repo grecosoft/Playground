@@ -7,6 +7,12 @@ data "azurerm_storage_account" "terraform" {
   resource_group_name = data.azurerm_resource_group.terraform.name
 }
 
+resource "azurerm_storage_container" "infrastructure" {
+  name                  = "infrastructure"
+  storage_account_name  = data.azurerm_storage_account.terraform.name
+  container_access_type = "private"
+}
+
 resource "azurerm_storage_container" "microservice" {
   for_each = toset(var.environments)
   name                  = replace(lower("${var.solution_name}-${each.key}"), ".", "-")
