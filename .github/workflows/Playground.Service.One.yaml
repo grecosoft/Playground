@@ -28,6 +28,9 @@ jobs:
         - name: Display Azure Account Info
           run: az account show
 
+        - name: Log Into ACR
+          run: az acr login --name registryshrew
+
     deploy:
       needs: build
       runs-on: ubuntu-latest

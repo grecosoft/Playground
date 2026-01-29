@@ -21,3 +21,12 @@ variable "github_account_name" {
   type = string
 }
 
+variable "infrastructure_resource_group_name" {
+  description = "The name of the resource group containing the resource to which the solution is deployed."
+  type = string
+}
+
+variable "container_registry_name" {
+  description = "The name of the Azure Container Registry to store container images."
+  type        = string
+}

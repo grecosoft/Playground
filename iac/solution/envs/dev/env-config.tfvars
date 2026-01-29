@@ -3,3 +3,7 @@ solution_name       = "Playground"
 environment         = "dev"
 location            = "eastus"
 github_account_name = "grecosoft"
+
+# External resource dependencies:
+infrastructure_resource_group_name = "Infrastructure-Playground"
+container_registry_name           = "registryshrew"
