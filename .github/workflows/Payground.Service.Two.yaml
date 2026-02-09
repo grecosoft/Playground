@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-    build:
+    env_var_examples:
       env:
         TEST_ENV_ONE: "JobLevelEnvVar"
       runs-on: ubuntu-latest
@@ -31,7 +31,19 @@ jobs:
           run: printenv
 
         - name: Print Env Var
-          run: echo $TEST_OUTPUT_VAR_ONE      
+          run: echo $TEST_OUTPUT_VAR_ONE  
+          
+          
+    call_script_example:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Call Script
+          run: |
+            SCRIPT_OUTPUT=$(./test.sh)
+            echo $SCRIPT_OUTPUT
 
 
     
