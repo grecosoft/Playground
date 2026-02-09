@@ -9,7 +9,7 @@ on:
 jobs:
     build:
       env:
-        GITHUB_ACTOR: "JobLevelEnvVar"
+        TestEnvOne: "JobLevelEnvVar"
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
@@ -21,7 +21,7 @@ jobs:
         - name: Print Env Var
           run: |
             echo $GITHUB_ACTOR
-            echo $JOB_LEVEL_ENV_VAR
+            echo $TEST_ENV_ONE
            
      
 
