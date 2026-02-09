@@ -49,7 +49,8 @@ jobs:
             API_STATUS=$(echo $SCRIPT_OUTPUT | jq -r '.api_status')
             echo "User Count: $USER_COUNT"
             echo "API Status: $API_STATUS"
-            run: printenv
+        - name: Environment Variables
+          run: printenv
 
 
     
