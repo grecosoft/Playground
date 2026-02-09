@@ -25,7 +25,13 @@ jobs:
             echo {{ env.TEST_ENV_ONE }}     # this is a custom env var defined at the job level, but using GitHub Actions expression syntax
            
         - name: Set Output Variable
-          run: echo "TEST_OUTPUT_VAR_ONE=OutputValue" >> $GITHUB_OUTPUT 
+          run: echo "TEST_OUTPUT_VAR_ONE=OutputValue" >> $GITHUB_ENV    # this sets an environment variable that will be available in subsequent steps of the same job 
+
+        - name: Environment Variables
+          run: printenv
+
+        - name: Print Env Var
+          run: echo $TEST_OUTPUT_VAR_ONE      
 
 
     
