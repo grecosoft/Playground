@@ -15,6 +15,10 @@ jobs:
 
         - name: Environment Variables
           run: printenv
+
+        - name: Print Env Var
+          run: echo $GITHUB_ACTOR
+           
      
 
 
