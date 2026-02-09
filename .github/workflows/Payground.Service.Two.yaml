@@ -42,6 +42,7 @@ jobs:
 
         - name: Call Script
           run: |
+            chmod +x ./test.sh
             SCRIPT_OUTPUT=$(./test.sh)
             echo $SCRIPT_OUTPUT
 
