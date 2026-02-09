@@ -1,4 +1,4 @@
-name: HomeLink Workflow
+name: Test Federated Identity
 
 on: 
   workflow_dispatch:
