@@ -1,0 +1,22 @@
+name: Research
+
+on: 
+  workflow_dispatch:
+  push:
+    branches: 
+      - main
+
+jobs:
+    build:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Environment Variables
+          run: printenv
+     
+
+
+    
+    
