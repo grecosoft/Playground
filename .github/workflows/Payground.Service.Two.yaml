@@ -45,6 +45,11 @@ jobs:
             chmod +x ./test.sh
             SCRIPT_OUTPUT=$(./test.sh)
             echo $SCRIPT_OUTPUT
+            USER_COUNT=$(echo $SCRIPT_OUTPUT | jq -r '.user_count')
+            API_STATUS=$(echo $SCRIPT_OUTPUT | jq -r '.api_status')
+            echo "User Count: $USER_COUNT"
+            echo "API Status: $API_STATUS"
+            run: printenv
 
 
     
