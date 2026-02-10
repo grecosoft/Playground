@@ -58,6 +58,10 @@ jobs:
             echo "API_STATUS=$API_STATUS" >> $GITHUB_ENV
         - name: Environment Variables
           run: printenv
+        - name: Access Prior Set Env Vars
+          run: |
+            echo "User Count from Env Var: $USER_COUNT"
+            echo "API Status from Env Var: $API_STATUS"
 
 
     
