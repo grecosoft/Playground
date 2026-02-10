@@ -24,7 +24,7 @@ jobs:
           run: |
             echo $GITHUB_ACTOR              # this is a default env var provided by GitHub Actions
             echo $TEST_ENV_ONE              # this is a custom env var defined at the job level
-            echo {{ env.TEST_ENV_ONE }}     # this is a custom env var defined at the job level, but using GitHub Actions expression syntax
+            echo "{{ env.TEST_ENV_ONE }}"   # this is a custom env var defined at the job level, but using GitHub Actions expression syntax
             echo $TEST_REPO_VAR              
            
         - name: Set Output Variable
