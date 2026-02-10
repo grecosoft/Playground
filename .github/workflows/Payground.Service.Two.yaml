@@ -69,8 +69,8 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: GitHub Context
-          run: echo json(github)  # this will print the entire GitHub context, which includes information about the repository, the event that triggered the workflow, and more 
-          
+          run: echo '${{ toJSON(github) }}'  # this will print the entire GitHub context, which includes information about the repository, the event that triggered the workflow, and more 
+
 
     
     
