@@ -110,6 +110,8 @@ jobs:
     calling_composite_action:
       runs-on: ubuntu-latest
       steps:
+        - uses: actions/checkout@v3
+
         - name: Call Composite Action
           id: full_name_action
           uses: ./.github/actions/my-action  # this calls a composite action defined in the .github/actions/my-action directory
