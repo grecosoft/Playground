@@ -13,9 +13,6 @@ inputs:
 outputs:
   full-name:
     description: 'Full name of the user'
-    value: ${{ inputs.first-name }} ${{ inputs.last-name }}
-  cache-hit:
-    description: 'Whether cache was hit'
     value: ${{ steps.fullName.outputs.full-name }}
 
 runs:
