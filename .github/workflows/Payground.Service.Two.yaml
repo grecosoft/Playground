@@ -101,7 +101,7 @@ jobs:
           uses: actions/github-script@v6
           with:
             script: |
-              return "Output from Action Step"
+              echo "ACTION_OUTPUT_VAR=Job_Output_Value" >> $GITHUB_OUTPUT  # this sets an output variable that can be accessed in subsequent steps of the same job using the step ID
 
     job_using_output_variable:
       needs: jobs_output_variables
