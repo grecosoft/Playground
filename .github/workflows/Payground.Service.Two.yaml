@@ -121,3 +121,18 @@ jobs:
 
         - name: Access Composite Action Output
           run: echo ${{ steps.full_name_action.outputs.full-name }}
+
+    container_action_example:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+
+        - name: Call Container Action
+          id: container_action
+          uses: ./.github/actions/container-action  # this calls a container action defined in the .github/actions/container-action directory
+          with:
+            first-name: "Jane"
+            last-name: "Smith"
+
+        - name: Access Container Action Output
+          run: echo ${{ steps.container_action.outputs.fullname }}

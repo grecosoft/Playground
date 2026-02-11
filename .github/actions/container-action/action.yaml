@@ -1,0 +1,22 @@
+name: 'Container Action'
+description: 'runs a simple script in a container'
+
+inputs:
+  first-name:
+    description: 'First name of the user'
+    required: true
+    
+  last-name:
+    description: 'Last name of the user'
+    required: true
+
+outputs:
+  fullname:
+    description: 'Full name of the user'
+    
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.first-name }}
+    - ${{ inputs.last-name }} 
