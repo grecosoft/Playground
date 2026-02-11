@@ -106,3 +106,16 @@ jobs:
       steps:
         - name: Access Job Output Variable
           run: echo ${{ needs.jobs_output_variables.outputs.JOB_OUTPUT_VAR }}  # this will print the value of the job output variable set in the previous job
+
+    calling_composite_action:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Call Composite Action
+          id: full_name_action
+          uses: ./.github/actions/my-action  # this calls a composite action defined in the .github/actions/my-action directory
+          with:
+            first-name: "John"
+            last-name: "Doe"
+
+        - name: Access Composite Action Output
+          run: echo ${{ steps.full_name_action.outputs.full-name }}
