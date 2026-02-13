@@ -14,6 +14,7 @@ jobs:
       with:
         solution-path: './shared/src/Playground.Common.sln'
         dotnet-version: '10.0.x'
+        cache-dependency-path: '**/packages.lock.json'
  
     package-solution:
       needs: build-solution
