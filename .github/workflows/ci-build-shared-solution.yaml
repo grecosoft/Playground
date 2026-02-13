@@ -29,4 +29,4 @@ jobs:
             key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
 
         - name: List Directory Contents
-          run: ls -R -a
+          run: ls -R -a /home/runner/.nuget/ 

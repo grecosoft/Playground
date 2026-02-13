@@ -37,7 +37,7 @@ jobs:
               run: dotnet restore ${{ inputs.solution-path }}
 
             - name: List Directory Contents
-              run: ls -R -a /
+              run: ls -R -a /home/runner/.nuget/ 
 
             - name: Build - ${{ steps.setup.outputs.SolutionName }}
               run: | 
