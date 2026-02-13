@@ -15,42 +15,40 @@ jobs:
     build-and-test:
         runs-on: ubuntu-latest
         steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
             - name: Job Setup
               id: setup
               run: echo "SolutionName=$(basename ${{ inputs.solution-path }})" >> $GITHUB_OUTPUT
-
-            - name: Checkout
-              uses: actions/checkout@v3
 
             - name: Setup .NET
               uses: actions/setup-dotnet@v5
               with:
                 dotnet-version: ${{ inputs.dotnet-version }}
                 cache: true
-                cache-dependency-path: '**/packages.lock.json'
 
-            - name: Restore - ${{ steps.setup.outputs.SolutionName }}
-              run: dotnet restore ${{ inputs.solution-path }} --locked-mode
+            - name: Restore 
+              run: dotnet restore ${{ inputs.solution-path }}
 
-            - name: List Directory Contents
-              run: ls -R -a /home/runner/.nuget/ 
-
-            - name: Build - ${{ steps.setup.outputs.SolutionName }}
+            - name: Build
               run: | 
                 dotnet build ${{ inputs.solution-path }} \
                 --no-restore \
                 --configuration Release
 
-            - name: Test - ${{ steps.setup.outputs.SolutionName }}
+            - name: Test 
               run: |
                 dotnet test ${{ inputs.solution-path }} \
                 --no-restore \
                 --no-build \
                 --configuration Release \
+                --results-directory ./test-results \
                 --logger "trx;LogFileName=test_results.trx"
 
-            - name: Publish Test Results
+            - name: Archive Test Results
               uses: actions/upload-artifact@v4
+              if: always()  
               with:
-                name: solution-test-results
-                path: test_results.trx  
+                name: test-results-${{ github.run_id }}
+                path: ./test-results/*.trx
