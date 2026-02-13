@@ -23,7 +23,7 @@ variable "github_account_name" {
 
 variable "infrastructure_resource_group_name" {
   description = "The name of the resource group containing the resource to which the solution is deployed."
-  type = string
+  type        = string
 }
 
 variable "container_registry_name" {
