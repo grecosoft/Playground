@@ -27,6 +27,12 @@ jobs:
               with:
                 dotnet-version: ${{ inputs.dotnet-version }}
 
+            - name: Cache NuGet packages
+              uses: actions/cache@v4
+              with:
+                path: ~/.nuget/packages
+                key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+
             - name: Restore - ${{ steps.setup.outputs.SolutionName }}
               run: dotnet restore ${{ inputs.solution-path }}
 
