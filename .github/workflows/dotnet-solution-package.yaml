@@ -27,7 +27,7 @@ jobs:
             with:
                 dotnet-version: ${{ inputs.dotnet-version }}
 
-          - name: Cache NuGet packages
+          - name: Cached NuGet packages
             uses: actions/cache@v4
             with:
               path: ~/.nuget/packages
@@ -41,7 +41,14 @@ jobs:
                VERSION="${{ inputs.pre-release-version }}.${{ github.run_number }}" 
                echo "package-version=$VERSION" >> $GITHUB_OUTPUT
 
+          - name: Create Nuget Packages
+            run: |
+              dotnet pack ${{ inputs.solution-path }} \
+              --configuration Release \
+              --output ./nupkg \
+              /p:PackageVersion=${{ steps.version.outputs.package-version }}
+
           - name: Echo
             run: |
-                echo "${{ steps.version.outputs.package-version }}"
+                ls -R -a ./nupkg
            
