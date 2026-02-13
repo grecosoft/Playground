@@ -17,7 +17,7 @@ jobs:
         steps:
             - name: Job Setup
               id: setup
-              run: echo "SolutionName=$(basename ${{ inputs.solution-path }})" >> $GITHUB_ENV
+              run: echo "SolutionName=$(basename ${{ inputs.solution-path }})" >> $GITHUB_OUTPUT
 
             - name: Checkout
               uses: actions/checkout@v3
