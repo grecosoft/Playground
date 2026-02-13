@@ -18,4 +18,4 @@ jobs:
         - name: Build Shared Solution
           uses: ./.github/actions/dotnet-solution-build
           with:
-            solution-path: './src/shared/Shared.sln'
+            solution-path: './src/shared/src/Playground.Common.sln'
