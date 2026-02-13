@@ -15,10 +15,21 @@ jobs:
     build-and-test:
         runs-on: ubuntu-latest
         steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+
           - name: Setup .NET
             uses: actions/setup-dotnet@v5
             with:
                 dotnet-version: ${{ inputs.dotnet-version }}
+
+          - name: Cache NuGet packages
+            uses: actions/cache@v4
+            with:
+              path: ~/.nuget/packages
+              key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+              restore-keys: |
+                ${{ runner.os }}-nuget-
 
           - name: List Nugets
             run: ls -R -a /home/runner/.nuget/
