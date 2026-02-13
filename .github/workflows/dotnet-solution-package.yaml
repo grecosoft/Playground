@@ -1,0 +1,19 @@
+name: .NET Build and Test Solution
+on:
+    workflow_call:
+        inputs:
+            solution-path:
+                description: 'Path to the solution file to build'
+                type: string
+                required: true
+            dotnet-version:
+                required: false
+                type: string
+                default: '10.0.x'
+
+jobs:
+    build-and-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: test
+              run: echo "Hello World"

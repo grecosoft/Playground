@@ -10,32 +10,29 @@ on:
     
 jobs:
     build-solution:
-      uses: ./.github/workflows/dotnet-build-test-solution.yaml
+      uses: ./.github/workflows/dotnet-solution-build-test.yaml
       with:
         solution-path: './shared/src/Playground.Common.sln'
         dotnet-version: '10.0.x'
 
- 
     package-solution:
       needs: build-solution
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v3
+      uses: ./.github/workflows/dotnet-solution-package.yaml
+      with:
+        solution-path: './shared/src/Playground.Common.sln'
+        dotnet-version: '10.0.x'
 
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v5
-          with:
-            dotnet-version: '10.0.x'
-            cache: true
-            cache-dependency-path: '**/packages.lock.json'
+      # runs-on: ubuntu-latest
+      # steps:
+      #   - name: Checkout
+      #     uses: actions/checkout@v3
 
+      #   - name: Setup .NET
+      #     uses: actions/setup-dotnet@v5
+      #     with:
+      #       dotnet-version: '10.0.x'
+      #       cache: true
+      #       cache-dependency-path: '**/packages.lock.json'
 
-        # - name: Cache NuGet packages
-        #   uses: actions/cache@v4
-        #   with:
-        #     path: ~/.nuget/packages
-        #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-
-        - name: List Directory Contents
-          run: ls -R -a /home/runner/.nuget/ 
+      #   - name: List Directory Contents
+      #     run: ls -R -a /home/runner/.nuget/ 
