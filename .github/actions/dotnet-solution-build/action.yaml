@@ -33,7 +33,7 @@ runs:
       run: |
         dotnet test ${{ inputs.solution-path }} \
           --no-restore \
-          --no-build \ 
+          --no-build \
           --configuration Release \
           --logger "trx;LogFileName=test_results.trx"
 
