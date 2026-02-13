@@ -14,6 +14,7 @@ jobs:
       with:
         solution-path: './shared/src/Playground.Common.sln'
         dotnet-version: '10.0.x'
+        cache: true
 
     package-solution:
       needs: build-solution
@@ -22,11 +23,11 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v3
 
-        - name: Cache NuGet packages
-          uses: actions/cache@v4
-          with:
-            path: ~/.nuget/packages
-            key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        # - name: Cache NuGet packages
+        #   uses: actions/cache@v4
+        #   with:
+        #     path: ~/.nuget/packages
+        #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
 
         - name: List Directory Contents
           run: ls -R -a /home/runner/.nuget/ 

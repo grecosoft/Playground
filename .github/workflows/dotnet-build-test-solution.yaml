@@ -26,15 +26,16 @@ jobs:
               uses: actions/setup-dotnet@v5
               with:
                 dotnet-version: ${{ inputs.dotnet-version }}
+                cache: true
 
-            - name: Cache NuGet packages
-              uses: actions/cache@v4
-              with:
-                path: ~/.nuget/packages
-                key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+            # - name: Cache NuGet packages
+            #   uses: actions/cache@v4
+            #   with:
+            #     path: ~/.nuget/packages
+            #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
 
             - name: Restore - ${{ steps.setup.outputs.SolutionName }}
-              run: dotnet restore ${{ inputs.solution-path }}
+              run: dotnet restore ${{ inputs.solution-path }} --locked-mode
 
             - name: List Directory Contents
               run: ls -R -a /home/runner/.nuget/ 
