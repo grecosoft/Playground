@@ -36,6 +36,9 @@ jobs:
             - name: Restore - ${{ steps.setup.outputs.SolutionName }}
               run: dotnet restore ${{ inputs.solution-path }}
 
+            - name: List Directory Contents
+              run: ls -R -a
+
             - name: Build - ${{ steps.setup.outputs.SolutionName }}
               run: | 
                 dotnet build ${{ inputs.solution-path }} \
