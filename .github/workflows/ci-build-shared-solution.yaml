@@ -1,0 +1,17 @@
+name: Build Shared Microservice Solution
+
+on: 
+  workflow_dispatch:
+  push:
+    branches: 
+      - main
+    paths:
+        - './src/shared/**'  # Trigger only when files in the shared directory are changed
+    
+jobs:
+    build-solution:
+      uses: ./.github/workflows/dotnet-build-test-solution.yaml
+      with:
+        solution-path: './shared/src/Playground.Common.sln'
+        dotnet-version: '10.0.x'
+ 
