@@ -30,7 +30,6 @@ runs:
     - name: Test
       shell: bash
       run: dotnet test ${{ inputs.solution-path }} \
-        --no-restore \
         --no-build \ 
         --configuration Release \
         --logger "trx;LogFileName=test_results.trx"
