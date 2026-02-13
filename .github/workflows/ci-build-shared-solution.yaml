@@ -26,4 +26,4 @@ jobs:
             key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
 
         - name: List Nuget Packages
-          run: ls -R ~/.nuget/packages
+          run: ls -R
