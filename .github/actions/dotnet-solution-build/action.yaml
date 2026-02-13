@@ -23,13 +23,12 @@ runs:
 
     - name: Build
       shell: bash
-      run: dotnet build ${{ inputs.solution-path }} \
-        --no-restore \
-        --configuration Release
+      run: dotnet build ${{ inputs.solution-path }} --no-restore --configuration Release
 
     - name: Test
       shell: bash
       run: dotnet test ${{ inputs.solution-path }} \
+        --no-restore \
         --no-build \ 
         --configuration Release \
         --logger "trx;LogFileName=test_results.trx"
