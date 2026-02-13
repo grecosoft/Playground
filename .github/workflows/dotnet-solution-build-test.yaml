@@ -18,10 +18,6 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
-            - name: Job Setup
-              id: setup
-              run: echo "SolutionName=$(basename ${{ inputs.solution-path }})" >> $GITHUB_OUTPUT
-
             - name: Setup .NET
               uses: actions/setup-dotnet@v5
               with:

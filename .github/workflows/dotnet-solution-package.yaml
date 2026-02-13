@@ -10,6 +10,10 @@ on:
                 required: false
                 type: string
                 default: '10.0.x'
+            pre-release-version:
+                required: false
+                type: string
+                default: '1.0.0-beta'
 
 jobs:
     build-and-test:
@@ -31,5 +35,13 @@ jobs:
               restore-keys: |
                 ${{ runner.os }}-nuget-
 
-          - name: List Nugets
-            run: ls -R -a /home/runner/.nuget/
+          - name: Determine Version
+            id: version
+            run: |
+               VERSION="${{ inputs.pre-release-version }}.${{ github.run_number }}" 
+               echo "package-version=$VERSION" >> $GITHUB_OUTPUT
+
+          - name: Echo
+            run: |
+                echo "${{ steps.version.outputs.package-version }}"
+           
