@@ -15,6 +15,10 @@ jobs:
     build-and-test:
         runs-on: ubuntu-latest
         steps:
+            - name: Job Setup
+              id: setup
+              run: echo "SolutionName=$(basename ${{ inputs.solution-path }})" >> $GITHUB_ENV
+
             - name: Checkout
               uses: actions/checkout@v3
 
@@ -23,16 +27,16 @@ jobs:
               with:
                 dotnet-version: ${{ inputs.dotnet-version }}
 
-            - name: Restore
+            - name: Restore - ${{ steps.setup.outputs.SolutionName }}
               run: dotnet restore ${{ inputs.solution-path }}
 
-            - name: Build
+            - name: Build - ${{ steps.setup.outputs.SolutionName }}
               run: | 
                 dotnet build ${{ inputs.solution-path }} \
                 --no-restore \
                 --configuration Release
 
-            - name: Test
+            - name: Test - ${{ steps.setup.outputs.SolutionName }}
               run: |
                 dotnet test ${{ inputs.solution-path }} \
                 --no-restore \
