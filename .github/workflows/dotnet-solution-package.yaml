@@ -49,15 +49,17 @@ jobs:
                 if [ "${{ github.ref }}" == "refs/heads/main" ]; then
                  VERSION="${{ inputs.release-version }}.${{ github.run_number }}" 
                    echo "package-version=$VERSION" >> $GITHUB_OUTPUT
+                   echo "configuration=Release" >> $GITHUB_OUTPUT
                 else
                    VERSION="${{ inputs.pre-release-version }}.${{ github.run_number }}" 
                    echo "package-version=$VERSION" >> $GITHUB_OUTPUT
+                   echo "configuration=Debug" >> $GITHUB_OUTPUT
                 fi  
 
           - name: Create Nuget Packages
             run: |
               dotnet pack ${{ inputs.solution-path }} \
-              --configuration Release \
+              --configuration ${{ steps.version.outputs.configuration }} \
               --output ./packages \
               /p:PackageVersion=${{ steps.version.outputs.package-version }}
 
