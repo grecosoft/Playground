@@ -61,7 +61,7 @@ jobs:
               dotnet pack ${{ inputs.solution-path }} \
               --configuration ${{ steps.version.outputs.configuration }} \
               --output ./packages \
-              /p:PackageVersion=${{ steps.version.outputs.package-version }}
+              /p:PackageVersion=${{ steps.version.outputs.package-version }} \
               /p:IncludeSymbols=true \
               /p:SymbolPackageFormat=snupkg
 
