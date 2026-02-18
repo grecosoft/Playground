@@ -10,6 +10,10 @@ on:
                 required: false
                 type: string
                 default: '10.0.x'
+            release-version:
+                required: false
+                type: string
+                default: '1.0.0'
             pre-release-version:
                 required: false
                 type: string
@@ -42,8 +46,13 @@ jobs:
           - name: Determine Version
             id: version
             run: |
-               VERSION="${{ inputs.pre-release-version }}.${{ github.run_number }}" 
-               echo "package-version=$VERSION" >> $GITHUB_OUTPUT
+                if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+                 VERSION="${{ inputs.release-version }}.${{ github.run_number }}" 
+                   echo "package-version=$VERSION" >> $GITHUB_OUTPUT
+                else
+                   VERSION="${{ inputs.pre-release-version }}.${{ github.run_number }}" 
+                   echo "package-version=$VERSION" >> $GITHUB_OUTPUT
+                fi  
 
           - name: Create Nuget Packages
             run: |
