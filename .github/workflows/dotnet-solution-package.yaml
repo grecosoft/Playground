@@ -60,6 +60,7 @@ jobs:
             run: |
               dotnet pack ${{ inputs.solution-path }} \
               --configuration ${{ steps.version.outputs.configuration }} \
+              --include-symbols true \
               --output ./packages \
               /p:PackageVersion=${{ steps.version.outputs.package-version }}
 
