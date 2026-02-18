@@ -9,6 +9,7 @@
     <DebugType>embedded</DebugType>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedAllSources>true</EmbedAllSources>
   </PropertyGroup>
 
   <ItemGroup>
