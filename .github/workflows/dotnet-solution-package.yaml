@@ -52,14 +52,14 @@ jobs:
                  VERSION="${{ inputs.release-version }}.${{ github.run_number }}" 
                    echo "package-version=$VERSION" >> $GITHUB_OUTPUT
                    echo "configuration=Debug" >> $GITHUB_OUTPUT
-                elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
-                   VERSION="${{ inputs.pre-release-version }}.${{ github.run_number }}" 
+                elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then`ber }}" 
                    echo "package-version=$VERSION" >> $GITHUB_OUTPUT
                    echo "configuration=Debug" >> $GITHUB_OUTPUT
                 fi  
 
           # Creates NuGet packages that can be debugged and publishes to GitHub Packages:
           - name: Create Nuget Packages
+            if: ${{ steps.version.outputs.package-version != '' }} 
             run: |
               dotnet pack ${{ inputs.solution-path }} \
               --configuration ${{ steps.version.outputs.configuration }} \
@@ -73,6 +73,7 @@ jobs:
               /p:SymbolPackageFormat=snupkg 
 
           - name: Publish to GitHub Packages
+            if: ${{ steps.version.outputs.package-version != '' }}
             run: |
                 dotnet nuget push "./packages/*.nupkg" \
                     --api-key ${{ secrets.GITHUB_TOKEN }} \
