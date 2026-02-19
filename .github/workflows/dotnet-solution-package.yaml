@@ -24,7 +24,7 @@ permissions:
   packages: write
 
 jobs:
-    build-and-test:
+    build-and-publish:
         runs-on: ubuntu-latest
         steps:
           - name: Checkout
