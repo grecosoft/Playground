@@ -1,23 +1,30 @@
-name: .NET Build and Test Solution
+name: Package and Publish Solution NuGets
 on:
     workflow_call:
         inputs:
             solution-path:
-                description: 'Path to the solution file to build'
+                description: 'Path to the .sln file to be packaged.'
                 type: string
                 required: true
             dotnet-version:
+                description: 'Version of .NET SDK to use for building and packaging.'
                 required: false
                 type: string
                 default: '10.0.x'
             release-version:
+                description: 'Version to use for release builds (main branch).' 
                 required: false
                 type: string
                 default: '1.0.0'
             pre-release-version:
+                description: 'Version to use for pre-release builds (develop branch).'
                 required: false
                 type: string
                 default: '1.0.0-beta'
+        secrets:
+            PUBLISH_PACKAGE_TOKEN:
+              description: 'GitHub PAT token with permissions to publish packages.'
+              required: true
 
 permissions:
   contents: read
@@ -51,7 +58,7 @@ jobs:
                 if [ "${{ github.ref }}" == "refs/heads/main" ]; then
                    VERSION="${{ inputs.release-version }}.${{ github.run_number }}" 
                    echo "package-version=$VERSION" >> $GITHUB_OUTPUT
-                   echo "configuration=Debug" >> $GITHUB_OUTPUT
+                   echo "configuration=Release" >> $GITHUB_OUTPUT
                 elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then 
                    VERSION="${{ inputs.pre-release-version }}.${{ github.run_number }}"
                    echo "package-version=$VERSION" >> $GITHUB_OUTPUT
@@ -77,6 +84,6 @@ jobs:
             if: ${{ steps.version.outputs.package-version != '' }}
             run: |
                 dotnet nuget push "./packages/*.nupkg" \
-                    --api-key ${{ secrets.GITHUB_TOKEN }} \
+                    --api-key ${{ secrets.PUBLISH_PACKAGE_TOKEN }} \
                     --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
                     --skip-duplicate
