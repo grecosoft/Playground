@@ -58,6 +58,7 @@ jobs:
                    echo "configuration=Debug" >> $GITHUB_OUTPUT
                 fi  
 
+          # Creates NuGet packages that can be debugged and publishes to GitHub Packages:
           - name: Create Nuget Packages
             run: |
               dotnet pack ${{ inputs.solution-path }} \
