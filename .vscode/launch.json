@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Service One Host (default)",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/microservices/Playground.Service.One/src/Playground.Service.One.Host/Playground.Service.One.Host.csproj"
+    },
+    {
+      "name": "Debug Service One Host",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build Service One Host",
+      "program": "${workspaceFolder}/microservices/Playground.Service.One/src/Playground.Service.One.Host/bin/Debug/net10.0/Playground.Service.One.Host.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/microservices/Playground.Service.One/src/Playground.Service.One.Host",
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "justMyCode": false,
+      "enableStepFiltering": false,
+      "suppressJITOptimizations": true,
+      "symbolOptions": {
+        "searchPaths": [],
+        "searchMicrosoftSymbolServer": true,
+        "searchNuGetOrgSymbolServer": true
+      }
+    }
+  ]
+}
