@@ -11,6 +11,14 @@ on:
                 type: string
                 default: '10.0.x'
 
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
     build-and-test:
         runs-on: ubuntu-latest
@@ -38,7 +46,8 @@ jobs:
               run: | 
                 dotnet build ${{ inputs.solution-path }} \
                 --no-restore \
-                --configuration Release
+                --configuration Release \
+                /p:TreatWarningsAsErrors=true
 
             - name: Test 
               run: |
@@ -47,11 +56,21 @@ jobs:
                 --no-build \
                 --configuration Release \
                 --results-directory ./test-results \
-                --logger "trx;LogFileName=test_results.trx"
+                --logger "trx;LogFileName=test_results.trx" \
+                --collect:"XPlat Code Coverage"
 
             - name: Archive Test Results
               uses: actions/upload-artifact@v4
-              if: always()  
+              if: success() || failure()
               with:
                 name: test-results-${{ github.run_id }}
                 path: ./test-results/*.trx
+                retention-days: 14
+
+            - name: Publish Test Results
+              uses: dorny/test-reporter@v1
+              if: success() || failure()
+              with:
+                name: Test Results
+                path: ./test-results/*.trx
+                reporter: dotnet-trx

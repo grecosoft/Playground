@@ -30,6 +30,10 @@ permissions:
   contents: read
   packages: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
     build-and-publish:
         runs-on: ubuntu-latest
@@ -58,11 +62,11 @@ jobs:
                 if [ "${{ github.ref }}" == "refs/heads/main" ]; then
                    VERSION="${{ inputs.release-version }}.${{ github.run_number }}" 
                    echo "package-version=$VERSION" >> $GITHUB_OUTPUT
-                   echo "configuration=Release" >> $GITHUB_OUTPUT
                 elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then 
                    VERSION="${{ inputs.pre-release-version }}.${{ github.run_number }}"
                    echo "package-version=$VERSION" >> $GITHUB_OUTPUT
-                   echo "configuration=Debug" >> $GITHUB_OUTPUT
+                else
+                   echo "::warning::Branch '${{ github.ref }}' is not configured for packaging, skipping package creation"
                 fi  
 
           # Creates NuGet packages that can be debugged and publishes to GitHub Packages:
@@ -70,7 +74,7 @@ jobs:
             if: ${{ steps.version.outputs.package-version != '' }} 
             run: |
               dotnet pack ${{ inputs.solution-path }} \
-              --configuration ${{ steps.version.outputs.configuration }} \
+              --configuration Release \
               --output ./packages \
               /p:PackageVersion=${{ steps.version.outputs.package-version }} \
               /p:PublishRepositoryUrl=true \
@@ -78,7 +82,8 @@ jobs:
               /p:EmbedAllSources=true \
               /p:EmbedUntrackedSources=true \
               /p:DebugType=embedded \
-              /p:SymbolPackageFormat=snupkg 
+              /p:SymbolPackageFormat=snupkg \
+              /p:EnableSourceLink=true 
 
           - name: Publish to GitHub Packages
             if: ${{ steps.version.outputs.package-version != '' }}
