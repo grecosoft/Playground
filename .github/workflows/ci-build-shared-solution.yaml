@@ -7,7 +7,7 @@ on:
       - main
       - develop
     paths:
-        - './shared/src/**'  
+        - 'shared/src/**' 
     
 jobs:
     build:
