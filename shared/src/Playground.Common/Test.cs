@@ -4,7 +4,7 @@ namespace Playground.Common
     {
         public static string GetMessage()
         {
-            return "Hello, World!";
+            return "Hello, World!!!!";
         }
     }
 }
