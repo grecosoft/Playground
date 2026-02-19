@@ -52,7 +52,8 @@ jobs:
                  VERSION="${{ inputs.release-version }}.${{ github.run_number }}" 
                    echo "package-version=$VERSION" >> $GITHUB_OUTPUT
                    echo "configuration=Debug" >> $GITHUB_OUTPUT
-                elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then`ber }}" 
+                elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then" 
+                   VERSION="${{ inputs.pre-release-version }}.${{ github.run_number }}"
                    echo "package-version=$VERSION" >> $GITHUB_OUTPUT
                    echo "configuration=Debug" >> $GITHUB_OUTPUT
                 fi  
