@@ -98,3 +98,27 @@ In VS Code settings (Ctrl+,), search for:
 This allows you to see decompiled source if symbols aren't available
 
 The easiest approach: Use embedded symbols with SourceLink. This makes the symbols and source links part of the package itself, so debugging works automatically without needing symbol servers.
+
+
+Step 2: Configure Visual Studio Debugger
+
+Tools → Options → Debugging → General
+Uncheck these:
+
+☐ Enable Just My Code
+☐ Enable .NET Framework source stepping
+
+
+Check these:
+
+☑ Enable Source Link support
+☑ Enable source server support
+☑ Suppress JIT optimization on module load (Managed only)
+
+
+Tools → Options → Debugging → Symbols
+Add symbol locations:
+
+☑ Microsoft Symbol Servers
+☑ NuGet.org Symbol Server
+Add custom location if needed: https://nuget.smbsrc.net/

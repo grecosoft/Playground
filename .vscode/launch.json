@@ -2,12 +2,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Service One Host (default)",
-      "type": "dotnet",
-      "request": "launch",
-      "projectPath": "${workspaceFolder}/microservices/Playground.Service.One/src/Playground.Service.One.Host/Playground.Service.One.Host.csproj"
-    },
-    {
       "name": "Debug Service One Host",
       "type": "coreclr",
       "request": "launch",
@@ -20,6 +14,28 @@
       "justMyCode": false,
       "enableStepFiltering": false,
       "suppressJITOptimizations": true,
+      "symbolOptions": {
+        "searchPaths": [],
+        "searchMicrosoftSymbolServer": true,
+        "searchNuGetOrgSymbolServer": true
+      }
+    },
+    {
+      "name": "Debug Service One WebApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build Service One WebApi",
+      "program": "${workspaceFolder}/microservices/Playground.Service.One/src/Playground.Service.One.WebApi/bin/Debug/net10.0/Playground.Service.One.WebApi.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/microservices/Playground.Service.One/src/Playground.Service.One.WebApi",
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "justMyCode": false,
+      "enableStepFiltering": false,
+      "suppressJITOptimizations": true,
+      "env": {
+        "ASPNETCORE_URLS": "http://localhost:5081"
+      },
       "symbolOptions": {
         "searchPaths": [],
         "searchMicrosoftSymbolServer": true,
