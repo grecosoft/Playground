@@ -14,5 +14,9 @@ jobs:
         solution-name: 'playground'
         service-root: './microservices/Playground.Service.One'
         service-name: 'service-one'
-        image-registry: 'ghcr.io/your-org'
+        image-registry: 'registryshrew.azurecr.io'
         image-tag: 'latest'
+      secrets:
+        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }} 

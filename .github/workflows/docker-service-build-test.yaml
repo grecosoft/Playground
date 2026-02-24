@@ -22,6 +22,16 @@ on:
                 description: 'Tag to use for the built Docker image (e.g., latest or 1.0.0)'
                 type: string
                 required: true
+        secrets:
+            AZURE_CLIENT_ID:
+              description: 'Azure Service Principal Client ID for authentication'
+              required: true
+            AZURE_TENANT_ID:
+              description: 'Azure Tenant ID for authentication'
+              required: true
+            AZURE_SUBSCRIPTION_ID:
+              description: 'Azure Subscription ID for authentication'
+              required: true
             
 jobs:
     create-service-image:
@@ -30,8 +40,20 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
-            - name: Build Docker image
-              run: |
-                IMAGE_NAME="${{ inputs.image-registry }}/${{ inputs.solution-name }}/${{ inputs.service-name }}:${{ inputs.image-tag }}"
-                docker build ${{ inputs.service-root }} -t $IMAGE_NAME 
+            - name: Azure Login
+              uses: azure/login@v1
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+            - name: Login to Azure Container Registry
+              uses: azure/docker-login@v1
+              with:
+                login-server: ${{ inputs.image-registry }}
+
+            # - name: Build Docker image
+            #   run: |
+            #     IMAGE_NAME="${{ inputs.image-registry }}/${{ inputs.solution-name }}/${{ inputs.service-name }}:${{ inputs.image-tag }}"
+            #     docker build ${{ inputs.service-root }} -t $IMAGE_NAME 
     

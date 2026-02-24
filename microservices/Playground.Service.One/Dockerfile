@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:52dcfb4225fda614c38ba5997a4ec72cbd5260a624125174416e547ff9eb9b8c AS runtime
 ENV ASPNETCORE_URLS=http://+:5081
 EXPOSE 5081
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM  mcr.microsoft.com/dotnet/sdk:10.0@sha256:0a506ab0c8aa077361af42f82569d364ab1b8741e967955d883e3f23683d473a AS build
 
 ENV SERVICE_NAME=Playground.Service.One
 
