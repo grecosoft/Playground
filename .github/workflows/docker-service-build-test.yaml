@@ -53,6 +53,13 @@ jobs:
             - name: Login to Azure Container Registry
               run: az acr login --name ${{ inputs.image-registry }}
 
+            - name: Build
+              uses: docker/build-push-action@v5
+              with:
+                context: ${{ inputs.service-root }}
+                push: false
+                tags: $IMAGE_NAME 
+
             # - name: Build Docker image
             #   run: |
             #     IMAGE_NAME="${{ inputs.image-registry }}/${{ inputs.solution-name }}/${{ inputs.service-name }}:${{ inputs.image-tag }}"
