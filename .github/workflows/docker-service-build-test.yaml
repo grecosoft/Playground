@@ -32,7 +32,10 @@ on:
             AZURE_SUBSCRIPTION_ID:
               description: 'Azure Subscription ID for authentication'
               required: true
-            
+permissions:
+  id-token: write
+  contents: read
+              
 jobs:
     create-service-image:
         runs-on: ubuntu-latest
