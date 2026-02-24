@@ -53,15 +53,18 @@ jobs:
             - name: Login to Azure Container Registry
               run: az acr login --name ${{ inputs.image-registry }}
 
+            - name: Set Image Tag
+              id: set-image-tag
+              run: |
+                IMAGE_TAG="${{ inputs.image-registry }}/${{ inputs.solution-name }}/${{ inputs.service-name }}:${{ inputs.image-tag }}"
+                echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
+                
             - name: Build
               uses: docker/build-push-action@v5
               with:
                 context: ${{ inputs.service-root }}
                 push: false
-                tags: "tst"
+                tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
 
-            # - name: Build Docker image
-            #   run: |
-            #     IMAGE_NAME="${{ inputs.image-registry }}/${{ inputs.solution-name }}/${{ inputs.service-name }}:${{ inputs.image-tag }}"
-            #     docker build ${{ inputs.service-root }} -t $IMAGE_NAME 
+  
     

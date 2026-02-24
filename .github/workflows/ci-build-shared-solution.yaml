@@ -11,7 +11,7 @@ on:
     
 jobs:
     build:
-      uses: ./.github/workflows/dotnet-solution-build-test.yaml
+      uses: ./.github/workflows/dotnet-solution-build.yaml
       with:
         solution-path: './shared/src/Playground.Common.sln'
         dotnet-version: '10.0.x'

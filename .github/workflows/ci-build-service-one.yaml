@@ -9,7 +9,7 @@ on:
 
 jobs:
     build:
-      uses: ./.github/workflows/docker-service-build-test.yaml
+      uses: ./.github/workflows/docker-service-build.yaml
       with:
         solution-name: 'playground'
         service-root: './microservices/Playground.Service.One'
