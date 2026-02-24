@@ -66,5 +66,11 @@ jobs:
                 push: false
                 tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
 
+            - name: Scan 
+              uses: aquasecurity/trivy-action@master
+              with:
+                image-ref: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
+                severity: HIGH,CRITICAL
+
   
     
