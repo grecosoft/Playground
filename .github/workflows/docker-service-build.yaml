@@ -50,7 +50,7 @@ jobs:
                 tenant-id: ${{ secrets.AZURE_TENANT_ID }}
                 subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-            - name: Login to Azure Container Registry
+            - name: Azure Container Registry Login
               run: az acr login --name ${{ inputs.image-registry }}
 
             - name: Set Image Tag
@@ -59,18 +59,24 @@ jobs:
                 IMAGE_TAG="${{ inputs.image-registry }}/${{ inputs.solution-name }}/${{ inputs.service-name }}:${{ inputs.image-tag }}"
                 echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
                 
-            - name: Build
+            - name: Build Image
               uses: docker/build-push-action@v5
               with:
                 context: ${{ inputs.service-root }}
                 push: false
                 tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
 
-            - name: Scan 
+            - name: Scan Image
               uses: aquasecurity/trivy-action@master
               with:
                 image-ref: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
                 severity: HIGH,CRITICAL
 
+            - name: Push Image
+              uses: docker/build-push-action@v5
+              with:
+                context: ${{ inputs.service-root }}
+                push: true
+                tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
   
     
