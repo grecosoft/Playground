@@ -22,6 +22,10 @@ on:
                 description: 'Tag to use for the built Docker image (e.g., latest or 1.0.0)'
                 type: string
                 required: true
+            debug:
+                description: 'Flag to enable debug logging'
+                type: boolean
+                default: true
         secrets:
             AZURE_CLIENT_ID:
               description: 'Azure Service Principal Client ID for authentication'
@@ -58,15 +62,20 @@ jobs:
               run: |
                 IMAGE_TAG="${{ inputs.image-registry }}/${{ inputs.solution-name }}/${{ inputs.service-name }}:${{ inputs.image-tag }}"
                 echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
+                If [ "${{ inputs.debug }}" = "true" ]; then
+                  echo "Image Tag: $IMAGE_TAG"
+                fi
                 
             - name: Build Image
               uses: docker/build-push-action@v5
               with:
                 context: ${{ inputs.service-root }}
                 push: false
+                load: true # Make the image available for local use
                 tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
 
             - name: List Images in Registry
+              if: ${{ inputs.debug }}
               run: docker images -a
 
             - name: Scan Image
@@ -77,13 +86,5 @@ jobs:
                 exit-code: '1'
 
             - name: Push Image
-              uses: docker/build-push-action@v5
-              with:
-                context: ${{ inputs.service-root }}
-                push: true
-                tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
-
-            - name: List Images in Registry
-              run: docker images -a
-  
+              run: docker push ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
     
