@@ -23,7 +23,7 @@ RUN dotnet build "./${SERVICE_NAME}.sln" -c Release --no-restore
 RUN dotnet test "./${SERVICE_NAME}.sln" -c Release --no-build --logger:trx --results-directory /test-results    
 RUN dotnet publish "./${SERVICE_NAME}.WebApi/${SERVICE_NAME}.WebApi.csproj" -c Release -o /service/publish --no-build   
 
-FROM scratch AS build-export
+FROM scratch AS test-results
 COPY --from=build /test-results .
 
 FROM runtime AS image

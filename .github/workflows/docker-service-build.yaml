@@ -66,15 +66,23 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
 
-            - name: Build Image
+            - name: Build and Run Tests, Export Test Results
+              uses: docker/build-push-action@v5
+              with:
+                context: ${{ inputs.service-root }}
+                target: test-results
+                outputs: type=local,dest=./test-results
+                cache-from: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache
+                cache-to: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache,mode=max
+
+            - name: Build Final Image
               uses: docker/build-push-action@v5
               with:
                 context: ${{ inputs.service-root }}
                 push: false
-                load: true # Make the image available for local use
+                load: true
                 tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
                 cache-from: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache
-                cache-to: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache,mode=max
 
             - name: List Images in Registry
               if: ${{ inputs.debug }}
