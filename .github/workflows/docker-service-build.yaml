@@ -67,6 +67,7 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
 
+            # Build up to the test-results stage to run tests and export results without building the final image.
             - name: Build and Run Tests, Export Test Results
               uses: docker/build-push-action@v5
               with:
@@ -76,6 +77,7 @@ jobs:
                 cache-from: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache
                 cache-to: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache,mode=max
 
+            # Build the final image and scan for vulnerabilities before pushing to the registry:
             - name: Build Final Image
               uses: docker/build-push-action@v5
               with:
@@ -89,6 +91,7 @@ jobs:
               if: ${{ inputs.debug }}
               run: docker images -a
 
+            # Scan the final image for vulnerabilities and push only if it passes the scan:
             - name: Scan Image
               uses: aquasecurity/trivy-action@0.28.0
               with:
@@ -98,7 +101,7 @@ jobs:
 
             - name: Push Image
               run: docker push ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
-
+  
             - name: Publish Test Results
               uses: dorny/test-reporter@v1
               if: success() || failure()
