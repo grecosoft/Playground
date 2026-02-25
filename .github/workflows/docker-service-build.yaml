@@ -66,6 +66,9 @@ jobs:
                 push: false
                 tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
 
+            - name: List Images in Registry
+              run: docker images -a
+
             - name: Scan Image
               uses: aquasecurity/trivy-action@master
               with:
