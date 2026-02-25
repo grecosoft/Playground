@@ -63,6 +63,9 @@ jobs:
                 IMAGE_TAG="${{ inputs.image-registry }}/${{ inputs.solution-name }}/${{ inputs.service-name }}:${{ inputs.image-tag }}"
                 echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
                              
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
             - name: Build Image
               uses: docker/build-push-action@v5
               with:
@@ -70,6 +73,8 @@ jobs:
                 push: false
                 load: true # Make the image available for local use
                 tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
+                cache-from: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache
+                cache-to: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache,mode=max
 
             - name: List Images in Registry
               if: ${{ inputs.debug }}
@@ -84,4 +89,4 @@ jobs:
 
             - name: Push Image
               run: docker push ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
-    
+
