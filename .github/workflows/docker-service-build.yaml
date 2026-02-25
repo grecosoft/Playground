@@ -71,6 +71,7 @@ jobs:
               with:
                 image-ref: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
                 severity: HIGH,CRITICAL
+                exit-code: '1'
 
             - name: Push Image
               uses: docker/build-push-action@v5
@@ -78,5 +79,8 @@ jobs:
                 context: ${{ inputs.service-root }}
                 push: true
                 tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
+
+            - name: List Images in Registry
+              run: docker images -a
   
     
