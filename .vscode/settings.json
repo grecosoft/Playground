@@ -3,6 +3,7 @@
         "aquasecurity",
         "ASPNETCORE",
         "elif",
+        "opencontainers",
         "snupkg"
     ]
 }
