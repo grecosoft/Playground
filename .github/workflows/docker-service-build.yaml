@@ -59,6 +59,11 @@ jobs:
                   console.log('subject:', payload.sub)
                   console.log('audience:', payload.aud)
 
+            - name: Debug Client ID
+              run: |
+                echo "First 8 chars: ${AZURE_CLIENT_ID:0:8}"
+              env:
+                AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
 
             - name: Azure Login
               uses: azure/login@v2
