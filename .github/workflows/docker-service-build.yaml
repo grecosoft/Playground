@@ -84,6 +84,14 @@ jobs:
               with:
                 labels: |
                   org.opencontainers.image.title: ${{ github.event.repository.name }}
+                  org.opencontainers.image.description: ${{ github.event.repository.description }}
+                  org.opencontainers.image.vendor: ${{github.repository.owner.login }}
+                  org.opencontainers.image.authors: ${{ github.event.repository.owner.login }}
+                  org.opencontainers.image.url: ${{ github.event.repository.html_url }}
+                  org.opencontainers.image.source: ${{ github.event.repository.html_url }}
+                  org.opencontainers.image.version: ${{ inputs.image-tag }}
+                  org.opencontainers.image.created: ${{ github.event.head_commit.timestamp }}
+                  
 
             # Build the final image and scan for vulnerabilities before pushing to the registry:
             - name: Build Final Image
