@@ -48,6 +48,17 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
+            - name: Debug OIDC Token
+              run: |
+                echo "Client ID length: ${#AZURE_CLIENT_ID}"
+                echo "Tenant ID length: ${#TENANT_ID}"
+                echo "Subscription ID length: ${#SUB_ID}"
+              env:
+                AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+                TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+                SUB_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+
             - name: Azure Login
               uses: azure/login@v2
               with:
