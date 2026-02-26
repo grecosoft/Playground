@@ -15,7 +15,7 @@ jobs:
         service-root: './microservices/Playground.Service.One'
         service-name: 'service-one'
         image-registry: 'registryshrew.azurecr.io'
-        image-tag: 'latest'
+        image-tag: "1.0.0.${{ github.run_number }}"
       secrets:
         AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
