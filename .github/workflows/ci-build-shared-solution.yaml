@@ -7,8 +7,7 @@ on:
       - main
       - develop
     paths:
-        - 'shared/src/**' 
-    
+        - 'workload/src/common/**'
 jobs:
     build:
       uses: ./.github/workflows/dotnet-solution-build.yaml
