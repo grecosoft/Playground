@@ -1,5 +1,0 @@
-subscription_id         = "c47473b5-b6e9-476b-853e-a1f5b826e95b"
-location                = "eastus"
-resource_group_name     = "Infrastructure-Playground"
-container_registry_name = "registry"
-container_registry_sku  = "Basic"
