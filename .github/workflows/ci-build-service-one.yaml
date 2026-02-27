@@ -5,7 +5,7 @@ on:
     branches: 
       - main
     paths:
-        - 'microservices/Playground.Service.One/src/**'
+        - 'solution/services/Playground.Service.One/src/**'
 
 permissions:
   id-token: write
