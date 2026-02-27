@@ -1,0 +1,35 @@
+variable "subscription_id" {
+  description = "The Subscription ID where the solution's resource group resources will be created."
+  type        = string
+}
+
+variable "workload_name" {
+  description = "Name of the workload to be developed containing resources shared between microservices"
+  type        = string
+}
+
+variable "environment" {
+  description = "The environment to deploy the solution in."
+  type        = string
+}
+
+variable "location" {
+  description = "The Azure region to deploy the resources in."
+  type        = string
+}
+
+# Remote state configuration variables:
+variable "storage_resource_group_name" {
+  description = "The name of the resource group where the storage account for remote state is located."
+  type        = string
+}
+
+variable "storage_account_name" {
+  description = "The name of the storage account for remote state."
+  type        = string
+}
+
+variable "workload_container_name" {
+  description = "The name of the container containing the state of the workload."
+  type        = string
+}

@@ -15,3 +15,10 @@ output "GITHUB_ENVIRONMENT_SECRETS" {
     AZURE_SUBSCRIPTION_ID = var.subscription_id
   }
 }
+
+output "servicebus_namespace" {
+  value = {
+    id   = module.servicebus_namespace.id
+    name = module.servicebus_namespace.name
+  }
+}

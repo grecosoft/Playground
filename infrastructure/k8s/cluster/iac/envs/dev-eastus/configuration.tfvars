@@ -1,5 +1,5 @@
 subscription_id         = "c47473b5-b6e9-476b-853e-a1f5b826e95b"
-environment         = "dev"
+environment             = "dev"
 location                = "eastus"
 resource_group_name     = "infrastructure"
 container_registry_name = "registry"

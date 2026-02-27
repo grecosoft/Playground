@@ -1,6 +1,6 @@
 locals {
-  location             = var.location
-  rg_name              = lower("${var.resource_group_name}-${var.environment}-${var.location}")
+  location = var.location
+  rg_name  = lower("${var.resource_group_name}-${var.environment}-${var.location}")
 }
 
 # Defines the resource group containing the infrastructure resources for solutions

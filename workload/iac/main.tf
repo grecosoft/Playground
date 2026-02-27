@@ -4,7 +4,8 @@ locals {
   github_identity_name = "github-workflow-identity"
 }
 
-# Defines the resource group containing the solution's resources.
+# TODO: Renamed to workload
+# Defines the resource group containing the workroom's resources.
 resource "azurerm_resource_group" "solution" {
   name     = local.rg_name
   location = local.location
@@ -21,6 +22,15 @@ module "github_identity" {
   identity_name       = local.github_identity_name
   github_account_name = var.github_account_name
 
+}
+
+# Defines the service bus namespace used by workload solution services.
+module "servicebus_namespace" {
+  source = "./modules/servicebus-namespace"
+
+  resource_group_name = azurerm_resource_group.solution.name
+  name                = "sb-namespace"
+  location            = local.location
 }
 
 

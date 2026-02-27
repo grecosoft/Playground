@@ -18,6 +18,11 @@ variable "workload_name" {
   type        = string
 }
 
+#Note:  make this a list in the future if we want to support multiple solutions per workload
+variable "solution_name" {
+  description = "The name of the solution contained within a workload."
+}
+
 variable "environments" {
   description = "The list of environments to create storage containers for."
   type        = list(string)

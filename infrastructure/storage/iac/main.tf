@@ -10,14 +10,22 @@ data "azurerm_storage_account" "terraform" {
 # This container is used to store common infrastructure state.  
 resource "azurerm_storage_container" "infrastructure" {
   for_each              = toset(var.environments)
-  name                  = "infrastructure-${each.key}"  
+  name                  = "infrastructure-${each.key}"
   storage_account_id    = data.azurerm_storage_account.terraform.id
   container_access_type = "private"
 }
 
+# TODO: rename to workload.
 resource "azurerm_storage_container" "solution" {
   for_each              = toset(var.environments)
   name                  = replace(lower("${var.workload_name}-${each.key}"), ".", "-")
+  storage_account_id    = data.azurerm_storage_account.terraform.id
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "workload_solution" {
+  for_each              = toset(var.environments)
+  name                  = replace(lower("${var.solution_name}-${each.key}"), ".", "-")
   storage_account_id    = data.azurerm_storage_account.terraform.id
   container_access_type = "private"
 }
