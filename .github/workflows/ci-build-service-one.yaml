@@ -19,7 +19,7 @@ jobs:
         solution-name: 'playground'
         service-root: './solution/src/service-one'
         service-name: 'service-one'
-        image-registry: 'registrysole.azurecr.io'
+        image-registry: 'registryterrapin.azurecr.io'
         image-tag: "1.0.0.${{ github.run_number }}"
       secrets:
         AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
