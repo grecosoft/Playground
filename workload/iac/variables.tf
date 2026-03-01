@@ -21,12 +21,18 @@ variable "github_account_name" {
   type = string
 }
 
+# External resource dependencies:
 variable "infrastructure_resource_group_name" {
-  description = "The name of the resource group containing the resource to which the solution is deployed."
+  description = "The name of the resource group containing the Azure container registry and Kubernetes cluster."
   type        = string
 }
 
 variable "container_registry_name" {
   description = "The name of the Azure Container Registry to store container images."
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "The name of the Kubernetes cluster."
   type        = string
 }

@@ -17,6 +17,11 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "cluster_name" {
+  description = "The name of the Kubernetes cluster."
+  type        = string
+}
+
 variable "container_registry_name" {
   type = string
 }

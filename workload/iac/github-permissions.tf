@@ -18,3 +18,10 @@ resource "azurerm_role_assignment" "github_actions_deploy_resource_group_contrib
   role_definition_name = "Contributor"
   principal_id         = module.github_identity.azure_deploy_principal_id
 }
+
+resource "azurerm_role_assignment" "AksContributor" {
+  principal_id                     = module.github_identity.azure_deploy_principal_id
+  role_definition_name             = "Contributor"
+  scope                            = data.azurerm_kubernetes_cluster.k8s.id
+  skip_service_principal_aad_check = true
+}
