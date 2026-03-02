@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Playground.Common" Version="1.0.0.59" />
+  </ItemGroup>
+
 </Project>
