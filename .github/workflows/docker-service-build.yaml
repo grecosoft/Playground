@@ -76,6 +76,8 @@ jobs:
               with:
                 context: ${{ inputs.service-root }}
                 target: test-results
+                secrets: |
+                  READ_PACKAGE_TOKEN=${{ secrets.READ_PACKAGE_TOKEN }}
                 outputs: type=local,dest=./test-results
                 cache-from: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache
                 cache-to: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache,mode=max
