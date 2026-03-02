@@ -19,6 +19,9 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4                 
 
+            - name: Create artifacts directory
+              run: mkdir -p $GITHUB_WORKSPACE/artifacts
+
             - name: GenerateManifests
               run: |
                 for dir in "${{inputs.service-root}}/k8s/envs/*"; do
@@ -28,7 +31,7 @@ jobs:
                         echo "Running kustomize on Environment: ${env_name} located at: ${dir}"
                         cd $dir
                         
-                        kubectl kustomize . > "${env_name}-resources.yaml"
+                        kubectl kustomize . > "$GITHUB_WORKSPACE/artifacts/${env_name}-resources.yaml"
                     )
                 done
 
@@ -37,5 +40,5 @@ jobs:
               if: success()
               with:
                 name: kubernetes-manifests-${{ github.run_id }}
-                path: "${{inputs.service-root}}/k8s/envs/*/*-resources.yaml"
+                path: "$GITHUB_WORKSPACE/artifacts/*-resources.yaml"
                 retention-days: ${{inputs.retain-days}}
