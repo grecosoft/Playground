@@ -6,6 +6,11 @@ on:
                 description: 'Name of the service (used for Docker image naming)'
                 type: string
                 required: true
+            retain-days:
+                description: 'Number of days to retain the generated artifacts (default: 14)'
+                type: number
+                required: false
+                default: 14
 
 jobs:
     gather-deploy-artifacts:
@@ -14,7 +19,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4                 
 
-            - name: ManifestGeneration
+            - name: GenerateManifests
               run: |
                 for dir in "${{inputs.service-root}}/k8s/envs/*"; do
                     echo "Processing: $dir"
@@ -27,5 +32,10 @@ jobs:
                     )
                 done
 
-            - name: List Files
-              run: ls -R "${{inputs.service-root}}/k8s/envs/"
+            - name: Archive Kubernetes Manifests
+              uses: actions/upload-artifact@v4
+              if: success()
+              with:
+                name: kubernetes-manifests-${{ github.run_id }}
+                path: "${{inputs.service-root}}/k8s/envs/*/*-resources.yaml"
+                retention-days: ${{inputs.retain-days}}
