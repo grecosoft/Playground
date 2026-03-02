@@ -13,6 +13,7 @@ COPY ["${SERVICE_NAME}.sln", "./"]
 COPY ["${SERVICE_NAME}.WebApi/${SERVICE_NAME}.WebApi.csproj", "./${SERVICE_NAME}.WebApi/"]
 COPY ["${SERVICE_NAME}.Core/${SERVICE_NAME}.Core.csproj", "./${SERVICE_NAME}.Core/"]
 COPY ["${SERVICE_NAME}.Tests/${SERVICE_NAME}.Tests.csproj", "./${SERVICE_NAME}.Tests/"]
+COPY ["${SERVICE_NAME}/NuGet.config", "./"]
 
 RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
     READ_PACKAGE_TOKEN=$(cat /run/secrets/READ_PACKAGE_TOKEN) \
