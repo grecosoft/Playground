@@ -70,15 +70,16 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
 
-            # Build up to the test-results stage to run tests and export results without building the final image.
+            - name: debug-query
+              run: ls -R /run/secrets/
+            
+              # Build up to the test-results stage to run tests and export results without building the final image.
             - name: Build and Run Tests, Export Test Results
               uses: docker/build-push-action@v6
               with:
                 context: ${{ inputs.service-root }}
                 target: test-results
                 outputs: type=local,dest=./test-results
-                build-args: |
-                  READ_PACKAGE_TOKEN=${{ secrets.READ_PACKAGE_TOKEN }}
                 cache-from: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache
                 cache-to: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache,mode=max
 
