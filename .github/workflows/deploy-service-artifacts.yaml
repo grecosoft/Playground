@@ -2,11 +2,7 @@ name: Assemble service deployment artifacts
 on:
     workflow_call:
         inputs:
-            solution-name:
-                description: 'Name of the solution the service belongs to (used for Docker image naming)'
-                type: string
-                required: true
-            service-name:
+            service-root:
                 description: 'Name of the service (used for Docker image naming)'
                 type: string
                 required: true
@@ -18,5 +14,18 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4                 
 
-            - name: List contents
+            - name: ManifestGeneration
+              run: |
+                for dir in ${INPUT_SERVICE_ROOT}/k8s/envs/*; do
+                    echo "Processing: $dir"
+                    (
+                        env_name=$(basename "$dir")
+                        echo "Running kustomize on Environment: ${env_name} located at: ${dir}"
+                        cd $dir
+                        
+                        kubectl kustomize . > "${env_name}-resources.yaml"
+                    )
+                done
+
+            - name: List Files
               run: ls -R
