@@ -4,7 +4,7 @@ export AZURE_CONFIG_DIR=~/.azure_T1
 mkdir -p ~/.azure_T1
 az login
 # After logging in, set the specific subscription for this session
-az account set --subscription "Subscription 1 Name"
+az account set --subscription "Subscription 1 Name  "
 
 
 
