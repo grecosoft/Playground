@@ -16,7 +16,7 @@ jobs:
 
             - name: ManifestGeneration
               run: |
-                for dir in "${inputs.service-root}/k8s/envs/*"; do
+                for dir in "${{inputs.service-root}}/k8s/envs/*"; do
                     echo "Processing: $dir"
                     (
                         env_name=$(basename "$dir")
@@ -28,4 +28,4 @@ jobs:
                 done
 
             - name: List Files
-              run: ls -R "${inputs.service-root}/k8s/envs/"
+              run: ls -R "${{inputs.service-root}}/k8s/envs/"
