@@ -19,7 +19,8 @@ RUN dotnet restore "./${SERVICE_NAME}.sln"
 # Copy the solution's source code and build, test, and publish project:
 COPY ["./", "./"]
 
-RUN dotnet nuget update source github-packages \
+RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
+    dotnet nuget update source github-packages \
     --username docker \
     --password $(cat /run/secrets/READ_PACKAGE_TOKEN) \
     --store-password-in-clear-text 
