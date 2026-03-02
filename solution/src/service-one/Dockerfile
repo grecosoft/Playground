@@ -4,7 +4,7 @@ EXPOSE 5081
 
 FROM  mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
-ARG READ_PACKAGE_TOKEN = ""
+ARG READ_PACKAGE_TOKEN
 ENV SERVICE_NAME=Playground.Service.One
 
 WORKDIR /src
