@@ -36,6 +36,9 @@ on:
             AZURE_SUBSCRIPTION_ID:
               description: 'Azure Subscription ID for authentication'
               required: true
+            READ_PACKAGE_TOKEN:
+              description: 'GitHub PAT token with permissions to read packages.'
+              required: true
 permissions:
   id-token: write
   contents: read
@@ -74,6 +77,8 @@ jobs:
                 context: ${{ inputs.service-root }}
                 target: test-results
                 outputs: type=local,dest=./test-results
+                build-args: |
+                  READ_PACKAGE_TOKEN=${{ secrets.READ_PACKAGE_TOKEN }}
                 cache-from: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache
                 cache-to: type=registry,ref=${{ inputs.image-registry }}/cache/${{ inputs.service-name }}:buildcache,mode=max
 

@@ -4,6 +4,7 @@ EXPOSE 5081
 
 FROM  mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
+ARG READ_PACKAGE_TOKEN = ""
 ENV SERVICE_NAME=Playground.Service.One
 
 WORKDIR /src
@@ -19,6 +20,7 @@ RUN dotnet restore "./${SERVICE_NAME}.sln"
 # Copy the solution's source code and build, test, and publish project:
 COPY ["./", "./"]
 
+RUN dotnet nuget update source github-packages --username docker --password $READ_PACKAGE_TOKEN --store-password-in-clear-text 
 RUN dotnet build "./${SERVICE_NAME}.sln" -c Release --no-restore
 RUN dotnet test "./${SERVICE_NAME}.sln" -c Release --no-build --logger:trx --results-directory /test-results    
 RUN dotnet publish "./${SERVICE_NAME}.WebApi/${SERVICE_NAME}.WebApi.csproj" -c Release -o /service/publish --no-build   
