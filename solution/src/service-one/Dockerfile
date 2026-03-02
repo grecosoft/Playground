@@ -15,12 +15,8 @@ COPY ["${SERVICE_NAME}.Core/${SERVICE_NAME}.Core.csproj", "./${SERVICE_NAME}.Cor
 COPY ["${SERVICE_NAME}.Tests/${SERVICE_NAME}.Tests.csproj", "./${SERVICE_NAME}.Tests/"]
 
 RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
-    dotnet nuget update source github-packages \
-    --username docker \
-    --password $(cat /run/secrets/READ_PACKAGE_TOKEN) \
-    --store-password-in-clear-text 
-
-RUN dotnet restore "./${SERVICE_NAME}.sln"
+    READ_PACKAGE_TOKEN=$(cat /run/secrets/READ_PACKAGE_TOKEN) \
+    dotnet restore "./${SERVICE_NAME}.sln" --configfile NuGet.config 
 
 # Copy the solution's source code and build, test, and publish project:
 COPY ["./", "./"]
