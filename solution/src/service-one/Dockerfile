@@ -16,9 +16,13 @@ COPY ["${SERVICE_NAME}.Tests/${SERVICE_NAME}.Tests.csproj", "./${SERVICE_NAME}.T
 COPY ["NuGet.config", "./"]
 
 RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
-    READ_PACKAGE_TOKEN=$(cat /run/secrets/READ_PACKAGE_TOKEN) && \
-    echo "Token length: ${#READ_PACKAGE_TOKEN}" && \
-    dotnet restore "./${SERVICE_NAME}.sln" --configfile NuGet.config 
+    export READ_PACKAGE_TOKEN=$(cat /run/secrets/READ_PACKAGE_TOKEN) && \
+    dotnet nuget add source "https://nuget.pkg.github.com/grecosoft/index.json" \
+      --name github \
+      --username github \
+      --password $READ_PACKAGE_TOKEN \
+      --store-password-in-clear-text \
+    && dotnet restore "./${SERVICE_NAME}.sln"
 
 # Copy the solution's source code and build, test, and publish project:
 COPY ["./", "./"]
