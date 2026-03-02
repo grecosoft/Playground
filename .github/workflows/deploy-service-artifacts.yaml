@@ -1,0 +1,22 @@
+name: Assemble service deployment artifacts
+on:
+    workflow_call:
+        inputs:
+            solution-name:
+                description: 'Name of the solution the service belongs to (used for Docker image naming)'
+                type: string
+                required: true
+            service-name:
+                description: 'Name of the service (used for Docker image naming)'
+                type: string
+                required: true
+
+jobs:
+    gather-deploy-artifacts:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4                 
+
+            - name: List contents
+              run: ls -R
