@@ -19,9 +19,10 @@ resource "azurerm_role_assignment" "github_actions_deploy_resource_group_contrib
   principal_id         = module.github_identity.azure_deploy_principal_id
 }
 
+# TODO:  Rename
 resource "azurerm_role_assignment" "AksContributor" {
   principal_id                     = module.github_identity.azure_deploy_principal_id
-  role_definition_name             = "Contributor"
+  role_definition_name             = "Azure Kubernetes Service Cluster User Role"
   scope                            = data.azurerm_kubernetes_cluster.k8s.id
   skip_service_principal_aad_check = true
 }
