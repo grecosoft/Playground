@@ -35,6 +35,9 @@ jobs:
                     )
                 done
 
+            - name: List generated artifacts
+              run: ls -l $GITHUB_WORKSPACE/artifacts
+
             - name: Archive Kubernetes Manifests
               uses: actions/upload-artifact@v4
               if: success()
