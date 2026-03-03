@@ -24,7 +24,7 @@ jobs:
 
             - name: GenerateManifests
               run: |
-                for dir in "${{inputs.service-root}}/k8s/envs/*"; do
+                for dir in ${{inputs.service-root}}/k8s/envs/*; do
                     echo "Processing: $dir"
                     (
                         env_name=$(basename "$dir")
