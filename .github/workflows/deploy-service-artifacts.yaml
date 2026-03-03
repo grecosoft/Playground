@@ -31,7 +31,7 @@ jobs:
                         echo "Running kustomize on Environment: ${env_name} located at: ${dir}"
                         cd $dir
                         
-                        kubectl kustomize . > "$GITHUB_WORKSPACE/artifacts/${env_name}-resources.yaml"
+                        kubectl kustomize . > ${GITHUB_WORKSPACE}/artifacts/${env_name}-resources.yaml
                     )
                 done
 
@@ -40,5 +40,5 @@ jobs:
               if: success()
               with:
                 name: kubernetes-manifests-${{ github.run_id }}
-                path: "$GITHUB_WORKSPACE/artifacts/*-resources.yaml"
+                path: "${GITHUB_WORKSPACE}/artifacts/*-resources.yaml"
                 retention-days: ${{inputs.retain-days}}
