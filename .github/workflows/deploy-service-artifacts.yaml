@@ -30,7 +30,7 @@ jobs:
                 for dir in $SERVICE_ROOT/k8s/envs/*; do
                     echo "Processing: $dir"
                     (
-                        ENV_NAME=$(basename "$dir")
+                        ENV_NAME=$(basename $dir)
                         echo "Running kustomize on Environment: ${ENV_NAME} located at: ${dir}"
                         cd $dir
                         
