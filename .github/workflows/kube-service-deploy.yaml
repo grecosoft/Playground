@@ -26,6 +26,10 @@ on:
                 description: 'Name of the AKS cluster to deploy to'
                 type: string
                 required: true
+            k8s-namespace:
+                description: 'Kubernetes namespace to deploy the service into (default: default)'
+                type: string
+                required: true
             image-registry:
                 description: 'Container registry where the built image is located (e.g., ghcr.io/your-org)'
                 type: string
@@ -79,6 +83,7 @@ jobs:
             - name: Deploy to Kubernetes cluster
               uses: azure/k8s-deploy@v1
               with:
+                namespace: ${{ inputs.k8s-namespace }}
                 manifests: |
                     ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml
                 images: |

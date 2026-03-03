@@ -39,6 +39,7 @@ jobs:
         deploy-environment-name: 'dev-eastus'
         k8s-resource-group: 'infrastructure-dev-eastus'
         k8s-cluster-name: 'aks-cluster' 
+        k8s-namespace: 'solution'
         solution-name: 'playground'
         service-name: 'service-one'
         image-registry: 'registryterrapin.azurecr.io'
