@@ -15,33 +15,36 @@ on:
 jobs:
     gather-deploy-artifacts:
         runs-on: ubuntu-latest
+        env:
+            SERVICE_ROOT: ${{ inputs.service-root }}
+            ARTIFACTS_DIR: ${{ github.workspace }}/artifacts
         steps:
             - name: Checkout
               uses: actions/checkout@v4                 
 
             - name: Create artifacts directory
-              run: mkdir -p $GITHUB_WORKSPACE/artifacts
+              run: mkdir -p $ARTIFACTS_DIR
 
             - name: GenerateManifests
               run: |
-                for dir in ${{inputs.service-root}}/k8s/envs/*; do
+                for dir in $SERVICE_ROOT/k8s/envs/*; do
                     echo "Processing: $dir"
                     (
-                        env_name=$(basename "$dir")
-                        echo "Running kustomize on Environment: ${env_name} located at: ${dir}"
+                        ENV_NAME=$(basename "$dir")
+                        echo "Running kustomize on Environment: ${ENV_NAME} located at: ${dir}"
                         cd $dir
                         
-                        kubectl kustomize . > ${GITHUB_WORKSPACE}/artifacts/${env_name}-resources.yaml
+                        kubectl kustomize . > $ARTIFACTS_DIR/$ENV_NAME-resources.yaml
                     )
                 done
 
             - name: List generated artifacts
-              run: ls -l $GITHUB_WORKSPACE/artifacts
+              run: ls -l $ARTIFACTS_DIR
 
             - name: Archive Kubernetes Manifests
               uses: actions/upload-artifact@v4
               if: success()
               with:
                 name: kubernetes-manifests-${{ github.run_id }}
-                path: "${{ github.workspace }}/artifacts/*-resources.yaml"
+                path: "$ARTIFACTS_DIR/*-resources.yaml"
                 retention-days: ${{inputs.retain-days}}
