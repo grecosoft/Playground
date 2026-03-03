@@ -2,12 +2,8 @@ name: Deploy Kubernetes Service
 on: 
     workflow_call:
         inputs:
-            solution-name:
-                description: 'Name of the solution the service belongs to (used for Docker image naming)'
-                type: string
-                required: true
-            service-name:
-                description: 'Name of the service (used for Docker image naming)'
+            environment:
+                description: 'Deployment environment (e.g., dev, stg, prod)'
                 type: string
                 required: true
             k8s-resource-group:
@@ -44,6 +40,8 @@ on:
 jobs:
     deploy-service:
         runs-on: ubuntu-latest
+        environment:
+            name: ${{ inputs.environment }}
         steps:
             - name: Azure Login
               uses: azure/login@v2

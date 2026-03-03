@@ -35,10 +35,9 @@ jobs:
       needs: deploy-artifacts
       uses: ./.github/workflows/kube-service-deploy.yaml
       with:
-        solution-name: 'playground'
-        service-name: 'service-one'
+        environment: 'dev'
         k8s-resource-group: 'rg-playground-aks'
-        k8s-cluster-name: 'playground-aks'
+        k8s-cluster-name: 'playground-aks' 
       secrets:
         AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }} 
