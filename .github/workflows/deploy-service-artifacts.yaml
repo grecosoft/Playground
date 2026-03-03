@@ -43,5 +43,5 @@ jobs:
               if: success()
               with:
                 name: kubernetes-manifests-${{ github.run_id }}
-                path: "${GITHUB_WORKSPACE}/artifacts/*-resources.yaml"
+                path: "${{ github.workspace }}/artifacts/*-resources.yaml"
                 retention-days: ${{inputs.retain-days}}
