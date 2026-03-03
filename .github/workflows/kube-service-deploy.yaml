@@ -76,10 +76,10 @@ jobs:
                 IMAGE_TAG="${{ inputs.image-registry }}/${{ inputs.solution-name }}/${{ inputs.service-name }}:${{ inputs.image-tag }}"
                 echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-            # - name: Deploy to Kubernetes cluster
-            #   uses: azure/k8s-deploy@v1
-            #   with:
-            #     manifests: |
-            #     ./path/to/your/manifest.yaml # Update with the path to your manifest files
-            #     images: |
-            #         ${{ steps.image-tag.outputs.IMAGE_TAG }}
+            - name: Deploy to Kubernetes cluster
+              uses: azure/k8s-deploy@v1
+              with:
+                manifests: |
+                    ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml
+                images: |
+                    ${{ steps.image-tag.outputs.IMAGE_TAG }}
