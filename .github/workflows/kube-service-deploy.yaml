@@ -2,8 +2,20 @@ name: Deploy Kubernetes Service
 on: 
     workflow_call:
         inputs:
+            solution-name:
+                description: 'Name of the solution the service belongs to (used for Docker image naming)'
+                type: string
+                required: true
+            service-name:
+                description: 'Name of the service (used for Docker image naming)'
+                type: string
+                required: true
             environment:
                 description: 'Deployment environment (e.g., dev, stg, prod)'
+                type: string
+                required: true
+            deploy-environment-name:
+                description: 'Name of the environment to deploy to (e.g., dev, staging, production)'
                 type: string
                 required: true
             k8s-resource-group:
@@ -14,18 +26,14 @@ on:
                 description: 'Name of the AKS cluster to deploy to'
                 type: string
                 required: true
-            # image-registry:
-            #     description: 'Container registry where the built image is located (e.g., ghcr.io/your-org)'
-            #     type: string
-            #     required: true
-            # image-tag:
-            #     description: 'Tag of the Docker image to deploy (e.g., latest or 1.0.0)'
-            #     type: string
-            #     required: true
-            # debug:
-            #     description: 'Flag to enable debug logging'
-            #     type: boolean
-            #     default: false
+            image-registry:
+                description: 'Container registry where the built image is located (e.g., ghcr.io/your-org)'
+                type: string
+                required: true
+            image-tag:
+                description: 'Tag of the Docker image to deploy (e.g., latest or 1.0.0)'
+                type: string
+                required: true
         secrets:
             AZURE_CLIENT_ID:
               description: 'Azure Service Principal Client ID for authentication'
@@ -55,3 +63,23 @@ jobs:
               with:
                 resource-group: ${{ inputs.k8s-resource-group }}
                 cluster-name: ${{ inputs.k8s-cluster-name }}
+
+            - name: Download artifact
+              uses: actions/download-artifact@v4
+              with:
+                name: kubernetes-manifests-${{ github.run_id }}
+                path: ./manifests/
+
+            - name: Determine image to deploy
+              id: image-tag
+              run: |
+                IMAGE_TAG="${{ inputs.image-registry }}/${{ inputs.solution-name }}/${{ inputs.service-name }}:${{ inputs.image-tag }}"
+                echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+            # - name: Deploy to Kubernetes cluster
+            #   uses: azure/k8s-deploy@v1
+            #   with:
+            #     manifests: |
+            #     ./path/to/your/manifest.yaml # Update with the path to your manifest files
+            #     images: |
+            #         ${{ steps.image-tag.outputs.IMAGE_TAG }}
