@@ -3,8 +3,10 @@
         "aquasecurity",
         "ASPNETCORE",
         "buildcache",
+        "eastus",
         "elif",
         "opencontainers",
+        "registryterrapin",
         "snupkg"
     ]
 }
