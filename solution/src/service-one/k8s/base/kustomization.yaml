@@ -4,8 +4,26 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - service.yaml
+  - serviceaccount.yaml
 
 labels:
   - pairs:
       acuitynext.io/dept: policy
       acuitynext.io/team: underwriting
+
+configMapGenerator:
+  - name: service-config-map
+    literals:
+      - DataLab__Common__AppConfiguration__Uri=https://appcs-dlreg-dev-eastus2-01.azconfig.io
+
+patches:
+  - target:
+      kind: ServiceAccount
+      name: solution-service-account
+    patch: |-
+      - op: replace
+        path: /metadata/annotations/azure.workload.identity~1client-id
+        value: "${CLIENT_ID}"
+      - op: replace
+        path: /metadata/annotations/azure.workload.identity~1tenant-id
+        value: "${TENANT_ID}"

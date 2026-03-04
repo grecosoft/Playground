@@ -4,7 +4,12 @@ variable "subscription_id" {
 }
 
 variable "workload_name" {
-  description = "Name of the workload to be developed containing resources shared between microservices"
+  description = "Name of the workload to which the solution belongs. A workload is a collection of services that work together to deliver value. For example, an e-commerce workload can be composed of a web application, an API, and a database."
+  type        = string
+}
+
+variable "solution_name" {
+  description = "Name of the solution deployed to the workload."
   type        = string
 }
 
@@ -16,6 +21,12 @@ variable "environment" {
 variable "location" {
   description = "The Azure region to deploy the resources in."
   type        = string
+}
+
+# Kubernetes workload identity variables:
+variable "namespace" {
+  type        = string
+  description = "The Kubernetes namespace to create ServiceAccount for the workload identity."
 }
 
 # Remote state configuration variables:

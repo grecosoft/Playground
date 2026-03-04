@@ -16,6 +16,14 @@ output "GITHUB_ENVIRONMENT_SECRETS" {
   }
 }
 
+output "kubernetes_cluster" {
+  value = {
+    id   = data.azurerm_kubernetes_cluster.k8s.id
+    name = data.azurerm_kubernetes_cluster.k8s.name
+    oidc_issuer_url = data.azurerm_kubernetes_cluster.k8s.oidc_issuer_url
+  }
+}
+
 output "servicebus_namespace" {
   value = {
     id   = module.servicebus_namespace.id

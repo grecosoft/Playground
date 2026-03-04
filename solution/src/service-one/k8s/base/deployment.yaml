@@ -11,11 +11,15 @@ spec:
   template:
     metadata:
       labels:
+        azure.workload.identity/use: "true"
         app: service-one
     spec:
       containers:
         - name: service-one
           image: registryterrapin.azurecr.io/playground/service-one:1.0.0.48
+          envFrom:
+            - configMapRef:
+                name: service-config-map
           ports:
             - containerPort: 80
           resources:

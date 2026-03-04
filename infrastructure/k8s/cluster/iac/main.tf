@@ -30,6 +30,8 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   resource_group_name = azurerm_resource_group.infrastructure.name
   dns_prefix          = "${var.cluster_name}-dns"
   node_resource_group = "${var.cluster_name}-node"
+  oidc_issuer_enabled       = true
+  workload_identity_enabled = true
 
   # Free tier control plane
   sku_tier = "Free"
