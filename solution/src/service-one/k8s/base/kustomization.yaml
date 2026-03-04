@@ -9,8 +9,8 @@ resources:
 
 labels:
   - pairs:
-      acuitynext.io/dept: policy
-      acuitynext.io/team: underwriting
+      solution.io/dept: policy
+      solution.io/team: underwriting
 
 patches:
   - target:
