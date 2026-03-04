@@ -9,7 +9,6 @@ resource "azurerm_user_assigned_identity" "github_build_identity" {
 
 resource "azurerm_federated_identity_credential" "github_main_branch" {
   name                = "github-build-federated-credential"
-  resource_group_name = var.resource_group_name
   parent_id           = azurerm_user_assigned_identity.github_build_identity.id
   audience            = ["api://AzureADTokenExchange"]
   issuer              = "https://token.actions.githubusercontent.com"
@@ -25,7 +24,6 @@ resource "azurerm_user_assigned_identity" "github_deploy_identity" {
 
 resource "azurerm_federated_identity_credential" "github_actions" {
   name                = "github-${var.environment}-federated-credential"
-  resource_group_name = var.resource_group_name
   parent_id           = azurerm_user_assigned_identity.github_deploy_identity.id
   audience            = ["api://AzureADTokenExchange"]
   issuer              = "https://token.actions.githubusercontent.com"

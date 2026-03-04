@@ -5,6 +5,7 @@
         "buildcache",
         "eastus",
         "elif",
+        "envsubst",
         "opencontainers",
         "registryterrapin",
         "serviceaccount",

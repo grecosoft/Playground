@@ -74,6 +74,16 @@ jobs:
                 name: kubernetes-manifests-${{ github.run_id }}
                 path: ./manifests/
 
+            - name: Set Manifest Variables
+              run: |
+                export CLIENT_ID=${{ vars.AZURE_CLIENT_ID }} 
+                export TENANT_ID=${{ vars.AZURE_TENANT_ID }} 
+
+                envsubst < ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml > \
+                ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml
+
+                cat ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml
+
             - name: Determine image to deploy
               id: image-tag
               run: |
