@@ -24,7 +24,7 @@ RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
     && dotnet restore "./${SERVICE_NAME}.sln"
 
 # Copy the solution's source code and build, test, and publish project:
-COPY ["src/", "./src/"]
+COPY ["src/", "./"]
 
 RUN dotnet build "${SERVICE_NAME}.sln" -c Release --no-restore
 RUN dotnet test "${SERVICE_NAME}.sln" -c Release --no-build --logger:trx --results-directory /test-results    
