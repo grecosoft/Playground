@@ -7,7 +7,7 @@
       "command": "dotnet",
       "args": [
         "build",
-        "${workspaceFolder}/microservices/Playground.Service.One/src/Playground.Service.One.Host/Playground.Service.One.Host.csproj"
+        "${workspaceFolder}/solution/src/service-one/Playground.Service.One.WebApi/Playground.Service.One.WebApi.csproj"
       ],
       "problemMatcher": "$msCompile",
       "group": {
@@ -21,7 +21,7 @@
       "command": "dotnet",
       "args": [
         "build",
-        "${workspaceFolder}/microservices/Playground.Service.One/src/Playground.Service.One.WebApi/Playground.Service.One.WebApi.csproj"
+        "${workspaceFolder}/solution/src/service-one/Playground.Service.One.WebApi/Playground.Service.One.WebApi.csproj"
       ],
       "problemMatcher": "$msCompile",
       "group": "build"
