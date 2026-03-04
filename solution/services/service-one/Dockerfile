@@ -26,9 +26,9 @@ RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
 # Copy the solution's source code and build, test, and publish project:
 COPY ["src/", "./src/"]
 
-RUN dotnet build "./src/${SERVICE_NAME}.sln" -c Release --no-restore
-RUN dotnet test "./src/${SERVICE_NAME}.sln" -c Release --no-build --logger:trx --results-directory /test-results    
-RUN dotnet publish "./src/${SERVICE_NAME}.WebApi/${SERVICE_NAME}.WebApi.csproj" -c Release -o /service/publish --no-build   
+RUN dotnet build "${SERVICE_NAME}.sln" -c Release --no-restore
+RUN dotnet test "${SERVICE_NAME}.sln" -c Release --no-build --logger:trx --results-directory /test-results    
+RUN dotnet publish "${SERVICE_NAME}.WebApi/${SERVICE_NAME}.WebApi.csproj" -c Release -o /service/publish --no-build   
 
 FROM scratch AS test-results
 COPY --from=build /test-results .
