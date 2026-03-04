@@ -79,8 +79,8 @@ jobs:
                 export CLIENT_ID=${{ vars.WORKLOAD_CLIENT_ID }}
                 export TENANT_ID=${{ vars.WORKLOAD_TENANT_ID }} 
 
-                envsubst < ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml > \
-                ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml
+                # envsubst < ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml > \
+                # ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml
 
                 cat ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml
 
