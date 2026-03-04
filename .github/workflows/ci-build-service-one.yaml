@@ -43,9 +43,7 @@ jobs:
         solution-name: 'playground'
         service-name: 'service-one'
         image-registry: 'registryterrapin.azurecr.io'
-        image-tag: "1.0.0.${{ github.run_number }}" 
-        workload-client-id: ${{ vars.WORKLOAD_CLIENT_ID }}
-        workload-tenant-id: ${{ vars.WORKLOAD_TENANT_ID }}
+        image-tag: "1.0.0.${{ github.run_number }}"
       secrets:
         AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }} 
