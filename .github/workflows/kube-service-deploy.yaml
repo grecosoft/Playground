@@ -76,13 +76,13 @@ jobs:
 
             - name: Set Manifest Variables
               run: |
-                export CLIENT_ID=${{ vars.WORKLOAD_CLIENT_ID }}
-                export TENANT_ID=${{ vars.WORKLOAD_TENANT_ID }} 
+                export WORKLOAD_CLIENT_ID=${{ vars.WORKLOAD_CLIENT_ID }}
+                export WORKLOAD_TENANT_ID=${{ vars.WORKLOAD_TENANT_ID }} 
 
-                # envsubst < ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml > \
-                # ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml
+                envsubst < ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml > \
+                    ./manifests/${{ inputs.deploy-environment-name }}-deploy-manifest.yaml
 
-                cat ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml
+                cat ./manifests/${{ inputs.deploy-environment-name }}-deploy-manifest.yaml
 
             - name: Determine image to deploy
               id: image-tag
@@ -95,6 +95,6 @@ jobs:
               with:
                 namespace: ${{ inputs.k8s-namespace }}
                 manifests: |
-                    ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml
+                    ./manifests/${{ inputs.deploy-environment-name }}-deploy-manifest.yaml
                 images: |
                     ${{ steps.image-tag.outputs.IMAGE_TAG }}
