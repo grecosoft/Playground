@@ -30,6 +30,14 @@ on:
                 description: 'Kubernetes namespace to deploy the service into (default: default)'
                 type: string
                 required: true
+            workload-client-id:
+                description: 'Azure Service Principal Client ID for Workload Identity authentication'
+                type: string
+                required: true
+            workload-tenant-id:
+                description: 'Azure Tenant ID for Workload Identity authentication'
+                type: string
+                required: true
             image-registry:
                 description: 'Container registry where the built image is located (e.g., ghcr.io/your-org)'
                 type: string
@@ -76,8 +84,8 @@ jobs:
 
             - name: Set Manifest Variables
               run: |
-                export CLIENT_ID=${{ vars.AZURE_CLIENT_ID }} 
-                export TENANT_ID=${{ vars.AZURE_TENANT_ID }} 
+                export WORKLOAD_CLIENT_ID=${{ inputs.workload-client-id }} 
+                export WORKLOAD_TENANT_ID=${{ inputs.workload-tenant-id }} 
 
                 envsubst < ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml > \
                 ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml
