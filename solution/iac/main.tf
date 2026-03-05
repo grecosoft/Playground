@@ -14,6 +14,6 @@ module workload_identity {
 
 module service_one {
   source = "./services/service-one"
-  
+  solution_identity_client_id = module.workload_identity.solution_identity_client_id  
   servicebus_namespace_id = local.servicebus_namespace.id
 }

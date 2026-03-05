@@ -4,3 +4,10 @@ resource "azurerm_servicebus_queue" "reply_queue" {
 
   partitioning_enabled = true
 }
+
+resource "azurerm_role_assignment" "AksContributor" {
+  principal_id                     = var.solution_identity_client_id
+  role_definition_name             = "Azure Service Bus Data Receiver"
+  scope                            = azurerm_servicebus_queue.reply_queue.id
+  skip_service_principal_aad_check = true
+}

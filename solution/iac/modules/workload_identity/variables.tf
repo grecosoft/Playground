@@ -10,6 +10,7 @@ variable "location" {
   type = string
 }
 
+# The name of the AKS cluster to integrate with workload identity.
 variable "oidc_issuer_url" {
   description = "The OIDC issuer url of the AKS cluster."
   type        = string
