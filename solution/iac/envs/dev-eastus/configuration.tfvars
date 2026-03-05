@@ -4,6 +4,10 @@ solution_name   = "solution"
 environment     = "dev"
 location        = "eastus"
 
+
+# Developer related variables:
+developer_group_name = "solution-developers"
+
 # Kubernetes workload identity variables:
 namespace       = "solution"
 

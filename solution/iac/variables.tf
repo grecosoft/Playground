@@ -23,6 +23,12 @@ variable "location" {
   type        = string
 }
 
+# Developer related variables:
+variable "developer_group_name" {
+  description = "The name of the Azure AD group that contains the developers who will have access to the solution's resources."
+  type        = string  
+}
+
 # Kubernetes workload identity variables:
 variable "namespace" {
   type        = string
