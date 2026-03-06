@@ -1,10 +1,13 @@
-using Playground.Service.One.WebApi;
+using Playground.Common;
+using Playground.Common.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddBusMessaging(builder.Configuration);
 
 var app = builder.Build();
 
@@ -14,21 +17,23 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseHttpsRedirection();
+
+app.MapGet("/send-command", async (
+    [FromKeyedServices("service-two")] IMessagingService  microserviceTwo,
+    CancellationToken cancellationToken) =>
+{
+
+    var command = new PingCommand("abcdef");
+    var response = await microserviceTwo.SendAsync(command, cancellationToken);
+    return Results.Ok(response);
+    
+});
+
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
-
-app.MapGet("/test-identity", () =>
-{
-    var identity = new Azure.Identity.DefaultAzureCredential().GetToken(
-        new Azure.Core.TokenRequestContext(
-            new[] { "https://graph.microsoft.com/.default" }
-        )
-    );
-    return Results.Ok(identity);
-});
-
 
 app.MapGet("/weatherforecast", () =>
 {
@@ -46,10 +51,7 @@ app.MapGet("/weatherforecast", () =>
 
 app.Run();
 
-namespace Playground.Service.One.WebApi
+record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
-    record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-    {
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-    }
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
