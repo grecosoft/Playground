@@ -1,3 +1,5 @@
+using Playground.Common;
+using Playground.Common.Messaging;
 using Playground.Service.One.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddBusMessaging(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -13,6 +17,17 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.MapGet("/send-command", async (
+    [FromKeyedServices("service-two")] IMessagingService  microserviceTwo,
+    CancellationToken cancellationToken) =>
+{
+
+    var command = new PingCommand("abcdef");
+    var response = await microserviceTwo.SendAsync(command, cancellationToken);
+    return Results.Ok(response);
+    
+});
 
 var summaries = new[]
 {
