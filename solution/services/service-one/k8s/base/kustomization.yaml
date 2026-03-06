@@ -12,14 +12,14 @@ labels:
       solution.io/dept: policy
       solution.io/team: underwriting
 
-patches:
-  - target:
-      kind: ServiceAccount
-      name: solution-service-account
-    patch: |-
-      - op: replace
-        path: /metadata/annotations/azure.workload.identity~1client-id
-        value: "${WORKLOAD_CLIENT_ID}"
-      - op: replace
-        path: /metadata/annotations/azure.workload.identity~1tenant-id
-        value: "${WORKLOAD_TENANT_ID}"
+# patches:
+#   - target:
+#       kind: ServiceAccount
+#       name: solution-service-account
+#     patch: |-
+#       - op: replace
+#         path: /metadata/annotations/azure.workload.identity~1client-id
+#         value: "${WORKLOAD_CLIENT_ID}"
+#       - op: replace
+#         path: /metadata/annotations/azure.workload.identity~1tenant-id
+#         value: "${WORKLOAD_TENANT_ID}"
