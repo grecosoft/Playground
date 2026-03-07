@@ -3,8 +3,8 @@ variable "servicebus_namespace_id" {
   type        = string
 }
 
-variable "solution_identity_client_id" {
-  description = "The client ID of the workload identity federated credential."
+variable "solution_identity_principal_id" {
+  description = "The principal ID of the workload identity federated credential."
   type        = string
 }
 

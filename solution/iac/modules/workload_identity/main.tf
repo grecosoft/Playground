@@ -10,5 +10,5 @@ resource "azurerm_federated_identity_credential" "solution-federated-identity" {
   audience            = ["api://AzureADTokenExchange"]
   issuer              = var.oidc_issuer_url
   parent_id           = azurerm_user_assigned_identity.solution-identity.id
-  subject             = "system:serviceaccount:${var.namespace}:${azurerm_user_assigned_identity.solution-identity.name}"
+  subject             = "system:serviceaccount:solution:solution-identity"
 }

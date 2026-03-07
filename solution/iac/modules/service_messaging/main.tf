@@ -15,24 +15,43 @@ resource "azurerm_servicebus_queue" "reply_queue" {
 resource "azurerm_role_assignment" "request_queue_senders" {
   for_each = {
     group    = { principal_id = var.solution_developers_group_id, principal_type = "Group" }
-    identity = { principal_id = var.solution_identity_client_id,  principal_type = "ServicePrincipal" }
+    identity = { principal_id = var.solution_identity_principal_id,  principal_type = "ServicePrincipal" }
   }
-
   principal_id         = each.value.principal_id
   principal_type       = each.value.principal_type
   role_definition_name = "Azure Service Bus Data Sender"
   scope                = azurerm_servicebus_queue.request_queue.id
 }
 
+resource "azurerm_role_assignment" "request_queue_receivers" {
+  for_each = {
+    group    = { principal_id = var.solution_developers_group_id, principal_type = "Group" }
+    identity = { principal_id = var.solution_identity_principal_id,  principal_type = "ServicePrincipal" }
+  }
+  principal_id         = each.value.principal_id
+  principal_type       = each.value.principal_type
+  role_definition_name = "Azure Service Bus Data Receiver"
+  scope                = azurerm_servicebus_queue.request_queue.id
+}
+
+resource "azurerm_role_assignment" "reply_queue_senders" {
+  for_each = {
+    group    = { principal_id = var.solution_developers_group_id, principal_type = "Group" }
+    identity = { principal_id = var.solution_identity_principal_id,  principal_type = "ServicePrincipal" }
+  }
+  principal_id         = each.value.principal_id
+  principal_type       = each.value.principal_type
+  role_definition_name = "Azure Service Bus Data Sender"
+  scope                = azurerm_servicebus_queue.reply_queue.id
+}
+
 resource "azurerm_role_assignment" "reply_queue_receivers" {
   for_each = {
     group    = { principal_id = var.solution_developers_group_id, principal_type = "Group" }
-    identity = { principal_id = var.solution_identity_client_id,  principal_type = "ServicePrincipal" }
+    identity = { principal_id = var.solution_identity_principal_id,  principal_type = "ServicePrincipal" }
   }
-
   principal_id         = each.value.principal_id
   principal_type       = each.value.principal_type
   role_definition_name = "Azure Service Bus Data Receiver"
   scope                = azurerm_servicebus_queue.reply_queue.id
 }
-
