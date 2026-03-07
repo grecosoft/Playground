@@ -1,17 +1,16 @@
 locals {
   developers_principal_id = data.azuread_group.solution_developers.object_id
-  resource_group_name = "${var.workload_name}-${var.environment}-${var.location}"
 }
 
 # Workload identity for the solution, used by the services in the solution to access 
 # Azure resources securely without needing to manage credentials.
 module workload_identity {
   source = "./modules/workload_identity"
-  resource_group_name = local.resource_group_name
+  resource_group_name = local.workload_env_name
   location            = var.location
   solution_name       = var.solution_name  
   oidc_issuer_url     = local.kubernetes_cluster.oidc_issuer_url
-  namespace           = "solution"
+  namespace           = local.workload_env_name
 }
 
 # Configurations for the services in the solution.
