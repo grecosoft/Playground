@@ -5,5 +5,5 @@ module "service_one_messaging" {
   service_name = "service-two"
   servicebus_namespace_id = var.servicebus_namespace_id
   solution_identity_principal_id = var.solution_identity_principal_id
-  solution_developers_group_id = var.solution_developers_group_id
+  solution_developers_group_id = var.developers_principal_id
 }

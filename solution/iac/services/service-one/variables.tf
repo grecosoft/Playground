@@ -8,6 +8,6 @@ variable "solution_identity_principal_id" {
   type        = string
 }
 
-variable "solution_developers_group_id" {
+variable "developers_principal_id" {
   description = "The identity of the EntraId group for the solutions developers."
 }
