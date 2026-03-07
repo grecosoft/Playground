@@ -16,6 +16,10 @@ output "GITHUB_ENVIRONMENT_SECRETS" {
   }
 }
 
+output "workload_env_name" {
+  value = local.workload_env_name
+}
+
 output "kubernetes_cluster" {
   value = {
     id   = data.azurerm_kubernetes_cluster.k8s.id
