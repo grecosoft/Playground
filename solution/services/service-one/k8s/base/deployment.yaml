@@ -13,7 +13,7 @@ spec:
         azure.workload.identity/use: "true"
         app: service-one
     spec:
-      serviceAccountName: solution-identity
+      serviceAccountName: solution-sa
       containers:
         - name: service-one
           image: registryterrapin.azurecr.io/playground/service-one:1.0.0.48
