@@ -24,9 +24,9 @@ spec:
                 name: service-one-appconfig
           ports:
             - containerPort: 80
-          volumeMounts: 
-            - name: config-volume
-              mountPath: /service/config
+          # volumeMounts: 
+          #   - name: config-volume
+          #     mountPath: /service/config
           resources:
             requests:
               cpu: "100m"
