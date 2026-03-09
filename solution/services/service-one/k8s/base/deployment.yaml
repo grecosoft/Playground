@@ -22,9 +22,9 @@ spec:
                 name: service-config-map
           ports:
             - containerPort: 80
-          # volumeMounts: 
-          #   - name: config-volume
-          #     mountPath: /service
+          volumeMounts: 
+            - name: config-volume
+              mountPath: /service/config
           resources:
             requests:
               cpu: "100m"
