@@ -28,9 +28,20 @@ output "kubernetes_cluster" {
   }
 }
 
+# TOOD:  rename this Messaging and also the module and have it contain
+# all messaging related resource.
 output "servicebus_namespace" {
   value = {
     id   = module.servicebus_namespace.id
     name = module.servicebus_namespace.name
+  }
+}
+
+output "configuration" {
+  value = {
+    key_vault_name = module.configuration.key_vault_name
+    key_vault_id = module.configuration.key_vault_id
+    app_config_name = module.configuration.app_config_name
+    app_config_id = module.configuration.app_config_id
   }
 }

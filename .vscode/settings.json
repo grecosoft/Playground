@@ -1,7 +1,9 @@
 {
     "cSpell.words": [
+        "appconfig",
         "aquasecurity",
         "ASPNETCORE",
+        "azconfig",
         "buildcache",
         "eastus",
         "elif",
@@ -9,6 +11,8 @@
         "opencontainers",
         "registryterrapin",
         "serviceaccount",
-        "snupkg"
+        "servicebus",
+        "snupkg",
+        "uami"
     ]
 }

@@ -1,5 +1,6 @@
 subscription_id     = "c47473b5-b6e9-476b-853e-a1f5b826e95b"
 workload_name       = "Playground"
+workload_developer_group_name = "workload-developers"
 environment         = "dev"
 location            = "eastus"
 github_account_name = "grecosoft"

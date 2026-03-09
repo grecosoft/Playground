@@ -57,6 +57,12 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 }
 
+resource "azurerm_kubernetes_cluster_extension" "app_configuration" {
+  name           = "app-configuraton-extension"
+  cluster_id     = azurerm_kubernetes_cluster.aks_cluster.id
+  extension_type = "Microsoft.AppConfiguration"
+}
+
 resource "azurerm_kubernetes_cluster_node_pool" "spot_node_pool" {
   name                  = "spot"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id

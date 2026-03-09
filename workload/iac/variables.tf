@@ -8,6 +8,11 @@ variable "workload_name" {
   type        = string
 }
 
+variable "workload_developer_group_name" {
+  description = "The name of the EntraId group containing developer granted access to workload level resources."
+  type = string
+}
+
 variable "environment" {
   description = "The environment to deploy the solution in."
   type        = string
