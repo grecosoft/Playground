@@ -16,7 +16,6 @@ spec:
       serviceAccountName: solution-sa
       containers:
         - name: service-one
-          image: registryterrapin.azurecr.io/playground/service-one:1.0.0.48
           envFrom:
             - configMapRef:
                 name: service-config-map
