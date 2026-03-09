@@ -20,13 +20,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: service-config-map
-            - configMapRef:
-                name: service-one-appconfig
           ports:
             - containerPort: 80
-          # volumeMounts: 
-          #   - name: config-volume
-          #     mountPath: /service/config
+          volumeMounts: 
+            - name: config-volume
+              mountPath: /service/configs
           resources:
             requests:
               cpu: "100m"
@@ -34,7 +32,7 @@ spec:
             limits:
               cpu: "250m"
               memory: "256Mi"
-      # volumes:
-      #   - name: config-volume 
-      #     configMap: 
-      #       name: service-one-appconfig
+      volumes:
+        - name: config-volume 
+          configMap: 
+            name: service-one-appconfig
