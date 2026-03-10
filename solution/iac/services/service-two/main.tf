@@ -1,9 +1,20 @@
+locals {
+  service_name = "service-two"
+  app_configs = []
+  vault_secrets = []
+}
+
+module "service_two_configuration" {
+  source = "../../modules/service_configuration" 
+  workload_config = var.workload_config
+  label_name =  local.service_name 
+  app_configs = local.app_configs
+  vault_secrets = local.vault_secrets 
+}
 
 # Enable receiving message from other services in the solution over Azure Service Bus queues. 
-module "service_one_messaging" {
+module "messaging" {
   source = "../../modules/service_messaging"
-  service_name = "service-two"
-  servicebus_namespace_id = var.servicebus_namespace_id
-  solution_identity_principal_id = var.solution_identity_principal_id
-  solution_developers_group_id = var.developers_principal_id
+  workload_config = var.workload_config
+  service_name = local.service_name
 }

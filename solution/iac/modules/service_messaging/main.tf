@@ -5,21 +5,21 @@ locals {
   request_queue_name = lower("${var.service_name}-request-queue")
 
   principals = {
-    group    = { principal_id = var.solution_developers_group_id,   principal_type = "Group" }
-    identity = { principal_id = var.solution_identity_principal_id, principal_type = "ServicePrincipal" }
+    group    = { principal_id = var.workload_config.developers_group_principal_id,   principal_type = "Group" }
+    identity = { principal_id = var.workload_config.solution_identity_principal_id, principal_type = "ServicePrincipal" }
   }
 }
 
 # Enable receiving message from other services in the solution over Azure Service Bus queues.
 resource "azurerm_servicebus_queue" "request_queue" {
   name         = local.request_queue_name
-  namespace_id = var.servicebus_namespace_id
+  namespace_id = var.workload_config.servicebus_namespace_id
 }
 
 # Enable sending reply message to other services in the solution over Azure Service Bus queues.
 resource "azurerm_servicebus_queue" "reply_queue" {
   name         = local.reply_queue_name
-  namespace_id = var.servicebus_namespace_id
+  namespace_id = var.workload_config.servicebus_namespace_id
   requires_session = true
 }
 

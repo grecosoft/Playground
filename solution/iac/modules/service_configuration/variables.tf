@@ -1,17 +1,10 @@
-variable "app_config_id" {
-    type = string
-}
-
-variable "key_vault_uri" {
-  type = string
-}
-
-variable "key_vault_id" {
-  type = string
+variable "workload_config" {
+  description = "Reference to the workflow configuration to which the solution belongs."
+  type = map(any)
 }
 
 variable "label_name" {
-  description = "The default configuration label if not specified on the configs or secrets."
+  description = "The default label used if not specified directly on the app_configs or vault_secrets objects."
   type = string
   default = ""
 }
@@ -28,9 +21,9 @@ variable "app_configs" {
 
 variable "vault_secrets" {
   type = list(object({
-    key = string
-    secret = string
-    label = optional(string)
+    key = string                    # The key of the configuration.
+    secret = any                    # The value of the secret.                 
+    label = optional(string)        # The label of the value.  If not specified, label_name is used
   }))
   default = []
 }

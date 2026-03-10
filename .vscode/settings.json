@@ -14,6 +14,7 @@
         "serviceaccount",
         "servicebus",
         "snupkg",
-        "uami"
+        "uami",
+        "versionless"
     ]
 }
