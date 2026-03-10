@@ -33,7 +33,7 @@ resource "azurerm_role_assignment" "appconfig_kv_crypto" {
 resource "azurerm_role_assignment" "kv_owner" {
   scope                = azurerm_key_vault.kv.id
   principal_type = "Group"
-  role_definition_name = "Owner"
+  role_definition_name = "Key Vault Administrator"
   principal_id         = var.workload_developers_group_id
 }
 
@@ -75,6 +75,6 @@ resource "azurerm_app_configuration" "app_configuration" {
 resource "azurerm_role_assignment" "app_config_owners" {
   principal_id         = var.workload_developers_group_id
   principal_type =      "Group"
-  role_definition_name = "Owner"
+  role_definition_name = "App Configuration Data Owner"
   scope                = azurerm_app_configuration.app_configuration.id
 }

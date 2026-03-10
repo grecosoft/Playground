@@ -18,13 +18,21 @@ module workload_identity {
 module service_one {
   source = "./services/service-one"
   solution_identity_principal_id = module.workload_identity.principal_id  
+  app_config_id = local.configuration.app_config_id
+  key_vault_uri = local.configuration.key_vault_uri  
+  key_vault_id = local.configuration.key_vault_id
   servicebus_namespace_id = local.servicebus_namespace.id 
-  developers_principal_id = local.developers_principal_id
+  developers_principal_id = local.developers_principal_id 
 }
 
 module service_two {
   source = "./services/service-two"
   solution_identity_principal_id = module.workload_identity.principal_id  
   servicebus_namespace_id = local.servicebus_namespace.id 
-  developers_principal_id = local.developers_principal_id
+  developers_principal_id = local.developers_principal_id  
 }
+
+
+
+
+

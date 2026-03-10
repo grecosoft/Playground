@@ -1,3 +1,16 @@
+variable "app_config_id" {
+  description = "The Id of the app configuration service."
+  type = string
+}
+
+variable "key_vault_uri" {
+  type = string
+}
+
+variable "key_vault_id" {
+  type = string
+}
+
 variable "servicebus_namespace_id" {
   description = "The ID of the Service Bus namespace"
   type        = string
