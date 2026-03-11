@@ -1,4 +1,4 @@
-output "GITHUB_BUILD_SECRETS" {
+ output "GITHUB_BUILD_SECRETS" {
   value = {
     Description           = "Add the following as Github Repository Secrets"
     AZURE_TENANT_ID       = module.github_identity.azure_build_tenant_id
@@ -28,15 +28,6 @@ output "kubernetes_cluster" {
   }
 }
 
-# TOOD:  rename this Messaging and also the module and have it contain
-# all messaging related resource.
-output "servicebus_namespace" {
-  value = {
-    id   = module.servicebus_namespace.id
-    name = module.servicebus_namespace.name
-  }
-}
-
 output "configuration" {
   value = {
     key_vault_name = module.configuration.key_vault_name
@@ -44,5 +35,12 @@ output "configuration" {
     key_vault_uri = module.configuration.key_vault_uri
     app_config_name = module.configuration.app_config_name
     app_config_id = module.configuration.app_config_id
+  }
+}
+
+output "servicebus_namespace" {
+  value = {
+    id   = module.messaging.servicebus_namespace_id
+    name = module.messaging.servicebus_namespace_name
   }
 }

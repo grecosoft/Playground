@@ -4,7 +4,7 @@ resource "random_string" "unique_postfix" {
 }
 
 resource "azurerm_servicebus_namespace" "servicebus_namespace" {
-  name                = "${var.name}-${random_string.unique_postfix.result}"
+  name                = "${var.servicebus_namespace_name}-${random_string.unique_postfix.result}"
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = "Standard"

@@ -44,11 +44,11 @@ module "configuration" {
 }
 
 # Defines the service bus namespace used by workload environment services.
-module "servicebus_namespace" {
-  source = "./modules/servicebus-namespace"
+module "messaging" {
+  source = "./modules/messaging"
 
   resource_group_name = azurerm_resource_group.workload.name
-  name                = "sb-namespace"
+  servicebus_namespace_name = "sb-namespace"
   location            = local.location
 }
 

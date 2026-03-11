@@ -2,7 +2,7 @@ variable "resource_group_name" {
   type = string
 }
 
-variable "name" {
+variable "servicebus_namespace_name" {
   type = string
 }
 
