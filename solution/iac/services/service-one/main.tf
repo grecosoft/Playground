@@ -33,6 +33,7 @@ module "configuration" {
   workload_config = var.workload_config
   label_name = "services.service-one" 
   app_configs = local.app_configs
+  app_config_overrides = lookup(var.env_service_configs, local.service_name, [])
   vault_secrets = local.vault_secrets 
 }
 

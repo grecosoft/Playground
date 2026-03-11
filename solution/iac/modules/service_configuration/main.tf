@@ -1,5 +1,27 @@
+# This module implements configurations/secrets that are specific
+# to a given service.  
+
+locals {
+  unique_keys = distinct(concat(
+    [for c in var.app_configs : c.key],
+    [for c in var.app_config_overrides : c.key]
+  ))
+
+  keyed_app_configs = { for c in var.app_configs : c.key => c }
+  keyed_app_config_overrides = { for c in var.app_config_overrides : c.key => c }
+
+  # Environment specific overrides take precedence 
+  # over those defined at the service level:
+
+  app_configs = [for key in local.unique_keys : merge(
+    lookup(local.keyed_app_configs, key, {}),
+    lookup(local.keyed_app_config_overrides, key, {})
+  )]
+
+}
+
 resource "azurerm_app_configuration_key" "service_config" {
-  for_each = { for item in var.app_configs : item.key => item }
+  for_each = { for item in local.app_configs : item.key => item }
 
   configuration_store_id = var.workload_config.app_config_id
   key                    = each.value.key

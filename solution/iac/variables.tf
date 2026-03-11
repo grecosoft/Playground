@@ -1,3 +1,4 @@
+# Solution level variables:
 variable "subscription_id" {
   description = "The Subscription ID where the solution's resource group resources will be created."
   type        = string
@@ -13,6 +14,8 @@ variable "solution_name" {
   type        = string
 }
 
+# Environment variables:
+
 variable "environment" {
   description = "The environment to deploy the solution in."
   type        = string
@@ -21,6 +24,20 @@ variable "environment" {
 variable "location" {
   description = "The Azure region to deploy the resources in."
   type        = string
+}
+
+variable "environment_overrides" {
+  description = "value"
+  type = object({
+    service_configs = map(
+      list(object({
+        key = string                    # The key of the configuration
+        value = any                     # The value.  This can be a simple value or jsonencode 
+        label = optional(string)        # The label of the value.  If not specified, label_name is used
+        isJson = optional(bool, false)  # Indicates that the value contains encoded json
+      }))
+    )
+  })
 }
 
 # Developer related variables:

@@ -17,3 +17,16 @@ namespace       = "solution"
 storage_resource_group_name = "terraform-state"
 storage_account_name        = "terraformstatestorage07"
 workload_container_name     = "playground-dev"
+
+# Environment Overrides:
+environment_overrides = {
+    service_configs = {
+        "service-one" = [
+          {
+            key   = "DatabasePort"
+            value = 1111
+            label = "test-label"
+          }
+        ]
+    }
+}
