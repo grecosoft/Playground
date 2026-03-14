@@ -20,6 +20,13 @@ workload_container_name     = "playground-dev"
 
 # Environment Overrides:
 environment_overrides = {
+    solution_auth = {
+      redirect_uris = [
+        "http://localhost",
+        "http://localhost:3000",
+        "http://localhost:8080",
+      ]
+    }
     service_configs = {
         "service-one" = [
           {

@@ -16,3 +16,20 @@ variable "solution_roles" {
     display_name = string
   }))
 }
+
+variable "role_user_assignments" {
+  description = "Should only be used if EntraId groups are not being used.  If groups are being used, users should be added externally."
+  type = map(list(string))
+  default = {}
+}
+
+variable "create_groups" {
+  description = "If specified, EntraId groups will be created for each role and have the role assigned."
+  type = bool
+  default = false
+}
+
+variable "redirect_uris" {
+  type = list(string)
+  default = [ ]
+}

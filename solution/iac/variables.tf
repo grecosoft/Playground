@@ -5,7 +5,7 @@ variable "subscription_id" {
 }
 
 variable "workload_name" {
-  description = "Name of the workload to which the solution belongs. A workload is a collection of services that work together to deliver value. For example, an e-commerce workload can be composed of a web application, an API, and a database."
+  description = "Name of the workload to which the solution belongs. A workload is a collection of services that work together to deliver value."
   type        = string
 }
 
@@ -27,8 +27,10 @@ variable "location" {
 }
 
 variable "environment_overrides" {
-  description = "value"
+  description = "Used to provide module and application configuration overrides for a specific environment."
   type = object({
+
+    // Environment specific service configurations merged with common service configurations. 
     service_configs = map(
       list(object({
         key = string                    # The key of the configuration
@@ -37,6 +39,11 @@ variable "environment_overrides" {
         isJson = optional(bool, false)  # Indicates that the value contains encoded json
       }))
     )
+
+    // overrides solution authorization module.
+    solution_auth = object({
+      redirect_uris = list(string)
+    })
   })
 }
 
