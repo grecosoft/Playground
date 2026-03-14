@@ -4,6 +4,19 @@ data "azuread_group" "solution_developers" {
   security_enabled = true
 }
 
+module solution_auth {
+  source = "./modules/solution_auth"
+  workload_config = local.workload_config 
+  solution_name = var.solution_name 
+  solution_roles = {
+    "apiDataReader" = {
+      display_name = "Solution Data Reader"
+      description = "Allowed to read any data for the solution service's."
+      allowed_member_types = ["Application", "User"]
+    }
+  }
+}
+
 # Configurations for the services implementing the solution.
 module service_one {
   source = "./services/service-one"
