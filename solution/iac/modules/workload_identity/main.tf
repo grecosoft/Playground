@@ -6,9 +6,9 @@ resource "azurerm_user_assigned_identity" "solution_identity" {
 }
 
 resource "azurerm_federated_identity_credential" "solution_federated_identity" {
-  name                = "${azurerm_user_assigned_identity.solution_identity.name}-fed"
-  audience            = ["api://AzureADTokenExchange"]
-  issuer              = var.oidc_issuer_url
-  parent_id           = azurerm_user_assigned_identity.solution_identity.id
-  subject             = "system:serviceaccount:${var.namespace}:${var.solution_name}-sa"
+  name      = "${azurerm_user_assigned_identity.solution_identity.name}-fed"
+  audience  = ["api://AzureADTokenExchange"]
+  issuer    = var.oidc_issuer_url
+  parent_id = azurerm_user_assigned_identity.solution_identity.id
+  subject   = "system:serviceaccount:${var.namespace}:${var.solution_name}-sa"
 }

@@ -33,10 +33,10 @@ variable "environment_overrides" {
     // Environment specific service configurations merged with common service configurations. 
     service_configs = map(
       list(object({
-        key = string                    # The key of the configuration
-        value = any                     # The value.  This can be a simple value or jsonencode 
-        label = optional(string)        # The label of the value.  If not specified, label_name is used
-        isJson = optional(bool, false)  # Indicates that the value contains encoded json
+        key    = string                # The key of the configuration
+        value  = any                   # The value.  This can be a simple value or jsonencode 
+        label  = optional(string)      # The label of the value.  If not specified, label_name is used
+        isJson = optional(bool, false) # Indicates that the value contains encoded json
       }))
     )
 
@@ -50,7 +50,7 @@ variable "environment_overrides" {
 # Developer related variables:
 variable "developer_group_name" {
   description = "The name of the Azure AD group that contains the developers who will have access to the solution's resources."
-  type        = string  
+  type        = string
 }
 
 # Kubernetes workload identity variables:

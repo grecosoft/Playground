@@ -6,6 +6,6 @@ data "azuread_service_principal" "msgraph" {
 
 data "azuread_user" "assigned_users" {
   for_each = toset(flatten(values(var.role_user_assignments)))
-  
+
   user_principal_name = each.value
 }

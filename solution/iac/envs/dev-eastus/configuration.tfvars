@@ -9,7 +9,7 @@ location        = "eastus"
 developer_group_name = "solution-developers"
 
 # Kubernetes workload identity variables:
-namespace       = "solution"
+namespace = "solution"
 
 # A given solution extends the core workload resources. For example, a solution can define EventHubs
 # specific to the services from which it is implemented, on the common EventHub Namespace defined by
@@ -20,20 +20,20 @@ workload_container_name     = "playground-dev"
 
 # Environment Overrides:
 environment_overrides = {
-    solution_auth = {
-      redirect_uris = [
-        "http://localhost",
-        "http://localhost:3000",
-        "http://localhost:8080",
-      ]
-    }
-    service_configs = {
-        "service-one" = [
-          {
-            key   = "DatabasePort"
-            value = 1111
-            label = "test-label"
-          }
-        ]
-    }
+  solution_auth = {
+    redirect_uris = [
+      "http://localhost",
+      "http://localhost:3000",
+      "http://localhost:8080",
+    ]
+  }
+  service_configs = {
+    "service-one" = [
+      {
+        key   = "DatabasePort"
+        value = 1111
+        label = "test-label"
+      }
+    ]
+  }
 }

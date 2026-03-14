@@ -14,7 +14,7 @@ locals {
   request_queue_name = lower("${var.service_name}-request-queue")
 
   principals = {
-    group    = { principal_id = var.workload_config.developers_group_principal_id,  principal_type = "Group" }
+    group    = { principal_id = var.workload_config.developers_group_principal_id, principal_type = "Group" }
     identity = { principal_id = var.workload_config.solution_identity_principal_id, principal_type = "ServicePrincipal" }
   }
 
@@ -22,7 +22,7 @@ locals {
     for queue_key, queue_id in {
       request = azurerm_servicebus_queue.request_queue.id
       reply   = azurerm_servicebus_queue.reply_queue.id
-    } : [
+      } : [
       for role in ["Azure Service Bus Data Sender", "Azure Service Bus Data Receiver"] : [
         for principal_key, principal in local.principals : {
           key            = "${queue_key}-${role}-${principal_key}"
