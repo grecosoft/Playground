@@ -9,10 +9,11 @@ using Playground.Common.Messaging.Types;
 
 namespace Playground.Common.Messaging.Services;
 
-public class RequestMessageDispatcher(
-    ILogger<RequestMessageDispatcher> logger,
+public class CommandHandlerDispatcher(
+    ILogger<CommandHandlerDispatcher> logger,
     IServiceProvider serviceProvider,
-    [FromKeyedServices("datalab.messaging.request")]ServiceBusProcessor requestQueueProcessor) : BackgroundService
+    [FromKeyedServices("datalab.messaging.request")]ServiceBusProcessor requestQueueProcessor,
+    [FromKeyedServices("datalab.messaging.reply")]ServiceBusSender replyQueueSender) : BackgroundService
 {
     private const string CommandNamespacePropName = "command-namespace";
     
@@ -77,7 +78,6 @@ public class RequestMessageDispatcher(
     {
         if (response is not null && eventArgs.Message.ReplyTo is not null)
         {
-            var replyQueue = requestScope.ServiceProvider.GetRequiredKeyedService<ServiceBusSender>(eventArgs.Message.ReplyTo);
             var replyMessage = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(response))
             {
                 CorrelationId = eventArgs.Message.CorrelationId,
@@ -85,7 +85,7 @@ public class RequestMessageDispatcher(
             };
             
             var stopwatch = Stopwatch.StartNew();
-            await replyQueue.SendMessageAsync(replyMessage, eventArgs.CancellationToken);
+            await replyQueueSender.SendMessageAsync(replyMessage, eventArgs.CancellationToken);
             
             stopwatch.Stop();
             Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds} ms");

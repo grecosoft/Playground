@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddBusMessaging(builder.Configuration);
+builder.Services.AddBusMessaging(builder.Configuration, "solution");
 
 var app = builder.Build();
 
@@ -20,7 +20,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapGet("/send-command", async (
-    [FromKeyedServices("service-two")] IMessagingService  microserviceTwo,
+    IMessagingService  microserviceTwo,
     CancellationToken cancellationToken) =>
 {
 

@@ -8,23 +8,39 @@ namespace Playground.Common.Messaging;
 
 public static class ServiceRegistrations
 {
-    public static IServiceCollection AddBusMessaging(this IServiceCollection services,
-        IConfiguration configuration)
+    extension(IServiceCollection services)
     {
-        var configSection = configuration.GetSection("BusMessaging");
-        
-        var config = configSection.Get<BusMessagingConfig>() 
-            ?? throw new NullReferenceException("BusMessagingConfig is null");
+        public IServiceCollection AddBusMessaging(IConfiguration configuration, string solutionName)
+        {
 
-        services.AddHostedService<RequestMessageDispatcher>();
+            var configSection = configuration.GetSection("BusMessaging");
         
-        AddMessagingBus(services, config);
-        AddRequestQueueProcessor(services, config);
-        AddReplyQueueProcessor(services, config);
-        AddCommandMessageHandlers(services);
+            var config = configSection.Get<BusMessagingConfig>() 
+                         ?? throw new NullReferenceException("BusMessagingConfig is null");
+
+            AddMessagingBus(services, config);
+            services.AddHostedService<CommandHandlerDispatcher>();
+            
+            
+            AddCommandMessageHandlers(services);
         
-        AddDependentServices(services, config);
-        return services;
+
+            AddRequestQueueProcessor(services, config);
+            AddReplyToQueueSender(services, config);
+            AddReplyQueueProcessor(services, config);
+            
+            // AddReplyQueueProcessor(services, config);
+            
+
+            services.AddSingleton<IMessagingService>(sp =>
+            {
+                var client = sp.GetRequiredService<ServiceBusClient>();
+                var sender = client.CreateSender(config.CommandTopic);
+                return new MessagingService(solutionName, config, client, sender);
+            });
+
+            return services;
+        }
     }
 
     private static void AddMessagingBus(IServiceCollection services, BusMessagingConfig config)
@@ -32,42 +48,28 @@ public static class ServiceRegistrations
         services.AddSingleton(new ServiceBusClient(config.FullyQualifiedNamespace, new DefaultAzureCredential()));
     }
     
-    private static void AddDependentServices(IServiceCollection services, BusMessagingConfig config)
-    {
-        foreach (var (serviceKey, serviceConfig) in config.DependentServices)
-        {
-            if (!string.IsNullOrEmpty(serviceConfig.RequestQueue))
-            {
-                services.AddKeyedSingleton<IMessagingService>(serviceKey, (sp, _) =>
-                {
-                    var client = sp.GetRequiredService<ServiceBusClient>();
-                    var sender = client.CreateSender(serviceConfig.RequestQueue);
-                    return new MessagingService(config, client, sender);
-                });
-            }
-
-            if (!string.IsNullOrEmpty(serviceConfig.ReplyQueue))
-            {
-                services.AddKeyedSingleton(serviceConfig.ReplyQueue, (sp, _) =>
-                {
-                    var client = sp.GetRequiredService<ServiceBusClient>();
-                    return client.CreateSender(serviceConfig.ReplyQueue);
-                });
-            }
-            
-        }
-    }
+    
     
     private static void AddRequestQueueProcessor(IServiceCollection services, BusMessagingConfig config)
     {
         services.AddKeyedSingleton("datalab.messaging.request", (sp, _) =>
         {
             var client = sp.GetRequiredService<ServiceBusClient>();
-            return client.CreateProcessor(config.RequestQueue, new ServiceBusProcessorOptions
+            return client.CreateProcessor(config.CommandTopic, "solution-service-one-commands", new ServiceBusProcessorOptions
             {
                 ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
                 PrefetchCount = 100
             });
+        });
+    }
+
+    private static void AddReplyToQueueSender(IServiceCollection services, BusMessagingConfig config)
+    {
+        services.AddKeyedSingleton("datalab.messaging.reply.queue", (sp, _) =>
+        {
+            var client = sp.GetRequiredService<ServiceBusClient>();
+            var sender = client.CreateSender(config.CommandTopic);
+            return sender;
         });
     }
 
@@ -76,7 +78,7 @@ public static class ServiceRegistrations
         services.AddKeyedSingleton("datalab.messaging.reply", (sp, _) =>
         {
             var client = sp.GetRequiredService<ServiceBusClient>();
-            return client.CreateProcessor(config.ReplyQueue);
+            return client.CreateSender(config.ReplyQueue);
         });
     }
 

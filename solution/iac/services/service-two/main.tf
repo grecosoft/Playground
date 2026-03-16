@@ -12,9 +12,7 @@ module "configuration" {
   vault_secrets   = local.vault_secrets
 }
 
-# Enable receiving message from other services in the solution over Azure Service Bus queues. 
-module "messaging" {
-  source          = "../../modules/service_messaging"
-  workload_config = var.workload_config
-  service_name    = local.service_name
+output "service_name" {
+  description = "The name used to identify the service within the solution."
+  value = local.service_name
 }

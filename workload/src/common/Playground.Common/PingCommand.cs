@@ -2,7 +2,13 @@
 
 namespace Playground.Common;
 
-[CommandNamespace("datalab.commands.ping")]
+public static class SolutionServices
+{
+    public const string SolutionOne = "service-one";
+    public const string SolutionTwo = "service-two";
+}
+
+[MessageNamespace(SolutionServices.SolutionOne, "commands.ping")]
 public record PingCommand(string ExpectedValue) : ICommandMessage<PingResponse>
 {
     

@@ -1,6 +1,11 @@
 namespace Playground.Common.Messaging.Types;
 
-public interface ICommandMessage
+public interface IMessage
+{
+    
+}
+
+public interface ICommandMessage: IMessage
 {
     
 }

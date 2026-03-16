@@ -5,6 +5,8 @@ namespace Playground.Common.Messaging.Services;
 
 public static class MessageTypeExtensions
 {
+ 
+    
     public static IEnumerable<CommandDispatchInfo> GetCommandDispatches(this IEnumerable<TypeInfo> types)
     {
         return AppDomain.CurrentDomain.GetAssemblies()
@@ -25,7 +27,7 @@ public static class MessageTypeExtensions
         if (handleMethod is null) return [];
 
         var commandType = handleMethod.GetParameters()[0].ParameterType;
-        var namespaceAttribute = commandType.GetCustomAttribute<CommandNamespace>();
+        var namespaceAttribute = commandType.GetCustomAttribute<MessageNamespace>();
 
         return namespaceAttribute is not null
             ? [new CommandDispatchInfo(namespaceAttribute.NamespaceName, handlerType)]
