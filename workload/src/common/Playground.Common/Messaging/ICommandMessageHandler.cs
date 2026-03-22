@@ -1,4 +1,4 @@
-﻿using Playground.Common.Messaging.Types;
+﻿using Playground.Common.Messaging.Services;
 
 namespace Playground.Common.Messaging;
 
@@ -7,7 +7,10 @@ public interface ICommandMessageHandler
     public Type CommandType { get; }
     public Type? ResponseType { get; }
 
-    public Task<object?> Handle(ICommandMessage command, CancellationToken cancellationToken);
+    public Task<CommandContext> Handle(
+        ReceivedCommand command,
+        ICommandRepository commandRepository,
+        CancellationToken cancellationToken);
 }
 
 

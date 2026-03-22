@@ -2,18 +2,23 @@
 
 public class BusMessagingConfig
 {
+    public string SolutionName { get; set; } = string.Empty;
+    
+    public string ServiceName { get; set; } = string.Empty;
+    
     public string FullyQualifiedNamespace { get; set; } = string.Empty;
 
+    /// <summary>
+    /// The name of the topic used to send RPC style commands between a solution's services.
+    /// </summary>
+    public string SolutionCommandTopic { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// The name of the reply queue used to send responses to received RPC style commands back
+    /// to the originating solution's service.  
+    /// </summary>
+    public string SolutionReplyQueue { get; set; } =  string.Empty;
+    
     public int ReplyTimeoutSeconds { get; set; } = 50;
-    
-    /// <summary>
-    /// The name of the queue that this service subscribes to for requests made by other services.
-    /// </summary>
-    public string CommandTopic { get; set; } = string.Empty;
-    
-    /// <summary>
-    /// The queue this service subscribes for receiving replies to the originating message
-    /// send to another service.
-    /// </summary>
-    public string ReplyQueue { get; set; } =  string.Empty;
+
 }

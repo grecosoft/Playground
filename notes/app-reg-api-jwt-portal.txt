@@ -1,0 +1,499 @@
+Complete Portal Setup: Azure AD Authentication with v2.0 Tokens
+Goal: Create app registrations that return JWT tokens with role values (like "Order.Admin") instead of role IDs (GUIDs).
+
+Part 1: Create API Application with App Roles
+Step 1.1: Navigate to App Registrations
+
+Go to https://portal.azure.com
+Search bar at top → Type: "App registrations"
+Click App registrations
+
+What you'll see:
+
+Page: "App registrations"
+Button: + New registration
+
+
+Step 1.2: Create API Application
+
+Click + New registration
+Fill in:
+
+   Name: MyWebAPI
+   
+   Supported account types:
+   ● Accounts in this organizational directory only (Single tenant)
+   
+   Redirect URI:
+   (leave blank)
+
+Click Register
+
+What you'll see:
+
+Page: "MyWebAPI | Overview"
+Application (client) ID: e.g., e7edcd91-d78a-4ac1-9bd4-e5cef55deb87
+Directory (tenant) ID: e.g., d105c533-f553-4e8c-b2a5-e5bdf9a67cf1
+
+
+SAVE THESE VALUES:
+
+Application (client) ID: ________________________
+Directory (tenant) ID: ________________________
+
+
+
+
+Step 1.3: Create App Roles
+
+Left menu → App roles
+Click + Create app role
+
+Role 1: Order Admin
+Display name: Order Admin
+
+Allowed member types:
+☑ Users/Groups
+
+Value: Order.Admin    ← CRITICAL: This is what appears in JWT
+
+Description: Can manage all orders
+
+Do you want to enable this app role?:
+☑ (checked)
+
+Click Apply
+
+Role 2: Order Reader
+
+Click + Create app role again
+
+Display name: Order Reader
+Allowed member types: ☑ Users/Groups
+Value: Order.Read    ← CRITICAL
+Description: Can view orders
+Enable: ☑
+
+Click Apply
+
+Role 3: Payment Processor
+
+Click + Create app role again
+
+Display name: Payment Processor
+Allowed member types: ☑ Users/Groups
+Value: Payment.Process    ← CRITICAL
+Description: Can process payments
+Enable: ☑
+
+Click Apply
+
+Final result - App roles table:
+Display name        | Value            | Allowed member types | Enabled
+Order Admin         | Order.Admin      | Users/Groups         | Yes
+Order Reader        | Order.Read       | Users/Groups         | Yes
+Payment Processor   | Payment.Process  | Users/Groups         | Yes
+
+Step 1.4: Set API Identifier URI
+
+Left menu → Expose an API
+Next to "Application ID URI" → Click + Set
+Accept default: api://e7edcd91-d78a-4ac1-9bd4-e5cef55deb87
+Click Save
+
+What you'll see:
+
+Application ID URI: api://e7edcd91-d78a-4ac1-9bd4-e5cef55deb87
+
+
+SAVE THIS VALUE:
+
+Application ID URI: ________________________
+
+
+
+
+Step 1.5: Add API Scope
+Still on "Expose an API" page:
+
+Scroll to Scopes defined by this API
+Click + Add a scope
+Fill in:
+
+   Scope name: user_impersonation
+   
+   Who can consent?: 
+   ● Admins and users
+   
+   Admin consent display name: Access MyWebAPI
+   
+   Admin consent description: Allow the application to access MyWebAPI on behalf of the signed-in user
+   
+   User consent display name: Access MyWebAPI
+   
+   User consent description: Allow the application to access MyWebAPI on your behalf
+   
+   State: ● Enabled
+
+Click Add scope
+
+What you'll see:
+Scope name           | Full scope value
+user_impersonation   | api://e7edcd91.../user_impersonation
+
+Step 1.6: Configure Token for v2.0 with Role Values
+** NOTE:  This step was later deleted since having it was putting GUIDs 
+** in the JTW token for the roles and not their names.
+
+Left menu → Token configuration
+Click + Add groups claim
+In the panel that opens:
+
+Top section (required by portal):
+Select group types:
+☑ Security groups (check this)
+Customize token properties by type:
+ID section:
+☐ Group ID
+☐ sAMAccountName
+☐ NetBIOSDomain\sAMAccountName
+☐ DNSDomain\sAMAccountName
+☐ On Premises Group Security Identifier
+☑ Emit groups as role claims    ← CHECK THIS!
+Access section:
+☐ Group ID
+☐ sAMAccountName
+☐ NetBIOSDomain\sAMAccountName
+☐ DNSDomain\sAMAccountName
+☐ On Premises Group Security Identifier
+☑ Emit groups as role claims    ← CHECK THIS!
+SAML section:
+(leave as default)
+
+Click Add
+
+
+Step 1.7: Configure Manifest for v2.0 Tokens (CRITICAL)
+
+Left menu → Manifest
+Click Download (optional - for backup)
+Find this line in the JSON:
+
+json   "accessTokenAcceptedVersion": null,
+
+Change it to:
+
+json   "accessTokenAcceptedVersion": 2,
+
+Scroll down and find:
+
+json   "api": {
+       "requestedAccessTokenVersion": null,
+
+Change it to:
+
+json   "api": {
+       "requestedAccessTokenVersion": 2,
+```
+
+7. Click **Save** at the top
+
+**What this does:**
+- Forces the API to issue **v2.0 tokens**
+- v2.0 tokens return role **values** (like "Order.Admin")
+- v1.0 tokens return role **IDs** (GUIDs) ← We don't want this!
+
+---
+
+## **Part 2: Create Client Application**
+
+### **Step 2.1: Create Client App Registration**
+
+1. Go back to **App registrations** (breadcrumb or search)
+2. Click **+ New registration**
+3. Fill in:
+```
+   Name: MyAppClient
+   
+   Supported account types:
+   ● Accounts in this organizational directory only (Single tenant)
+   
+   Redirect URI:
+   Platform: Public client/native (mobile & desktop)
+   URI: http://localhost
+```
+
+4. Click **Register**
+
+**What you'll see:**
+- Page: "MyAppClient | Overview"
+- **Application (client) ID**: e.g., `4ed5e537-6b4c-4c1a-b832-5de5c31b42f2`
+
+5. **SAVE THIS VALUE:**
+   - Application (client) ID: ________________________
+
+---
+
+### **Step 2.2: Configure for Public Client**
+
+1. Left menu → **Authentication**
+2. Scroll to **Advanced settings**
+3. Find **"Allow public client flows"**
+4. Toggle to **Yes**
+5. Click **Save** at top
+
+**What you'll see:**
+```
+Advanced settings:
+  Allow public client flows: Yes ✓
+```
+
+---
+
+### **Step 2.3: Add More Redirect URIs**
+
+Still on "Authentication" page:
+
+1. Under **Mobile and desktop applications**
+2. Click **+ Add URI**
+3. Add: `https://login.microsoftonline.com/common/oauth2/nativeclient`
+4. Click **+ Add URI**
+5. Add: `http://localhost:3000`
+6. Click **+ Add URI**
+7. Add: `http://localhost:8080`
+8. Click **Save** at top
+
+**Final result:**
+```
+Mobile and desktop applications
+  4 Redirect URIs:
+    http://localhost
+    http://localhost:3000
+    http://localhost:8080
+    https://login.microsoftonline.com/common/oauth2/nativeclient
+
+Step 2.4: Configure Manifest for v2.0 Tokens (CRITICAL)
+
+Left menu → Manifest
+Find this line:
+
+json   "accessTokenAcceptedVersion": null,
+
+Change it to:
+
+json   "accessTokenAcceptedVersion": 2,
+
+Find this section:
+
+json   "api": {
+       "requestedAccessTokenVersion": null,
+
+Change it to:
+
+json   "api": {
+       "requestedAccessTokenVersion": 2,
+
+Find this line:
+
+json   "isFallbackPublicClient": null,
+
+Change it to:
+
+json   "isFallbackPublicClient": true,
+```
+
+8. Click **Save** at top
+
+**What this does:**
+- Client requests **v2.0 tokens** from the API
+- Enables **public client flows** (device code flow)
+
+---
+
+### **Step 2.5: Grant API Permissions**
+
+1. Left menu → **API permissions**
+2. Click **+ Add a permission**
+3. Click **My APIs** tab
+4. Click **MyWebAPI**
+5. Click **Delegated permissions**
+6. Expand the tree
+7. Check **☑ user_impersonation**
+8. Click **Add permissions**
+
+**What you'll see:**
+```
+API / Permissions name              Type        Status
+Microsoft Graph                    Delegated   Granted
+  User.Read                        Delegated   Granted
+
+MyWebAPI                           Delegated   Not granted
+  user_impersonation               Delegated   Not granted
+```
+
+9. Click **Grant admin consent for [Your Tenant]**
+10. Click **Yes**
+
+**After granting consent:**
+```
+API / Permissions name              Type        Status
+MyWebAPI                           Delegated   Granted for...
+  user_impersonation               Delegated   Granted for... ✓
+```
+
+---
+
+## **Part 3: Assign Your User to App Roles**
+
+### **Step 3.1: Navigate to Enterprise Applications**
+
+**IMPORTANT:** Use **Enterprise Applications**, NOT "App registrations"
+
+1. Portal search bar → Type: **"Enterprise applications"**
+2. Click **Enterprise applications**
+
+**What you'll see:**
+- Page: "Enterprise applications | All applications"
+- Filter: "Application type == Enterprise Applications"
+
+---
+
+### **Step 3.2: Change Filter to Show All Applications**
+
+1. Click the **Application type** dropdown (shows "Enterprise Applications")
+2. Select **All applications**
+3. Click **Apply**
+
+**What you'll see:**
+- Filter now shows: "Application type == All applications"
+
+---
+
+### **Step 3.3: Find Your API Application**
+
+1. Search box → Type: **MyWebAPI**
+2. Press Enter
+3. Click on **MyWebAPI** in the results
+
+**What you'll see:**
+- Page: "MyWebAPI | Overview"
+- Left menu with: Properties, Users and groups, etc.
+
+---
+
+### **Step 3.4: Open Users and Groups**
+
+1. Left menu → **Users and groups**
+
+**What you'll see:**
+```
+Page: MyWebAPI | Users and groups
+
+Buttons:
+  [+ Add user/group]  [+ Add assignment]  [Remove]
+
+Table (initially empty):
+Name    Type    Assignment    Role
+(No items to display)
+```
+
+---
+
+### **Step 3.5: Assign Yourself to Roles**
+
+**CRITICAL:** Assign **USER** directly, NOT a group
+
+#### **Assignment 1: Order Admin**
+
+1. Click **+ Add user/group**
+2. Panel opens: "Add Assignment"
+
+**Select User:**
+3. Under **Users and groups** → Click **None Selected**
+4. Search for your email: **greco.brian@hotmail.com**
+5. **Check the box** next to your email (**User** type, NOT group)
+6. Click **Select**
+
+**Select Role:**
+7. Under **Select a role** → Click **None Selected**
+8. Click **Order Admin** (radio button fills in)
+9. Click **Select**
+
+**Assign:**
+10. Click **Assign**
+
+**What you'll see in table:**
+```
+Name                         Type    Assignment    Role
+greco.brian@hotmail.com      User    Direct        Order Admin
+```
+
+**Notice:** Type = **User** (NOT Group)
+
+---
+
+#### **Assignment 2: Order Reader**
+
+11. Click **+ Add user/group** again
+12. Select **Users and groups** → Search **greco.brian@hotmail.com**
+13. Check box → **Select**
+14. Select **Select a role** → Click **Order Reader** → **Select**
+15. Click **Assign**
+
+---
+
+#### **Assignment 3: Payment Processor**
+
+16. Click **+ Add user/group** again
+17. Select **Users and groups** → Search **greco.brian@hotmail.com**
+18. Check box → **Select**
+19. Select **Select a role** → Click **Payment Processor** → **Select**
+20. Click **Assign**
+
+---
+
+**Final Result - Users and groups table:**
+```
+Name                         Type    Assignment    Role
+greco.brian@hotmail.com      User    Direct        Order Admin
+greco.brian@hotmail.com      User    Direct        Order Reader
+greco.brian@hotmail.com      User    Direct        Payment Processor
+```
+
+✅ **All three rows show Type = User**  
+✅ **Same user, 3 different role assignments**
+
+---
+
+## **Part 4: Summary of Configuration Values**
+
+You should have saved these values:
+
+### **From MyWebAPI (API App):**
+```
+Application (client) ID: e7edcd91-d78a-4ac1-9bd4-e5cef55deb87
+Directory (tenant) ID: d105c533-f553-4e8c-b2a5-e5bdf9a67cf1
+Application ID URI: api://e7edcd91-d78a-4ac1-9bd4-e5cef55deb87
+```
+
+### **From MyAppClient (Client App):**
+```
+Application (client) ID: 4ed5e537-6b4c-4c1a-b832-5de5c31b42f2
+```
+
+### **Your User:**
+```
+Email: greco.brian@hotmail.com
+
+Part 5: Test Configuration
+Ubuntu Script Configuration:
+bash#!/bin/bash
+
+CLIENT_ID="4ed5e537-6b4c-4c1a-b832-5de5c31b42f2"  # MyAppClient
+TENANT_ID="d105c533-f553-4e8c-b2a5-e5bdf9a67cf1"  # Tenant
+API_CLIENT_ID="e7edcd91-d78a-4ac1-9bd4-e5cef55deb87"  # MyWebAPI
+
+# Use api:// prefix for v2.0 tokens
+API_SCOPE="api://${API_CLIENT_ID}/.default"
+
+# ... rest of device code script ...

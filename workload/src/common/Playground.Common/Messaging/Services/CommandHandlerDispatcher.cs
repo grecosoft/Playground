@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,8 +13,6 @@ public class CommandHandlerDispatcher(
     [FromKeyedServices("datalab.messaging.request")]ServiceBusProcessor requestQueueProcessor,
     [FromKeyedServices("datalab.messaging.reply")]ServiceBusSender replyQueueSender) : BackgroundService
 {
-    private const string CommandNamespacePropName = "command-namespace";
-    
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         requestQueueProcessor.ProcessMessageAsync += OnProcessMessageAsync;
@@ -27,36 +23,32 @@ public class CommandHandlerDispatcher(
 
     private async Task OnProcessMessageAsync(ProcessMessageEventArgs eventArgs)
     {
+        
         // Create service scope to execute the request within:
         using var requestScope = serviceProvider.CreateScope();
-
-        if (!TryResolveCommandHandler(requestScope, eventArgs.Message, out var commandHandler))
-        {
-            logger.LogError("Message {MessageId} received on {QueueName} not processed.",
-                eventArgs.Message.MessageId,
-                requestQueueProcessor.EntityPath);
-            return;
-        }
-
+        
         try
         {
-            // Deserialize received message into the handler's associated command-type:
-            var request = JsonSerializer.Deserialize(eventArgs.Message.Body, commandHandler.CommandType);
-            if (request is null)
+            var receivedCommand = ReceivedCommand.Create(eventArgs.Message);
+            var commandRepository = requestScope.ServiceProvider.GetRequiredService<ICommandRepository>();
+            var commandHandler = ResolveCommandHandler(requestScope, receivedCommand);
+            
+            receivedCommand.SetCommand(eventArgs.Message, commandHandler.CommandType);
+            
+            switch (receivedCommand.DispatchStrategy)
             {
-                logger.LogError(
-                    "Command message {MessageId} could not be deserialized into {CommandType} for handler {Handler}.",
-                    eventArgs.Message.MessageId,
-                    commandHandler.CommandType,
-                    commandHandler);
-                return;
+                case DispatchStrategyType.Rpc:
+                    var response = await commandHandler.Handle(receivedCommand, commandRepository, eventArgs.CancellationToken);
+                    await SendReplyToCommand(commandHandler, response, eventArgs);
+                    break;
+                case DispatchStrategyType.Async:
+                    await commandHandler.Handle(receivedCommand, commandRepository, eventArgs.CancellationToken);
+                    break;
+                default:
+                    throw new InvalidOperationException($"Unknown command type of {receivedCommand.DispatchStrategy}");
             }
             
-            
-            // Invoke the handler to process the command:
-            var response = await commandHandler.Handle((ICommandMessage)request, eventArgs.CancellationToken);
-            
-            await SendOptionalReplyToRequest(requestScope, commandHandler, response, eventArgs);
+            // await eventArgs.CompleteMessageAsync(eventArgs.Message);
         }
         catch (Exception ex)
         {
@@ -70,29 +62,24 @@ public class CommandHandlerDispatcher(
         return Task.CompletedTask;
     }
 
-    private async Task SendOptionalReplyToRequest(
-        IServiceScope requestScope,
+    private async Task SendReplyToCommand(
         ICommandMessageHandler handler,
-        object? response,
+        CommandContext commandContext,
         ProcessMessageEventArgs eventArgs)
     {
-        if (response is not null && eventArgs.Message.ReplyTo is not null)
+        if (commandContext.Response is not null && eventArgs.Message.ReplyTo is not null)
         {
-            var replyMessage = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(response))
+            var replyMessage = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(commandContext.Response))
             {
                 CorrelationId = eventArgs.Message.CorrelationId,
                 SessionId = eventArgs.Message.SessionId,
             };
             
-            var stopwatch = Stopwatch.StartNew();
             await replyQueueSender.SendMessageAsync(replyMessage, eventArgs.CancellationToken);
-            
-            stopwatch.Stop();
-            Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds} ms");
             return;
         }
             
-        if (response is null && eventArgs.Message.ReplyTo is not null)
+        if (commandContext.Response is null && eventArgs.Message.ReplyTo is not null)
         {
             logger.LogWarning(
                 "Command handler {Handler} for message {MessageId} returned null but request message expected reply to queue {QueueName}.",
@@ -103,7 +90,7 @@ public class CommandHandlerDispatcher(
             return;
         }
 
-        if (response is not null && eventArgs.Message.ReplyTo is null)
+        if (commandContext.Response is not null && eventArgs.Message.ReplyTo is null)
         {
             logger.LogWarning(
                 "Command handler {Handler} for message {MessageId} returned response but request didn't specify reply queue {QueueName}.",
@@ -112,32 +99,17 @@ public class CommandHandlerDispatcher(
                 eventArgs.Message.ReplyTo);
         }
     }
-    
-    // The handler responsible for processing the received command-message is determined by the 
-    // namespace message property.  Each ICommandMessageHandler is registered as a keyed service
-    // based on the namespace associated with the command it handles.
-    private bool TryResolveCommandHandler(IServiceScope requestScope, ServiceBusReceivedMessage message,
-        [NotNullWhen(true)] out ICommandMessageHandler? handler)
+
+    private static ICommandMessageHandler ResolveCommandHandler(
+        IServiceScope requestScope,
+        ReceivedCommand receivedCommand)
     {
-        handler = null;
-        if (!message.ApplicationProperties.TryGetValue(CommandNamespacePropName, out var commandNamespace))
-        {
-            logger.LogError(
-                "Command message {MessageId} received on {QueueName} missing {ApplicationProperty}.", 
-                message.MessageId,
-                requestQueueProcessor.EntityPath,
-                CommandNamespacePropName);
-            return false;
-        }
-        
-        handler = requestScope.ServiceProvider.GetKeyedService<ICommandMessageHandler>(commandNamespace);
-        if (handler is not null) return true;
-        
-        logger.LogError(
-            "Command handler for {Namespace} not registered for command message {MessageId} received on {QueueName}.",
-            commandNamespace,
-            message.MessageId,
-            requestQueueProcessor.EntityPath);
-        return false;
+        var handler = requestScope.ServiceProvider.GetKeyedService<ICommandMessageHandler>(
+            receivedCommand.CommandNamespace);
+
+        return handler ?? throw new InvalidOperationException("");
     }
+    
+ 
+    
 }

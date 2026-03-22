@@ -21,12 +21,13 @@ public static class ServiceRegistrations
             AddMessagingBus(services, config);
             services.AddHostedService<CommandHandlerDispatcher>();
             
+            services.AddSingleton<ICommandRepository, CommandRepository>();
+            
             
             AddCommandMessageHandlers(services);
         
 
             AddRequestQueueProcessor(services, config);
-            AddReplyToQueueSender(services, config);
             AddReplyQueueProcessor(services, config);
             
             // AddReplyQueueProcessor(services, config);
@@ -35,8 +36,8 @@ public static class ServiceRegistrations
             services.AddSingleton<IMessagingService>(sp =>
             {
                 var client = sp.GetRequiredService<ServiceBusClient>();
-                var sender = client.CreateSender(config.CommandTopic);
-                return new MessagingService(solutionName, config, client, sender);
+                var sender = client.CreateSender(config.SolutionCommandTopic);
+                return new MessagingService(config, client, sender);
             });
 
             return services;
@@ -55,30 +56,20 @@ public static class ServiceRegistrations
         services.AddKeyedSingleton("datalab.messaging.request", (sp, _) =>
         {
             var client = sp.GetRequiredService<ServiceBusClient>();
-            return client.CreateProcessor(config.CommandTopic, "solution-service-one-commands", new ServiceBusProcessorOptions
+            return client.CreateProcessor(config.SolutionCommandTopic, "solution-service-one-commands", new ServiceBusProcessorOptions
             {
                 ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
                 PrefetchCount = 100
             });
         });
     }
-
-    private static void AddReplyToQueueSender(IServiceCollection services, BusMessagingConfig config)
-    {
-        services.AddKeyedSingleton("datalab.messaging.reply.queue", (sp, _) =>
-        {
-            var client = sp.GetRequiredService<ServiceBusClient>();
-            var sender = client.CreateSender(config.CommandTopic);
-            return sender;
-        });
-    }
-
+    
     private static void AddReplyQueueProcessor(IServiceCollection services, BusMessagingConfig config)
     {
         services.AddKeyedSingleton("datalab.messaging.reply", (sp, _) =>
         {
             var client = sp.GetRequiredService<ServiceBusClient>();
-            return client.CreateSender(config.ReplyQueue);
+            return client.CreateSender(config.SolutionReplyQueue);
         });
     }
 

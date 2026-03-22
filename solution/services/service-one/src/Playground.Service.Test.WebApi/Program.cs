@@ -24,9 +24,20 @@ app.MapGet("/send-command", async (
     CancellationToken cancellationToken) =>
 {
 
-    var command = new PingCommand("abcdef");
-    var response = await microserviceTwo.SendAsync(command, cancellationToken);
+    var command = new PingCommand("value-one", "value-two");
+    var response = await microserviceTwo.SendCommandWithReplyAsync(command, cancellationToken);
     return Results.Ok(response);
+    
+});
+
+app.MapGet("/send-command2", async (
+    IMessagingService  microserviceTwo,
+    CancellationToken cancellationToken) =>
+{
+
+    var command = new DeviceUpdate(Guid.NewGuid().ToString());
+    await microserviceTwo.SendCommandWithResponseAsync(command, cancellationToken);
+    return Results.Ok();
     
 });
 
