@@ -10,7 +10,7 @@ public static class ServiceRegistrations
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddBusMessaging(IConfiguration configuration, string solutionName)
+        public IServiceCollection AddBusMessaging(IConfiguration configuration, string solutionName, string topicName)
         {
 
             var configSection = configuration.GetSection("BusMessaging");
@@ -27,7 +27,7 @@ public static class ServiceRegistrations
             AddCommandMessageHandlers(services);
         
 
-            AddRequestQueueProcessor(services, config);
+            AddRequestQueueProcessor(services, config, topicName);
             AddReplyQueueProcessor(services, config);
             
             // AddReplyQueueProcessor(services, config);
@@ -51,12 +51,12 @@ public static class ServiceRegistrations
     
     
     
-    private static void AddRequestQueueProcessor(IServiceCollection services, BusMessagingConfig config)
+    private static void AddRequestQueueProcessor(IServiceCollection services, BusMessagingConfig config, string topicName)
     {
         services.AddKeyedSingleton("datalab.messaging.request", (sp, _) =>
         {
             var client = sp.GetRequiredService<ServiceBusClient>();
-            return client.CreateProcessor(config.SolutionCommandTopic, "solution-service-one-commands", new ServiceBusProcessorOptions
+            return client.CreateProcessor(config.SolutionCommandTopic, topicName, new ServiceBusProcessorOptions
             {
                 ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
                 PrefetchCount = 100

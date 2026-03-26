@@ -9,7 +9,7 @@ public static class SolutionServices
 }
 
 [MessageNamespace(
-    SolutionServices.SolutionOne,
+    SolutionServices.SolutionTwo,
     "commands.ping",
     DispatchStrategyType.Rpc)]
 public record PingCommand(string ValueOne, string ValueTwo) : ICommandMessage<PingResponse>
@@ -20,7 +20,7 @@ public record PingCommand(string ValueOne, string ValueTwo) : ICommandMessage<Pi
 public record PingResponse(string PingValue);
 
 [MessageNamespace(
-    SolutionServices.SolutionOne,
+    SolutionServices.SolutionTwo,
     "commands.device.status",
     DispatchStrategyType.Async)]
 public record DeviceUpdate(string DeviceId) : ICommandMessage<DeviceStatus>

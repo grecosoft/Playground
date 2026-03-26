@@ -24,10 +24,31 @@ public class MessagingService(
         return await WaitCommandResponse<TResponse>(correlationId, token);
     }
 
-    public Task SendCommandWithResponseAsync<TResponse>(ICommandMessage<TResponse> command, CancellationToken token)
+    public Task SendCommandAsync<TResponse>(ICommandMessage<TResponse> command, CancellationToken token)
     {
         var correlationId = Guid.NewGuid().ToString();
         return SendCommandMessage(correlationId, command, token);
+    }
+    
+    public async Task SendResponseToCommandAsync<TResponse>(
+        ReceivedCommand receivedCommand,
+        ICommandMessage<TResponse> command,
+        CancellationToken token)
+    {
+        var message = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(command, command.GetType()))
+        {
+            CorrelationId = receivedCommand.CorrelationId,
+            ApplicationProperties =
+            {
+                { "service", $"solution:{receivedCommand.ReplyToService}" }
+            }
+        };
+
+        message.ApplicationProperties.Add(MessageProperties.CommandNamespace, receivedCommand.CommandNamespace);
+        message.ApplicationProperties.Add(MessageProperties.DispatchStrategyType, receivedCommand.DispatchStrategy.ToString());
+        message.ApplicationProperties.Add(MessageProperties.SendingService, busConfig.ServiceName);
+        
+        await sender.SendMessageAsync(message, token);
     }
 
     private async Task SendCommandMessage(string correlationId, ICommandMessage command, CancellationToken token)

@@ -1,7 +1,7 @@
 using Playground.Common;
 using Playground.Common.Messaging;
 
-namespace Playground.Service.Test.WebApi;
+namespace Playground.Service.Test2.WebApi;
 
 public class PingMessageHandler : CommandHandlerBase<PingCommand, PingResponse>
 {

@@ -9,6 +9,8 @@ public class CommandRepository : ICommandRepository
     
     public Task SaveCommand(ReceivedCommand receivedCommand, CancellationToken cancellationToken)
     {
+        Console.WriteLine($"Command {receivedCommand.CorrelationId} saved.");
+        
         var commandState = new CommandState(
             receivedCommand.CorrelationId,
             receivedCommand.ReplyToService,
