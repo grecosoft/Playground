@@ -2,6 +2,7 @@
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Playground.Common.Messaging.Services;
 
 namespace Playground.Common.Messaging;
@@ -19,36 +20,53 @@ public static class ServiceRegistrations
                          ?? throw new NullReferenceException("BusMessagingConfig is null");
 
             AddMessagingBus(services, config);
-            services.AddHostedService<CommandHandlerDispatcher>();
-            
-            services.AddSingleton<ICommandRepository, CommandRepository>();
-            
             
             AddCommandMessageHandlers(services);
-        
-
             AddRequestQueueProcessor(services, config, topicName);
-            AddReplyQueueProcessor(services, config);
+            AddReplyQueueSender(services, config);
+            AddDependentServiceEndpoints(services, config);
             
-            // AddReplyQueueProcessor(services, config);
+            services.AddHostedService<CommandHandlerDispatcher>();
+            services.AddSingleton<ICommandRepository, CommandRepository>();
             
-
-            services.AddSingleton<IMessagingService>(sp =>
+            services.AddSingleton<MessagingService>(sp =>
             {
                 var client = sp.GetRequiredService<ServiceBusClient>();
                 var sender = client.CreateSender(config.SolutionCommandTopic);
                 return new MessagingService(config, client, sender);
             });
-
+            
+            services.AddSingleton<IMessagingService>(sp => sp.GetRequiredService<MessagingService>());
+            
             return services;
         }
     }
 
     private static void AddMessagingBus(IServiceCollection services, BusMessagingConfig config)
     {
-        services.AddSingleton(new ServiceBusClient(config.FullyQualifiedNamespace, new DefaultAzureCredential()));
+        services.AddSingleton(new ServiceBusClient(
+            config.FullyQualifiedNamespace,
+            new DefaultAzureCredential(),
+            new ServiceBusClientOptions
+            {
+                
+            }));
     }
     
+    private static void AddCommandMessageHandlers(IServiceCollection services)
+    {
+        var commandHandlers = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(a => a.DefinedTypes)
+            .GetCommandDispatches();
+
+        foreach (var handler in commandHandlers)
+        {
+            services.AddKeyedScoped(
+                typeof(ICommandMessageHandler),
+                handler.CommandNamespace,
+                handler.ImplementationType);
+        }
+    }
     
     
     private static void AddRequestQueueProcessor(IServiceCollection services, BusMessagingConfig config, string topicName)
@@ -64,7 +82,7 @@ public static class ServiceRegistrations
         });
     }
     
-    private static void AddReplyQueueProcessor(IServiceCollection services, BusMessagingConfig config)
+    private static void AddReplyQueueSender(IServiceCollection services, BusMessagingConfig config)
     {
         services.AddKeyedSingleton("datalab.messaging.reply", (sp, _) =>
         {
@@ -72,17 +90,20 @@ public static class ServiceRegistrations
             return client.CreateSender(config.SolutionReplyQueue);
         });
     }
-
-    private static void AddCommandMessageHandlers(IServiceCollection services)
+    
+    private static void AddDependentServiceEndpoints(IServiceCollection serviceCollection, BusMessagingConfig config)
     {
-        var commandHandlers = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(a => a.DefinedTypes)
-            .GetCommandDispatches();
-
-        foreach (var handler in commandHandlers)
+        foreach (var (serviceKey, serviceInfo) in config.DependentServices)
         {
-            services.AddKeyedScoped(typeof(ICommandMessageHandler), handler.CommandNamespace, handler.ImplementationType);
+            serviceCollection.AddKeyedSingleton<IServiceEndpoint>(serviceKey, (sp, _)  =>
+            {
+                var messagingService = sp.GetRequiredService<MessagingService>();
+                var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger(serviceInfo.Name);
+                return new ServiceEndpoint(
+                    logger, 
+                    new EndpointInfo(serviceInfo.Name, serviceInfo.Id),
+                    messagingService);
+            });
         }
     }
-    
 }

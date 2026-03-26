@@ -8,7 +8,7 @@ public static class MessageProperties
     /// Message property storing unique key used to identify the sending service used
     /// to route the message when replying to a command.
     /// </summary>
-    public const string SendingService = "sending-service";
+    public const string SendingServiceId = "sending-service-id";
     
     /// <summary>
     /// Message property used to uniquely identify the message within a solution of services.

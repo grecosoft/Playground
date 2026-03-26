@@ -2,11 +2,11 @@
 
 public class BusMessagingConfig
 {
-    public string SolutionName { get; set; } = string.Empty;
-    
-    public string ServiceName { get; set; } = string.Empty;
+    public string ServiceId { get; set; } = string.Empty;
     
     public string FullyQualifiedNamespace { get; set; } = string.Empty;
+    
+    public Dictionary<string, DependentServiceOptions> DependentServices { get; init; } = [];
 
     /// <summary>
     /// The name of the topic used to send RPC style commands between a solution's services.
@@ -20,5 +20,10 @@ public class BusMessagingConfig
     public string SolutionReplyQueue { get; set; } =  string.Empty;
     
     public int ReplyTimeoutSeconds { get; set; } = 50;
+}
 
+public class DependentServiceOptions
+{
+    public string Name { get; init; } = string.Empty;
+    public Guid Id { get; init; }
 }

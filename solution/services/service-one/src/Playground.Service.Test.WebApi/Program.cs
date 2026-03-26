@@ -20,18 +20,16 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapGet("/send-command", async (
-    IMessagingService  microserviceTwo,
+    [FromKeyedServices("service-two")]IServiceEndpoint  microserviceTwo,
     CancellationToken cancellationToken) =>
 {
-
     var command = new PingCommand("value-one", "value-two");
     var response = await microserviceTwo.SendCommandWithReplyAsync(command, cancellationToken);
     return Results.Ok(response);
-    
 });
 
 app.MapGet("/send-command2", async (
-    IMessagingService  microserviceTwo,
+    [FromKeyedServices("service-two")]IServiceEndpoint  microserviceTwo,
     CancellationToken cancellationToken) =>
 {
 

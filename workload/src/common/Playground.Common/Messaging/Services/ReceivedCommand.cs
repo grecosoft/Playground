@@ -6,7 +6,7 @@ namespace Playground.Common.Messaging.Services;
 
 public class ReceivedCommand(
     string correlationId,
-    string replyToService,
+    string replyToServiceId,
     string commandNamespace,
     DispatchStrategyType dispatchStrategy)
 {
@@ -14,7 +14,7 @@ public class ReceivedCommand(
     private Type? _commandType;
 
     public string CorrelationId { get; } = correlationId;
-    public string ReplyToService { get; } = replyToService;
+    public string ReplyToServiceId { get; } = replyToServiceId;
     public string CommandNamespace { get; } = commandNamespace;
     public DispatchStrategyType DispatchStrategy { get; } = dispatchStrategy;
     
@@ -25,7 +25,7 @@ public class ReceivedCommand(
     {
         return new ReceivedCommand(
             message.CorrelationId,
-            message.GetRequiredStringProperty(MessageProperties.SendingService),
+            message.GetRequiredStringProperty(MessageProperties.SendingServiceId),
             message.GetRequiredStringProperty(MessageProperties.CommandNamespace),
             message.GetRequiredEnumProperty<DispatchStrategyType>(MessageProperties.DispatchStrategyType));
     }

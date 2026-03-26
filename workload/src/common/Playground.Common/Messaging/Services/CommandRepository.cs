@@ -13,7 +13,7 @@ public class CommandRepository : ICommandRepository
         
         var commandState = new CommandState(
             receivedCommand.CorrelationId,
-            receivedCommand.ReplyToService,
+            receivedCommand.ReplyToServiceId,
             receivedCommand.CommandNamespace,
             JsonSerializer.Serialize(receivedCommand.Command, receivedCommand.CommandType));
 

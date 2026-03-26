@@ -15,19 +15,39 @@ public class MessagingService(
     // when publishing message to the consuming service.
     private readonly ConcurrentDictionary<Type, MessageMetadata> _messageMetadata = new();
     
-    public async Task<TResponse> SendCommandWithReplyAsync<TResponse>(ICommandMessage<TResponse> command, 
-        CancellationToken token) 
+    public async Task<TResponse> SendCommandWithReplyAsync<TResponse>(
+        ICommandMessage command,
+        EndpointInfo endpointInfo,
+        CancellationToken token)
     {
         var correlationId = Guid.NewGuid().ToString();
-       
-        await SendCommandMessage(correlationId, command, token);
+        await SendCommandMessage(
+            correlationId, 
+            endpointInfo,
+            command,
+            new Dictionary<string, object>
+            {
+                { MessageProperties.DispatchStrategyType, nameof(DispatchStrategyType.Rpc) }
+            },
+            token);
         return await WaitCommandResponse<TResponse>(correlationId, token);
     }
-
-    public Task SendCommandAsync<TResponse>(ICommandMessage<TResponse> command, CancellationToken token)
+    
+    public Task SendCommandAsync<TResponse>(
+        ICommandMessage<TResponse> command,
+        EndpointInfo endpointInfo,
+        CancellationToken token)
     {
         var correlationId = Guid.NewGuid().ToString();
-        return SendCommandMessage(correlationId, command, token);
+        return SendCommandMessage(
+            correlationId,
+            endpointInfo,
+            command,
+            new Dictionary<string, object>
+            {
+                { MessageProperties.DispatchStrategyType, nameof(DispatchStrategyType.Async) }
+            },
+            token);
     }
     
     public async Task SendResponseToCommandAsync<TResponse>(
@@ -40,18 +60,23 @@ public class MessagingService(
             CorrelationId = receivedCommand.CorrelationId,
             ApplicationProperties =
             {
-                { "service", $"solution:{receivedCommand.ReplyToService}" }
+                { "service", receivedCommand.ReplyToServiceId }
             }
         };
 
         message.ApplicationProperties.Add(MessageProperties.CommandNamespace, receivedCommand.CommandNamespace);
-        message.ApplicationProperties.Add(MessageProperties.DispatchStrategyType, receivedCommand.DispatchStrategy.ToString());
-        message.ApplicationProperties.Add(MessageProperties.SendingService, busConfig.ServiceName);
+        message.ApplicationProperties.Add(MessageProperties.DispatchStrategyType, nameof(DispatchStrategyType.Async));
+        message.ApplicationProperties.Add(MessageProperties.SendingServiceId, busConfig.ServiceId);
         
         await sender.SendMessageAsync(message, token);
     }
-
-    private async Task SendCommandMessage(string correlationId, ICommandMessage command, CancellationToken token)
+    
+    private async Task SendCommandMessage(
+        string correlationId,
+        EndpointInfo endpointInfo,
+        ICommandMessage command, 
+        IDictionary<string, object> messageProperties,
+        CancellationToken token)
     {
         var messageMetadata = GetMessageMetadata(command.GetType());
         var message = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(command, command.GetType()))
@@ -61,17 +86,21 @@ public class MessagingService(
             ReplyTo = busConfig.SolutionReplyQueue,
             ApplicationProperties =
             {
-                { "service", messageMetadata.TargetService }
+                { "service", endpointInfo.ServiceId }
             }
         };
 
         message.ApplicationProperties.Add(MessageProperties.CommandNamespace, messageMetadata.MessageNamespace);
-        message.ApplicationProperties.Add(MessageProperties.DispatchStrategyType, messageMetadata.DispatchStrategyType);
-        message.ApplicationProperties.Add(MessageProperties.SendingService, busConfig.ServiceName);
+        message.ApplicationProperties.Add(MessageProperties.SendingServiceId, busConfig.ServiceId);
+        
+        foreach (var property in messageProperties)
+        {
+            message.ApplicationProperties.Add(property.Key, property.Value);
+        }
         
         await sender.SendMessageAsync(message, token);
     }
-
+    
     private async Task<TResponse> WaitCommandResponse<TResponse>(string correlationId, CancellationToken token)
     {
         await using var sessionReceiver = await client.AcceptSessionAsync(
@@ -100,22 +129,9 @@ public class MessagingService(
             var attrib = t.GetCustomAttribute<MessageNamespace>();
             return attrib == null 
                 ? throw new InvalidOperationException($"The message namespace '{t.Name}' is not found.")
-                : new MessageMetadata(
-                    t,
-                    busConfig.SolutionName,
-                    attrib.ServiceName,
-                    attrib.NamespaceName, 
-                    attrib.CommandType.ToString());
+                : new MessageMetadata(attrib.NamespaceName);
         });
     }
-    
-    private record MessageMetadata(
-        Type MessageType,
-        string SolutionName,
-        string ServiceName,
-        string MessageNamespace,
-        string DispatchStrategyType)
-    {
-        public string TargetService =>  $"{SolutionName}:{ServiceName}";
-    }
+
+    private record MessageMetadata(string MessageNamespace);
 }
