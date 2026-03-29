@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>Common.Messaging.Contracts</AssemblyName>
+    <RootNamespace>Common.Messaging.Contracts</RootNamespace>
   </PropertyGroup>
 
 </Project>
