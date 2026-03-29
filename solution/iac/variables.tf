@@ -1,20 +1,17 @@
-# Solution level variables:
 variable "subscription_id" {
   description = "The Subscription ID where the solution's resource group resources will be created."
   type        = string
 }
 
-variable "workload_name" {
-  description = "Name of the workload to which the solution belongs. A workload is a collection of services that work together to deliver value."
-  type        = string
-}
-
 variable "solution_name" {
-  description = "Name of the solution deployed to the workload."
+  description = "Name of the solution to be developed containing resources shared between microservices"
   type        = string
 }
 
-# Environment variables:
+variable "developer_group_name" {
+  description = "The name of the EntraId group containing developer granted access to workload level resources."
+  type = string
+}
 
 variable "environment" {
   description = "The environment to deploy the solution in."
@@ -22,55 +19,38 @@ variable "environment" {
 }
 
 variable "location" {
-  description = "The Azure region to deploy the resources in."
+  type = string
+}
+
+
+# External resource dependencies:
+variable "infrastructure_resource_group_name" {
+  description = "The name of the resource group containing the Azure container registry and Kubernetes cluster."
   type        = string
 }
 
-variable "environment_overrides" {
-  description = "Used to provide module and application configuration overrides for a specific environment."
+variable "container_registry_name" {
+  description = "The name of the Azure Container Registry to store container images."
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "The name of the Kubernetes cluster."
+  type        = string
+}
+
+# Referenced Module Variable Overrides:
+variable "github" {
   type = object({
-
-    // Environment specific service configurations merged with common service configurations. 
-    service_configs = map(
-      list(object({
-        key    = string                # The key of the configuration
-        value  = any                   # The value.  This can be a simple value or jsonencode 
-        label  = optional(string)      # The label of the value.  If not specified, label_name is used
-        isJson = optional(bool, false) # Indicates that the value contains encoded json
-      }))
-    )
-
-    // overrides solution authorization module.
-    solution_auth = object({
-      redirect_uris = list(string)
-    })
+    identity_base_name = optional(string, "github-actions")
+    account_name = string
   })
 }
 
-# Developer related variables:
-variable "developer_group_name" {
-  description = "The name of the Azure AD group that contains the developers who will have access to the solution's resources."
-  type        = string
-}
-
-# Kubernetes workload identity variables:
-variable "namespace" {
-  type        = string
-  description = "The Kubernetes namespace to create ServiceAccount for the workload identity."
-}
-
-# Remote state configuration variables:
-variable "storage_resource_group_name" {
-  description = "The name of the resource group where the storage account for remote state is located."
-  type        = string
-}
-
-variable "storage_account_name" {
-  description = "The name of the storage account for remote state."
-  type        = string
-}
-
-variable "workload_container_name" {
-  description = "The name of the container containing the state of the workload."
-  type        = string
+variable "configuration" {
+  type = object({
+    key_vault_name = optional(string)
+    app_config_name = optional(string)
+  })
+  default = {}
 }

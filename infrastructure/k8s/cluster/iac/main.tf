@@ -14,7 +14,6 @@ resource "azurerm_resource_group" "infrastructure" {
 resource "random_pet" "container_registry_name" {
   prefix    = var.container_registry_name
   separator = ""
-  length    = 1
 }
 
 resource "azurerm_container_registry" "container_registry" {
