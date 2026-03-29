@@ -1,7 +1,7 @@
 data "azuread_client_config" "current" {}
 
 resource "azuread_application_registration" "solution_api" {
-  display_name                       = "${var.solution_name}-api-${var.workload_config.workload_env_name}"
+  display_name                       = "${var.solution_env_name}-api"
   description                        = "Application for the services belonging to the solution."
   sign_in_audience                   = "AzureADMyOrg"
   implicit_id_token_issuance_enabled = true

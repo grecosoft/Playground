@@ -54,3 +54,9 @@ variable "configuration" {
   })
   default = {}
 }
+
+variable "authorization" {
+  type = object({
+    redirect_uris = list(string)
+  })
+}

@@ -1,6 +1,5 @@
-variable "workload_config" {
-  description = "Reference to the workflow configuration to which the solution belongs."
-  type        = map(any)
+variable "solution_env_name" {
+  type        = string
 }
 
 variable "solution_name" {

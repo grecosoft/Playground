@@ -15,3 +15,9 @@ cluster_name                       = "aks-cluster"
 github = {
   account_name = "grecosoft"
 }
+
+authorization = {
+  redirect_uris = [
+    "http://localhost:8080"
+  ]
+}

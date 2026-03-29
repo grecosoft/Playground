@@ -1,5 +1,5 @@
 resource "azuread_application_registration" "solution_client" {
-  display_name                   = "${var.solution_name}-client-${var.workload_config.workload_env_name}"
+  display_name                   = "${var.solution_env_name}-client"
   description                    = "Client application for accessing the solution's services."
   sign_in_audience               = "AzureADMyOrg"
   requested_access_token_version = 2

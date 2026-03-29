@@ -16,6 +16,7 @@ locals {
   tenant_id = data.azurerm_client_config.current.tenant_id
   solution_env_name    = lower("${var.solution_name}-${var.environment}-${var.location}")
   resource_postfix     = random_string.resource_postfix.result
+  default_redirect_uris = ["https://login.microsoftonline.com/common/oauth2/nativeclient"]
 }
 
 # Defines the resource group containing the solution's resources.
@@ -50,7 +51,29 @@ module "configuration" {
   developers_group_id = data.azuread_group.solution_developers.object_id    
 }
 
-# TODO:  Add solution_authorization module to create Enterprise Application, App Roles, and Groups for solution access control.
+# Creates Enterprise Application, App Roles, and Groups for solution access control.
+module "solution_auth" {
+  source          = "../../common/iac/modules/solution_authorization"
+
+  solution_name   = var.solution_name
+  solution_env_name = local.solution_env_name
+
+  redirect_uris = distinct(concat(
+    local.default_redirect_uris,
+    var.authorization.redirect_uris))
+
+  solution_roles = {
+    "apiDataReader" = {
+      display_name         = "Solution Data Reader"
+      description          = "Allowed to read any data for the solution service's."
+      allowed_member_types = ["Application", "User"]
+    }
+  }
+
+  role_user_assignments = {
+    "apiDataReader" = []
+  }
+}
 
 # Defines resources used for solution messaging between services.
 module "messaging" {
