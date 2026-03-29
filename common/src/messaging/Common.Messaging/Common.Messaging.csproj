@@ -7,4 +7,15 @@
     <PackageId>Common.Messaging</PackageId>
   </PropertyGroup>
 
+  <PropertyGroup Label="NuGet Documentation">
+    <Description>Common utilities and helpers for Playground services</Description>
+    <Authors>Your Name or Organization</Authors>
+    <Copyright>Copyright © 2026 Your Organization</Copyright>
+    <PackageTags>playground;common;utilities</PackageTags>
+    <PackageProjectUrl>https://github.com/your-org/Playground</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/your-org/Playground</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
 </Project>
