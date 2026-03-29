@@ -3,4 +3,5 @@
     <Project Path="messaging/Common.Messaging.Services/Common.Messaging.Services.csproj" />
     <Project Path="messaging/Common.Messaging.Types/Common.Messaging.Types.csproj" />
   </Folder>
+  <Project Path="Common.Services.Tests/Common.Services.Tests.csproj" />
 </Solution>
