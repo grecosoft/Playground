@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/messaging/">
+    <Project Path="messaging/Common.Messaging.Services/Common.Messaging.Services.csproj" />
+    <Project Path="messaging/Common.Messaging.Types/Common.Messaging.Types.csproj" />
+  </Folder>
+</Solution>

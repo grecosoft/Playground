@@ -7,19 +7,19 @@ on:
       - main
       - develop
     paths:
-        - 'workload/src/common/**'
+        - 'common/src/**'
 jobs:
     build:
       uses: ./.github/workflows/dotnet-solution-build.yaml
       with:
-        solution-path: './workload/src/common/Playground.Common.sln'
+        solution-path: './common/src/Common.Services.slnx'
         dotnet-version: '10.0.x'
 
     package:
       needs: build
       uses: ./.github/workflows/dotnet-solution-package.yaml
       with:
-        solution-path: './workload/src/common/Playground.Common.sln'
+        solution-path: './common/src/Common.Services.slnx'
         dotnet-version: '10.0.x'
       secrets:
         PUBLISH_PACKAGE_TOKEN: ${{ secrets.PUBLISH_PACKAGE_TOKEN }}
