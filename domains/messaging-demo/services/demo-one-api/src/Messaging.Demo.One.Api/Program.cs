@@ -20,8 +20,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-app.MapGet("/send-command", async (
-    [FromKeyedServices("service-two")]IServiceEndpoint  microserviceTwo,
+app.MapGet("/send-rpc-command", async (
+    [FromKeyedServices("messaging-demo-two-api")]IServiceEndpoint  microserviceTwo,
     CancellationToken cancellationToken) =>
 {
     var command = new PingCommand("value-one", "value-two");
@@ -29,8 +29,8 @@ app.MapGet("/send-command", async (
     return Results.Ok(response);
 });
 
-app.MapGet("/send-command2", async (
-    [FromKeyedServices("service-two")]IServiceEndpoint  microserviceTwo,
+app.MapGet("/send-async-command", async (
+    [FromKeyedServices("messaging-demo-two-api")]IServiceEndpoint  microserviceTwo,
     CancellationToken cancellationToken) =>
 {
 
