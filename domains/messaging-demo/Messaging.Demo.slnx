@@ -1,2 +1,12 @@
 <Solution>
+  <Folder Name="/common/">
+    <Project Path="../../common/src/messaging/Common.Messaging.Core/Common.Messaging.Core.csproj" />
+    <Project Path="../../common/src/messaging/Common.Messaging.Entities/Common.Messaging.Entities.csproj" />
+    <Project Path="../../common/src/messaging/Common.Messaging/Common.Messaging.csproj" />
+  </Folder>
+  <Folder Name="/services/">
+    <Project Path="services/demo-one-api/src/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj" />
+    <Project Path="services/demo-two-api/src/Messaging.Demo.Two.Api/Messaging.Demo.Two.Api.csproj" />
+  </Folder>
+  <Project Path="Messaging.Demo.Common/Messaging.Demo.Common.csproj" />
 </Solution>

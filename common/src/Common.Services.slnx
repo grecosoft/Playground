@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/messaging/">
-    <Project Path="messaging\Common.Messaging.Contracts\Common.Messaging.Contracts.csproj" />
+    <Project Path="messaging/Common.Messaging.Core/Common.Messaging.Core.csproj" />
+    <Project Path="messaging/Common.Messaging.Entities/Common.Messaging.Entities.csproj" />
     <Project Path="messaging\Common.Messaging\Common.Messaging.csproj" />
   </Folder>
   <Project Path="Common.Services.Tests/Common.Services.Tests.csproj" />

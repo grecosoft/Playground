@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common.Messaging.Contracts\Common.Messaging.Contracts.csproj" />
+    <ProjectReference Include="..\Common.Messaging.Entities\Common.Messaging.Entities.csproj" />
   </ItemGroup>
 
 </Project>

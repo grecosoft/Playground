@@ -1,4 +1,4 @@
-namespace Common.Messaging.Contracts;
+namespace Common.Messaging.Entities;
 
 public interface ICommandMessage: IMessage
 {

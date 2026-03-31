@@ -1,7 +1,7 @@
 using System.Reflection;
-using Common.Messaging.Contracts;
+using Common.Messaging.Entities;
 
-namespace Common.Messaging.Services;
+namespace Common.Messaging.Core;
 
 public static class MessageTypeExtensions
 {

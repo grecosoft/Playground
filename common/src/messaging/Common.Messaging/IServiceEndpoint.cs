@@ -1,4 +1,4 @@
-using Common.Messaging.Contracts;
+using Common.Messaging.Entities;
 
 namespace Common.Messaging;
 

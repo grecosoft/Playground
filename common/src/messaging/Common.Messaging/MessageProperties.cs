@@ -1,6 +1,6 @@
 using Azure.Messaging.ServiceBus;
 
-namespace Common.Messaging.Services;
+namespace Common.Messaging;
 
 public static class MessageProperties
 {

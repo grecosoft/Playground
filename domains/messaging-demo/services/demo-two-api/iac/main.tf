@@ -1,0 +1,37 @@
+locals {
+  service_name = "messaging-demo-two-api"
+}
+
+# The identity used by the deployed service used to access resources.
+module "identity" {
+  source = "../../../../../common/iac/modules/service_identity"
+
+  resource_group_name = local.solution_env_name
+  service_name = local.service_name
+  location = local.solution_location
+  namespace = local.solution_env_name
+  oidc_issuer_url = local.solution.kubernetes.oidc_issuer_url
+}
+
+# The configuration for the service.
+module "configuration" {
+  source               = "../../../../../common/iac/modules/service_configuration"
+  
+  solution_configuration = local.solution.configuration
+  label_name           = "messaging-demo-two-api"
+  app_configs          = local.app_configs
+  app_config_overrides = var.env_app_configs
+  vault_secrets        = local.vault_secrets 
+}
+
+# Allows the service to send messages to over solutions services over Service Bus.
+module "messaging" {  
+  source = "../../../../../common/iac/modules/service_messaging"
+
+  service_name = local.service_name
+  service_id = module.identity.service_id
+  service_principal_id = module.identity.principal_id
+  developers_group_id = local.solution_developers_group_id 
+  solution_messaging = local.solution.messaging
+  solution_servicebus = local.solution.servicebus 
+}

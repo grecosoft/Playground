@@ -1,4 +1,4 @@
-namespace Common.Messaging.Contracts;
+namespace Common.Messaging.Entities;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class MessageNamespace(
