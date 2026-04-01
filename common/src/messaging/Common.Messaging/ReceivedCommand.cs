@@ -7,8 +7,7 @@ namespace Common.Messaging;
 public class ReceivedCommand(
     string correlationId,
     string replyToServiceId,
-    string commandNamespace,
-    DispatchStrategyType dispatchStrategy)
+    string commandNamespace)
 {
     private ICommandMessage? _command;
     private Type? _commandType;
@@ -16,7 +15,6 @@ public class ReceivedCommand(
     public string CorrelationId { get; } = correlationId;
     public string ReplyToServiceId { get; } = replyToServiceId;
     public string CommandNamespace { get; } = commandNamespace;
-    public DispatchStrategyType DispatchStrategy { get; } = dispatchStrategy;
     
     public ICommandMessage Command => _command ?? throw new InvalidOperationException("Command not set.");
     public Type CommandType => _commandType ?? throw new InvalidOperationException("CommandType not set.");
@@ -26,8 +24,7 @@ public class ReceivedCommand(
         return new ReceivedCommand(
             message.CorrelationId,
             message.GetRequiredStringProperty(MessageProperties.SendingServiceId),
-            message.GetRequiredStringProperty(MessageProperties.CommandNamespace),
-            message.GetRequiredEnumProperty<DispatchStrategyType>(MessageProperties.DispatchStrategyType));
+            message.GetRequiredStringProperty(MessageProperties.CommandNamespace));
     }
 
     public void SetCommand(ICommandMessage command)

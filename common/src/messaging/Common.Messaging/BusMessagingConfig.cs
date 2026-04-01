@@ -8,6 +8,8 @@ public class BusMessagingConfig
     /// </summary>
     public string ServiceId { get; set; } = string.Empty;
     
+    public string SolutionName { get; set; } = string.Empty;
+    
     public string ServiceName { get; set; } = string.Empty;
     
     /// <summary>
@@ -24,31 +26,31 @@ public class BusMessagingConfig
     /// <summary>
     /// The name of the topic used to send RPC style commands between a solution's services.
     /// </summary>
-    public string RpcCommandTopic { get; set; } = string.Empty;
-    
+    public string RpcCommandTopic => $"{SolutionName}-command-rpc-topic";
+
     /// <summary>
     /// The name of the subscription used to receive RPC style commands for this service.    
     /// </summary>
-    public string RpcCommandSubscription { get; set; } = string.Empty;
+    public string RpcCommandSubscription => $"{ServiceName}-rpc-commands";
     
     /// <summary>
     /// The name of the reply queue used to send responses to received RPC style commands back
     /// to the originating solution's service.  
     /// </summary>
-    public string RpcReplyQueue { get; set; } =  string.Empty;
+    public string RpcReplyQueue => $"{SolutionName}-command-rpc-reply-queue";
     
     public int RpcReplyTimeoutSeconds { get; set; } = 50;
-    
+
     /// <summary>
     /// The name of the topic used to send asynchronous commands between a solution's services,
     /// where the sender does not expect an immediate response from the receiving service.
     /// </summary>
-    public string AsyncCommandTopic { get; set; } = string.Empty;
-    
+    public string AsyncCommandTopic => $"{SolutionName}-command-async-topic";
+
     /// <summary>
     /// The name of the subscription used to receive asynchronous commands for this service.
     /// </summary>
-    public string AsyncCommandSubscription { get; set; } = string.Empty;
+    public string AsyncCommandSubscription => $"{ServiceName}-async-commands";
 }
 
 public class DependentServiceOptions

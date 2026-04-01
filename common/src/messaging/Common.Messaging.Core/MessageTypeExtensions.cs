@@ -3,6 +3,10 @@ using Common.Messaging.Entities;
 
 namespace Common.Messaging.Core;
 
+public record CommandDispatchInfo(
+    string CommandNamespace,
+    Type ImplementationType);
+
 public static class MessageTypeExtensions
 {
     public static IEnumerable<CommandDispatchInfo> GetCommandDispatches(this IEnumerable<TypeInfo> types)

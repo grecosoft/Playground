@@ -27,7 +27,7 @@ public class CommandHandlerDispatcherAsync(
         {
             var receivedCommand = ReceivedCommand.Create(eventArgs.Message);
             var commandRepository = requestScope.ServiceProvider.GetRequiredService<ICommandRepository>();
-            var commandHandler = ResolveCommandHandler(requestScope, receivedCommand);
+            var commandHandler = requestScope.ServiceProvider.GetCommandHandler(receivedCommand);
             
             receivedCommand.SetCommand(eventArgs.Message, commandHandler.CommandType);
             await commandHandler.Handle(receivedCommand, commandRepository, eventArgs.CancellationToken);
@@ -43,15 +43,5 @@ public class CommandHandlerDispatcherAsync(
     {
         logger.LogError(eventArgs.Exception, "Exception processing message received on {QueueName}", eventArgs.EntityPath);
         return Task.CompletedTask;
-    }
-    
-    private static ICommandMessageHandler ResolveCommandHandler(
-        IServiceScope requestScope,
-        ReceivedCommand receivedCommand)
-    {
-        var handler = requestScope.ServiceProvider.GetKeyedService<ICommandMessageHandler>(
-            receivedCommand.CommandNamespace);
-
-        return handler ?? throw new InvalidOperationException("");
     }
 }

@@ -27,10 +27,6 @@ public class MessagingService(
             correlationId, 
             endpointInfo,
             command,
-            new Dictionary<string, object>
-            {
-                { MessageProperties.DispatchStrategyType, nameof(DispatchStrategyType.Rpc) }
-            },
             token);
         return await WaitCommandResponse<TResponse>(correlationId, token);
     }
@@ -46,10 +42,6 @@ public class MessagingService(
             correlationId,
             endpointInfo,
             command,
-            new Dictionary<string, object>
-            {
-                { MessageProperties.DispatchStrategyType, nameof(DispatchStrategyType.Async) }
-            },
             token);
     }
     
@@ -68,7 +60,6 @@ public class MessagingService(
         };
 
         message.ApplicationProperties.Add(MessageProperties.CommandNamespace, receivedCommand.CommandNamespace);
-        message.ApplicationProperties.Add(MessageProperties.DispatchStrategyType, nameof(DispatchStrategyType.Async));
         message.ApplicationProperties.Add(MessageProperties.SendingServiceId, busConfig.ServiceId);
         
         await asyncCommandSender.SendMessageAsync(message, token);
@@ -79,7 +70,6 @@ public class MessagingService(
         string correlationId,
         EndpointInfo endpointInfo,
         ICommandMessage command, 
-        IDictionary<string, object> messageProperties,
         CancellationToken token)
     {
         var messageMetadata = GetMessageMetadata(command.GetType());
@@ -96,11 +86,6 @@ public class MessagingService(
 
         message.ApplicationProperties.Add(MessageProperties.CommandNamespace, messageMetadata.MessageNamespace);
         message.ApplicationProperties.Add(MessageProperties.SendingServiceId, busConfig.ServiceId);
-        
-        foreach (var property in messageProperties)
-        {
-            message.ApplicationProperties.Add(property.Key, property.Value);
-        }
         
         await sender.SendMessageAsync(message, token);
     }

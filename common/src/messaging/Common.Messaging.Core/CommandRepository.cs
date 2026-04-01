@@ -33,8 +33,7 @@ public class CommandRepository : ICommandRepository
         var receivedCommand = new ReceivedCommand(
             commandState.CorrelationId,
             commandState.ReplyToService,
-            commandState.CommandNamespace, 
-            DispatchStrategyType.Async);
+            commandState.CommandNamespace);
         
         receivedCommand.SetCommand(
             JsonSerializer.Deserialize<T>(commandState.command)
