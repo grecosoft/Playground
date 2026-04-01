@@ -21,7 +21,7 @@ resource "azurerm_role_assignment" "command_rpc_topic_receiver" {
 
 # Queue used by services to await responses for sent RPC style commands:
 resource "azurerm_servicebus_queue" "command_rpc_reply_queue" {
-  name             = "${var.solution_name}-reply-queue"
+  name             = "${var.solution_name}-command-rpc-reply-queue"
   namespace_id     = var.servicebus_namespace_id
   requires_session = true
 }

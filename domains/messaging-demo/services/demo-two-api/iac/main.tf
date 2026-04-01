@@ -1,5 +1,5 @@
 locals {
-  service_name = "messaging-demo-two-api"
+  service_name = "demo-two-api"
 }
 
 # The identity used by the deployed service used to access resources.
@@ -18,7 +18,7 @@ module "configuration" {
   source               = "../../../../../common/iac/modules/service_configuration"
   
   solution_configuration = local.solution.configuration
-  label_name           = "messaging-demo-two-api"
+  label_name           = local.service_name
   app_configs          = local.app_configs
   app_config_overrides = var.env_app_configs
   vault_secrets        = local.vault_secrets 
