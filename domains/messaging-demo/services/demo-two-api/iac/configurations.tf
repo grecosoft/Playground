@@ -11,11 +11,6 @@ locals {
           { v2 = 44 }
         ]
       })
-    },
-    {
-      key   = "DatabasePort2"
-      value = 5432
-      label = "test-label2"
     }
   ]
 

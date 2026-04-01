@@ -1,6 +1,0 @@
-@Playground.Service.Test.WebApi_HostAddress = http://localhost:5236
-
-GET {{Playground.Service.Test.WebApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

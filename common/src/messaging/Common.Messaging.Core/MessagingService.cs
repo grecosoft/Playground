@@ -9,7 +9,8 @@ namespace Common.Messaging.Core;
 public class MessagingService(
     BusMessagingConfig busConfig,
     ServiceBusClient client,
-    ServiceBusSender rpcCommandSender) : IMessagingService
+    ServiceBusSender rpcCommandSender,
+    ServiceBusSender asyncCommandSender) : IMessagingService
 {
     // Caches message associated metadata used to set properties 
     // when publishing message to the consuming service.
@@ -22,6 +23,7 @@ public class MessagingService(
     {
         var correlationId = Guid.NewGuid().ToString();
         await SendCommandMessage(
+            rpcCommandSender,
             correlationId, 
             endpointInfo,
             command,
@@ -40,6 +42,7 @@ public class MessagingService(
     {
         var correlationId = Guid.NewGuid().ToString();
         return SendCommandMessage(
+            asyncCommandSender,
             correlationId,
             endpointInfo,
             command,
@@ -60,7 +63,7 @@ public class MessagingService(
             CorrelationId = receivedCommand.CorrelationId,
             ApplicationProperties =
             {
-                { "service", receivedCommand.ReplyToServiceId }
+                { "service_id", receivedCommand.ReplyToServiceId }
             }
         };
 
@@ -68,10 +71,11 @@ public class MessagingService(
         message.ApplicationProperties.Add(MessageProperties.DispatchStrategyType, nameof(DispatchStrategyType.Async));
         message.ApplicationProperties.Add(MessageProperties.SendingServiceId, busConfig.ServiceId);
         
-        await rpcCommandSender.SendMessageAsync(message, token);
+        await asyncCommandSender.SendMessageAsync(message, token);
     }
     
     private async Task SendCommandMessage(
+        ServiceBusSender sender,
         string correlationId,
         EndpointInfo endpointInfo,
         ICommandMessage command, 
@@ -98,7 +102,7 @@ public class MessagingService(
             message.ApplicationProperties.Add(property.Key, property.Value);
         }
         
-        await rpcCommandSender.SendMessageAsync(message, token);
+        await sender.SendMessageAsync(message, token);
     }
     
     private async Task<TResponse> WaitCommandResponse<TResponse>(string correlationId, CancellationToken token)

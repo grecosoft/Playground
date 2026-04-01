@@ -59,5 +59,8 @@ output "messaging" {
     command_rpc_topic_id = module.messaging.command_rpc_topic_id
     command_rpc_reply_queue_name = module.messaging.command_rpc_reply_queue_name
     command_rpc_reply_queue_id = module.messaging.command_rpc_reply_queue_id
+
+    command_async_topic_name = module.messaging.command_async_topic_name
+    command_async_topic_id = module.messaging.command_async_topic_id
   }
 }

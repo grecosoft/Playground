@@ -13,10 +13,4 @@ storage_account_name        = "terraformstatestorage07"
 solution_container_name     = "playground-dev-eastus"
 
 # Environment Overrides:
-env_app_configs = [
-  {
-    key   = "DatabasePort"
-    value = 1111
-    label = "test-label"
-  }
-]
+env_app_configs = []

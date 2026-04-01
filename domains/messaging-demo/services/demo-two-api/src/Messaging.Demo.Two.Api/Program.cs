@@ -1,5 +1,6 @@
 using Common.Messaging;
 using Common.Messaging.Core;
+using Messaging.Demo.Common.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,27 @@ builder.Services.AddBusMessaging(builder.Configuration);
 builder.Services.AddSingleton<ICommandRepository, CommandRepository>();
 
 var app = builder.Build();
+
+app.MapGet("/send-async-response/{correlationId}", async (
+    string correlationId, 
+    ICommandRepository commandRepository,
+    IMessagingService  messagingService,
+    CancellationToken cancellationToken) =>
+{
+    var receivedCommand = await commandRepository.LoadCommand<DeviceUpdateCommand>(correlationId, cancellationToken);
+    var command = (DeviceUpdateCommand)receivedCommand.Command;
+    
+    command.Response = new DeviceStatus(true);
+    
+    await messagingService.SendResponseToCommandAsync(
+        receivedCommand, 
+        command,
+        cancellationToken);
+    
+    return Results.Ok();
+});
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

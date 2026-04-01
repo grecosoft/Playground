@@ -20,7 +20,7 @@ public static class ServiceRegistrations
 
             AddServiceBusClient(services, config);
             AddRpcCommandMessageHandling(services, config);
-            // AddAsyncCommandMessageHandling(services, config);
+            AddAsyncCommandMessageHandling(services, config);
             
             AddCommandMessageHandlers(services);
             
@@ -86,6 +86,8 @@ public static class ServiceRegistrations
               
                 });
         });
+        
+        services.AddHostedService<CommandHandlerDispatcherAsync>();
     }
     
     private static void AddMessagingServices(
@@ -95,8 +97,9 @@ public static class ServiceRegistrations
         services.AddSingleton<MessagingService>(sp =>
         {
             var client = sp.GetRequiredService<ServiceBusClient>();
-            var sender = client.CreateSender(config.RpcCommandTopic);
-            return new MessagingService(config, client, sender);
+            var rpcSender = client.CreateSender(config.RpcCommandTopic);
+            var asyncSender = client.CreateSender(config.AsyncCommandTopic);
+            return new MessagingService(config, client, rpcSender, asyncSender);
         });
             
         services.AddSingleton<IMessagingService>(sp => sp.GetRequiredService<MessagingService>());
