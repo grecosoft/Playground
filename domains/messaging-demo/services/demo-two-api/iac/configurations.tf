@@ -13,16 +13,16 @@ locals {
       })
     },
     {
-      key   = "DatabasePort"
+      key   = "DatabasePort2"
       value = 5432
-      label = "test-label"
+      label = "test-label2"
     }
   ]
 
   vault_secrets = [
     {
-      key    = "secret:value",
-      secret = "some value"
+      key    = "secret:value2",
+      secret = "some value2"
     }
   ]
 }

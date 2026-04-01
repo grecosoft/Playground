@@ -78,8 +78,8 @@ public static class ServiceRegistrations
                 config.ServiceCommandSubscription, 
                 new ServiceBusProcessorOptions
                 {
-                    ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
-                    PrefetchCount = 100
+                    //ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
+                   // PrefetchCount = 100
                 });
         });
     }

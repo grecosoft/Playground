@@ -86,7 +86,7 @@ public class MessagingService(
             ReplyTo = busConfig.SolutionReplyQueue,
             ApplicationProperties =
             {
-                { "service", endpointInfo.ServiceId }
+                { "service_id", endpointInfo.ServiceId }
             }
         };
 
