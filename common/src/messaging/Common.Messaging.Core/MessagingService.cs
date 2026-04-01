@@ -9,7 +9,7 @@ namespace Common.Messaging.Core;
 public class MessagingService(
     BusMessagingConfig busConfig,
     ServiceBusClient client,
-    ServiceBusSender sender) : IMessagingService
+    ServiceBusSender rpcCommandSender) : IMessagingService
 {
     // Caches message associated metadata used to set properties 
     // when publishing message to the consuming service.
@@ -68,7 +68,7 @@ public class MessagingService(
         message.ApplicationProperties.Add(MessageProperties.DispatchStrategyType, nameof(DispatchStrategyType.Async));
         message.ApplicationProperties.Add(MessageProperties.SendingServiceId, busConfig.ServiceId);
         
-        await sender.SendMessageAsync(message, token);
+        await rpcCommandSender.SendMessageAsync(message, token);
     }
     
     private async Task SendCommandMessage(
@@ -83,7 +83,7 @@ public class MessagingService(
         {
             CorrelationId = correlationId,
             SessionId = correlationId,
-            ReplyTo = busConfig.SolutionReplyQueue,
+            ReplyTo = busConfig.RpcReplyQueue,
             ApplicationProperties =
             {
                 { "service_id", endpointInfo.ServiceId }
@@ -98,19 +98,19 @@ public class MessagingService(
             message.ApplicationProperties.Add(property.Key, property.Value);
         }
         
-        await sender.SendMessageAsync(message, token);
+        await rpcCommandSender.SendMessageAsync(message, token);
     }
     
     private async Task<TResponse> WaitCommandResponse<TResponse>(string correlationId, CancellationToken token)
     {
         await using var sessionReceiver = await client.AcceptSessionAsync(
-            busConfig.SolutionReplyQueue, 
+            busConfig.RpcReplyQueue, 
             correlationId,
             new ServiceBusSessionReceiverOptions { ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete },
             token);
         
         var replyMessage = await sessionReceiver.ReceiveMessageAsync(
-            TimeSpan.FromSeconds(busConfig.ReplyTimeoutSeconds),
+            TimeSpan.FromSeconds(busConfig.RpcReplyTimeoutSeconds),
             token);
 
         if (replyMessage == null)

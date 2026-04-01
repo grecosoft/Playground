@@ -18,38 +18,88 @@ public static class ServiceRegistrations
             var config = configSection.Get<BusMessagingConfig>() 
                          ?? throw new NullReferenceException("BusMessagingConfig is null");
 
-            AddMessagingBus(services, config);
+            AddServiceBusClient(services, config);
+            AddRpcCommandMessageHandling(services, config);
+            // AddAsyncCommandMessageHandling(services, config);
             
             AddCommandMessageHandlers(services);
-            AddRequestQueueProcessor(services, config);
-            AddReplyQueueSender(services, config);
+            
+            // Registers services used for sending messages to other services, which will
+            // be injected into command handlers and other services that need to send messages.
+            AddMessagingServices(services, config);
             AddDependentServiceEndpoints(services, config);
-            
-            services.AddHostedService<RpcCommandHandlerDispatcher>();
-            services.AddSingleton<ICommandRepository, CommandRepository>();
-            
-            services.AddSingleton<MessagingService>(sp =>
-            {
-                var client = sp.GetRequiredService<ServiceBusClient>();
-                var sender = client.CreateSender(config.SolutionCommandTopic);
-                return new MessagingService(config, client, sender);
-            });
-            
-            services.AddSingleton<IMessagingService>(sp => sp.GetRequiredService<MessagingService>());
-            
             return services;
         }
     }
 
-    private static void AddMessagingBus(IServiceCollection services, BusMessagingConfig config)
+    private static void AddServiceBusClient(IServiceCollection services, BusMessagingConfig config)
     {
         services.AddSingleton(new ServiceBusClient(
-            config.FullyQualifiedNamespace,
+            config.ServiceBusNamespace,
             new DefaultAzureCredential(),
             new ServiceBusClientOptions
             {
                 
             }));
+    }
+    
+    private static void AddRpcCommandMessageHandling(
+        IServiceCollection services,
+        BusMessagingConfig config)
+    {
+        // Subscribes to the topic/subscription to receive RPC commands, which will be dispatched
+        // to the appropriate handlers based on message properties.
+        services.AddKeyedSingleton("rpc", (sp, _) =>
+        {
+            var client = sp.GetRequiredService<ServiceBusClient>();
+            return client.CreateProcessor(
+                config.RpcCommandTopic,
+                config.RpcCommandSubscription, 
+                new ServiceBusProcessorOptions
+                {
+                    ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
+                });
+        });
+        
+        // Registers a sender for sending replies to RPC commands back to the originating service.
+        services.AddKeyedSingleton("rpc", (sp, _) =>
+        {
+            var client = sp.GetRequiredService<ServiceBusClient>();
+            return client.CreateSender(config.RpcReplyQueue);
+        });
+        
+        services.AddHostedService<CommandHandlerDispatcherRpc>();
+    }
+
+    private static void AddAsyncCommandMessageHandling(
+        IServiceCollection services,
+        BusMessagingConfig config)
+    {
+        services.AddKeyedSingleton("async", (sp, _) =>
+        {
+            var client = sp.GetRequiredService<ServiceBusClient>();
+            return client.CreateProcessor(
+                config.AsyncCommandTopic,
+                config.AsyncCommandSubscription, 
+                new ServiceBusProcessorOptions
+                {
+              
+                });
+        });
+    }
+    
+    private static void AddMessagingServices(
+        IServiceCollection services,
+        BusMessagingConfig config)
+    {
+        services.AddSingleton<MessagingService>(sp =>
+        {
+            var client = sp.GetRequiredService<ServiceBusClient>();
+            var sender = client.CreateSender(config.RpcCommandTopic);
+            return new MessagingService(config, client, sender);
+        });
+            
+        services.AddSingleton<IMessagingService>(sp => sp.GetRequiredService<MessagingService>());
     }
     
     private static void AddCommandMessageHandlers(IServiceCollection services)
@@ -67,32 +117,6 @@ public static class ServiceRegistrations
         }
     }
     
-    
-    private static void AddRequestQueueProcessor(IServiceCollection services, BusMessagingConfig config)
-    {
-        services.AddKeyedSingleton("datalab.messaging.rpc.request", (sp, _) =>
-        {
-            var client = sp.GetRequiredService<ServiceBusClient>();
-            return client.CreateProcessor(
-                config.SolutionCommandTopic,
-                config.ServiceCommandSubscription, 
-                new ServiceBusProcessorOptions
-                {
-                    //ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
-                   // PrefetchCount = 100
-                });
-        });
-    }
-    
-    private static void AddReplyQueueSender(IServiceCollection services, BusMessagingConfig config)
-    {
-        services.AddKeyedSingleton("datalab.messaging.rpc.reply", (sp, _) =>
-        {
-            var client = sp.GetRequiredService<ServiceBusClient>();
-            return client.CreateSender(config.SolutionReplyQueue);
-        });
-    }
-    
     private static void AddDependentServiceEndpoints(IServiceCollection serviceCollection, BusMessagingConfig config)
     {
         foreach (var (serviceKey, serviceInfo) in config.DependentServices)
@@ -105,7 +129,7 @@ public static class ServiceRegistrations
                         .ForContext("DependentServiceName", serviceInfo.Name)
                         .ForContext("DependentServiceId", serviceInfo.Id) )
                  
-                        .CreateLogger(config.ServiceName);
+                    .CreateLogger(config.ServiceName);
                 
                 return new ServiceEndpoint(
                     logger, 

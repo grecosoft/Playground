@@ -1,3 +1,4 @@
+using Common.Messaging;
 using Common.Messaging.Core;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 builder.Services.AddBusMessaging(builder.Configuration);
+builder.Services.AddSingleton<ICommandRepository, CommandRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

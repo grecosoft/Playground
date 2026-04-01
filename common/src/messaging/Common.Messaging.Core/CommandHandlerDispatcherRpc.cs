@@ -6,18 +6,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Common.Messaging.Core;
 
-public class RpcCommandHandlerDispatcher(
-    ILogger<RpcCommandHandlerDispatcher> logger,
+public class CommandHandlerDispatcherRpc(
+    ILogger<CommandHandlerDispatcherRpc> logger,
     IServiceProvider serviceProvider,
-    [FromKeyedServices("datalab.messaging.rpc.request")]ServiceBusProcessor requestQueueProcessor,
-    [FromKeyedServices("datalab.messaging.rpc.reply")]ServiceBusSender replyQueueSender) : BackgroundService
+    [FromKeyedServices("rpc")]ServiceBusProcessor requestTopicProcessor,
+    [FromKeyedServices("rpc")]ServiceBusSender replyQueueSender) : BackgroundService
 {
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        requestQueueProcessor.ProcessMessageAsync += OnProcessMessageAsync;
-        requestQueueProcessor.ProcessErrorAsync += OnProcessErrorAsync;
+        requestTopicProcessor.ProcessMessageAsync += OnProcessMessageAsync;
+        requestTopicProcessor.ProcessErrorAsync += OnProcessErrorAsync;
         
-        return requestQueueProcessor.StartProcessingAsync(stoppingToken);
+        return requestTopicProcessor.StartProcessingAsync(stoppingToken);
     }
 
     private async Task OnProcessMessageAsync(ProcessMessageEventArgs eventArgs)
