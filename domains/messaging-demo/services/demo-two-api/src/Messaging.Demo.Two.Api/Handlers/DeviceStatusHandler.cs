@@ -1,5 +1,4 @@
-﻿using Common.Messaging;
-using Common.Messaging.Commands;
+﻿using Common.Messaging.Commands;
 using Messaging.Demo.Common.Commands;
 
 namespace Messaging.Demo.Two.Api.Handlers;

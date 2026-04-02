@@ -3,12 +3,19 @@ using Common.Messaging.Commands;
 using Common.Messaging.Core;
 using Common.Messaging.Core.Commands;
 using Messaging.Demo.Common.Commands;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+    .CreateLogger();
+
 
 builder.Services.AddBusMessaging(builder.Configuration);
 builder.Services.AddSingleton<ICommandRepository, CommandRepository>();
@@ -25,7 +32,7 @@ app.UseHttpsRedirection();
 
 
 app.MapGet("/send-rpc-command", async (
-    [FromKeyedServices("demo-two-api2")]ICommandEndpoint  microserviceTwo,
+    [FromKeyedServices("demo-two-api")]ICommandEndpoint  microserviceTwo,
     CancellationToken cancellationToken) =>
 {
     var command = new PingCommand("value-one", "value-two");

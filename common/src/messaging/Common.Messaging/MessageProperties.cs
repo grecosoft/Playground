@@ -10,15 +10,12 @@ public static class MessageProperties
     /// </summary>
     public const string SendingServiceId = "sending-service-id";
     
+    public const string EndpointServiceId = "service_id";
+    
     /// <summary>
     /// Message property used to uniquely identify the message within a solution of services.
     /// </summary>
     public const string CommandNamespace = "command-namespace";
-    
-    /// <summary>
-    /// Message property indicating how the sending service expects to receive a response to the command.
-    /// </summary>
-    public const string DispatchStrategyType = "dispatch-strategy";
     
     /// <summary>
     /// Extension methods for retrieving message properties. 

@@ -4,8 +4,6 @@ using Common.Messaging.Commands;
 using Common.Messaging.Core.Commands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
-using Serilog.Extensions.Logging;
 
 namespace Common.Messaging.Core;
 
@@ -136,15 +134,7 @@ public static class ServiceRegistrations
             serviceCollection.AddKeyedSingleton<ICommandEndpoint>(serviceKey, (sp, _)  =>
             {
                 var messagingService = sp.GetRequiredService<CommandMessagingService>();
-
-                var logger = new SerilogLoggerFactory(Log
-                        .ForContext("DependentServiceName", serviceInfo.Name)
-                        .ForContext("DependentServiceId", serviceInfo.Id) )
-                 
-                    .CreateLogger(config.ServiceName);
-                
                 return new CommandEndpoint(
-                    logger, 
                     new EndpointInfo(serviceInfo.Name, serviceInfo.Id),
                     messagingService);
             });

@@ -27,11 +27,22 @@ public class CommandHandlerDispatcherAsync(
         try
         {
             var context = CommandContext.Create(eventArgs.Message);
-            var commandRepository = requestScope.ServiceProvider.GetRequiredService<ICommandRepository>();
-            var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
+            using var _ = logger.BeginScope(context.ToDictionary());
             
+            var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
             context.SetCommand(eventArgs.Message.Body, commandHandler.CommandType);
-            context.SetCommandRepository(commandRepository);
+
+            var commandRepository = requestScope.ServiceProvider.GetService<ICommandRepository>();
+            if (commandRepository is not null)
+            {
+                context.SetCommandRepository(commandRepository);
+            }
+            
+            logger.LogDebug(
+                "Dispatching command message {MessageId} to handler {Handler} of type {CommandType}.",
+                eventArgs.Message.MessageId, 
+                commandHandler,
+                commandHandler.CommandType);
             
             await commandHandler.Handle(context, eventArgs.CancellationToken);
             await eventArgs.CompleteMessageAsync(eventArgs.Message);

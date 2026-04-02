@@ -14,7 +14,7 @@ public class CommandRepository : ICommandRepository
         
         var commandState = new CommandState(
             commandContext.CorrelationId,
-            commandContext.ReplyToServiceId,
+            commandContext.SendingServiceId,
             commandContext.CommandNamespace,
             JsonSerializer.Serialize(commandContext.Command, commandContext.CommandType));
 

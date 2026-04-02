@@ -38,9 +38,16 @@ public class CommandHandlerDispatcherRpc(
         try
         {
             var context = CommandContext.Create(eventArgs.Message);
-            var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
+            using var _ = logger.BeginScope(context.ToDictionary());
             
+            var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
             context.SetCommand(eventArgs.Message.Body, commandHandler.CommandType);
+            
+            logger.LogDebug(
+                "Dispatching command message {MessageId} to handler {Handler} of type {CommandType}.",
+                eventArgs.Message.MessageId, 
+                commandHandler,
+                commandHandler.CommandType);
             
             await commandHandler.Handle(context, eventArgs.CancellationToken);
             await SendReplyToCommand(commandHandler, context, eventArgs);
@@ -53,40 +60,22 @@ public class CommandHandlerDispatcherRpc(
     
     private async Task SendReplyToCommand(
         ICommandMessageHandler handler,
-        CommandContext commandContextContext,
+        CommandContext context,
         ProcessMessageEventArgs eventArgs)
     {
-        if (commandContextContext.Response is not null && eventArgs.Message.ReplyTo is not null)
+        if (context.Response is null)
         {
-            var replyMessage = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(commandContextContext.Response))
-            {
-                CorrelationId = eventArgs.Message.CorrelationId,
-                SessionId = eventArgs.Message.SessionId,
-            };
+            throw new InvalidOperationException(
+                $"Command handler {handler.GetType().Name} did not set a response on the command context.");
+        }
+        
+        var replyMessage = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(context.Response))
+        {
+            CorrelationId = eventArgs.Message.CorrelationId,
+            SessionId = eventArgs.Message.SessionId,
+        };
             
-            await replyQueueSender.SendMessageAsync(replyMessage, eventArgs.CancellationToken);
-            return;
-        }
-            
-        if (commandContextContext.Response is null && eventArgs.Message.ReplyTo is not null)
-        {
-            logger.LogWarning(
-                "Command handler {Handler} for message {MessageId} returned null but request message expected reply to queue {QueueName}.",
-                handler,
-                eventArgs.Message.MessageId,
-                eventArgs.Message.ReplyTo);
-                
-            return;
-        }
-
-        if (commandContextContext.Response is not null && eventArgs.Message.ReplyTo is null)
-        {
-            logger.LogWarning(
-                "Command handler {Handler} for message {MessageId} returned response but request didn't specify reply queue {QueueName}.",
-                handler,
-                eventArgs.Message.MessageId,
-                eventArgs.Message.ReplyTo);
-        }
+        await replyQueueSender.SendMessageAsync(replyMessage, eventArgs.CancellationToken);
     }
     
     private Task OnProcessErrorAsync(ProcessErrorEventArgs eventArgs)
