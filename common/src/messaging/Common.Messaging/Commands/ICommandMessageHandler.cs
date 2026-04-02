@@ -1,4 +1,4 @@
-namespace Common.Messaging;
+namespace Common.Messaging.Commands;
 
 public interface ICommandMessageHandler
 {

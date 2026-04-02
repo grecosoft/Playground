@@ -1,6 +1,6 @@
 ﻿using Common.Messaging.Entities;
 
-namespace Common.Messaging;
+namespace Common.Messaging.Commands;
 
 public abstract class CommandHandlerBase<TCommand, TResponse> : ICommandMessageHandler
     where TCommand : ICommandMessage<TResponse> 

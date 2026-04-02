@@ -2,7 +2,7 @@
 using Azure.Messaging.ServiceBus;
 using Common.Messaging.Entities;
 
-namespace Common.Messaging;
+namespace Common.Messaging.Commands;
 
 public class CommandContext(
     string correlationId,
