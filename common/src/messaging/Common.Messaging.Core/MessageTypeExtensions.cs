@@ -1,4 +1,5 @@
 using System.Reflection;
+using Common.Messaging.Commands;
 using Common.Messaging.Entities;
 
 namespace Common.Messaging.Core;

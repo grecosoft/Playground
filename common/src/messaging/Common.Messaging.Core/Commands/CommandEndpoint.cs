@@ -1,12 +1,13 @@
-﻿using Common.Messaging.Entities;
+﻿using Common.Messaging.Commands;
+using Common.Messaging.Entities;
 using Microsoft.Extensions.Logging;
 
-namespace Common.Messaging.Core;
+namespace Common.Messaging.Core.Commands;
 
-public class ServiceEndpoint(
+public class CommandEndpoint(
     ILogger logger,
     EndpointInfo endpointInfo,
-    MessagingService messagingService): IServiceEndpoint
+    CommandMessagingService messagingService): ICommandEndpoint
 {
     public EndpointInfo EndpointInfo { get; } = endpointInfo;
     

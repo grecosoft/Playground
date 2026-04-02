@@ -1,28 +1,29 @@
 ﻿using System.Text.Json;
+using Common.Messaging.Commands;
 using Common.Messaging.Entities;
 
-namespace Common.Messaging.Core;
+namespace Common.Messaging.Core.Commands;
 
 public class CommandRepository : ICommandRepository
 {
     private readonly Dictionary<string, CommandState> _commandStates = new();
     
-    public Task SaveCommand(ReceivedCommand receivedCommand, CancellationToken cancellationToken)
+    public Task SaveCommand(CommandContext commandContext, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"Command {receivedCommand.CorrelationId} saved.");
+        Console.WriteLine($"Command {commandContext.CorrelationId} saved.");
         
         var commandState = new CommandState(
-            receivedCommand.CorrelationId,
-            receivedCommand.ReplyToServiceId,
-            receivedCommand.CommandNamespace,
-            JsonSerializer.Serialize(receivedCommand.Command, receivedCommand.CommandType));
+            commandContext.CorrelationId,
+            commandContext.ReplyToServiceId,
+            commandContext.CommandNamespace,
+            JsonSerializer.Serialize(commandContext.Command, commandContext.CommandType));
 
-        _commandStates[receivedCommand.CorrelationId] = commandState;
+        _commandStates[commandContext.CorrelationId] = commandState;
         
         return Task.CompletedTask;
     }
 
-    public Task<ReceivedCommand> LoadCommand<T>(string correlationId, CancellationToken cancellationToken)
+    public Task<CommandContext> LoadCommand<T>(string correlationId, CancellationToken cancellationToken)
         where T : ICommandMessage
     {
         if (!_commandStates.TryGetValue(correlationId, out var commandState))
@@ -30,15 +31,12 @@ public class CommandRepository : ICommandRepository
             throw new KeyNotFoundException($"Command {correlationId} not found.");
         }
 
-        var receivedCommand = new ReceivedCommand(
+        var receivedCommand = new CommandContext(
             commandState.CorrelationId,
             commandState.ReplyToService,
             commandState.CommandNamespace);
         
-        receivedCommand.SetCommand(
-            JsonSerializer.Deserialize<T>(commandState.command)
-            ?? throw new InvalidOperationException($"Command {commandState.command} not deserialized."));
-        
+        receivedCommand.SetCommand(BinaryData.FromString(commandState.command), typeof(T));
         
         return Task.FromResult(receivedCommand);
     }

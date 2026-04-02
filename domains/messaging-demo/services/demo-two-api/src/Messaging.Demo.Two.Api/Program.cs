@@ -1,5 +1,7 @@
 using Common.Messaging;
+using Common.Messaging.Commands;
 using Common.Messaging.Core;
+using Common.Messaging.Core.Commands;
 using Messaging.Demo.Common.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +18,7 @@ var app = builder.Build();
 app.MapGet("/send-async-response/{correlationId}", async (
     string correlationId, 
     ICommandRepository commandRepository,
-    IMessagingService  messagingService,
+    ICommandMessagingService  messagingService,
     CancellationToken cancellationToken) =>
 {
     var receivedCommand = await commandRepository.LoadCommand<DeviceUpdateCommand>(correlationId, cancellationToken);

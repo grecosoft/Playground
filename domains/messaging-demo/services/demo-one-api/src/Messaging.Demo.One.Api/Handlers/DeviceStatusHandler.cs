@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Common.Messaging;
+using Common.Messaging.Commands;
 using Messaging.Demo.Common.Commands;
 
 namespace Messaging.Demo.One.Api.Handlers;
@@ -7,7 +8,7 @@ namespace Messaging.Demo.One.Api.Handlers;
 public class DeviceStatusHandler : CommandHandlerBase<DeviceUpdateCommand, DeviceStatus>
 {
     protected override Task HandleMessage(DeviceUpdateCommand command,
-        CommandContext<DeviceStatus> context,
+        CommandContext context,
         CancellationToken cancellationToken)
     {
         Console.WriteLine($"{nameof(DeviceUpdateCommand)} received: {JsonSerializer.Serialize(command)}");

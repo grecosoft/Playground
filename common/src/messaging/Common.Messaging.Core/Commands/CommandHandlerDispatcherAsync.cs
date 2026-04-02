@@ -1,9 +1,10 @@
 ﻿using Azure.Messaging.ServiceBus;
+using Common.Messaging.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Common.Messaging.Core;
+namespace Common.Messaging.Core.Commands;
 
 public class CommandHandlerDispatcherAsync(
     ILogger<CommandHandlerDispatcherAsync> logger,
@@ -25,12 +26,14 @@ public class CommandHandlerDispatcherAsync(
         
         try
         {
-            var receivedCommand = ReceivedCommand.Create(eventArgs.Message);
+            var context = CommandContext.Create(eventArgs.Message);
             var commandRepository = requestScope.ServiceProvider.GetRequiredService<ICommandRepository>();
-            var commandHandler = requestScope.ServiceProvider.GetCommandHandler(receivedCommand);
+            var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
             
-            receivedCommand.SetCommand(eventArgs.Message, commandHandler.CommandType);
-            await commandHandler.Handle(receivedCommand, commandRepository, eventArgs.CancellationToken);
+            context.SetCommand(eventArgs.Message.Body, commandHandler.CommandType);
+            context.SetCommandRepository(commandRepository);
+            
+            await commandHandler.Handle(context, eventArgs.CancellationToken);
             await eventArgs.CompleteMessageAsync(eventArgs.Message);
         }
         catch (Exception ex)

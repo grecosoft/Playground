@@ -1,5 +1,7 @@
 using Common.Messaging;
+using Common.Messaging.Commands;
 using Common.Messaging.Core;
+using Common.Messaging.Core.Commands;
 using Messaging.Demo.Common.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +25,7 @@ app.UseHttpsRedirection();
 
 
 app.MapGet("/send-rpc-command", async (
-    [FromKeyedServices("messaging-demo-two-api")]IServiceEndpoint  microserviceTwo,
+    [FromKeyedServices("demo-two-api2")]ICommandEndpoint  microserviceTwo,
     CancellationToken cancellationToken) =>
 {
     var command = new PingCommand("value-one", "value-two");
@@ -32,7 +34,7 @@ app.MapGet("/send-rpc-command", async (
 });
 
 app.MapGet("/send-async-command", async (
-    [FromKeyedServices("messaging-demo-two-api")]IServiceEndpoint  microserviceTwo,
+    [FromKeyedServices("demo-two-api")]ICommandEndpoint  microserviceTwo,
     CancellationToken cancellationToken) =>
 {
 

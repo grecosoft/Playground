@@ -1,11 +1,12 @@
+using Common.Messaging.Commands;
 using Common.Messaging.Entities;
 
 namespace Common.Messaging;
 
-public interface IMessagingService
+public interface ICommandMessagingService
 {
     Task SendResponseToCommandAsync<TResponse>(
-        ReceivedCommand receivedCommand,
+        CommandContext commandContext,
         ICommandMessage<TResponse> command,
         CancellationToken token);
 

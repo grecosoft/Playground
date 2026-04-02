@@ -1,6 +1,6 @@
 ﻿namespace Common.Messaging;
 
-public class BusMessagingConfig
+public class MessagingConfig
 {
     /// <summary>
     /// The unique identifier of the service within the solution, used for service discovery

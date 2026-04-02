@@ -1,10 +1,11 @@
 ﻿using System.Text.Json;
 using Azure.Messaging.ServiceBus;
+using Common.Messaging.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Common.Messaging.Core;
+namespace Common.Messaging.Core.Commands;
 
 /// <summary>
 /// Background service that listens for incoming RPC command messages on a Service Bus topic subscription
@@ -19,7 +20,7 @@ public class CommandHandlerDispatcherRpc(
     ILogger<CommandHandlerDispatcherRpc> logger,
     IServiceProvider serviceProvider,
     [FromKeyedServices("rpc")]ServiceBusProcessor requestTopicProcessor,
-    [FromKeyedServices("rpc")]ServiceBusSender replyQueueSender) : BackgroundService
+    [FromKeyedServices("rpc-reply")]ServiceBusSender replyQueueSender) : BackgroundService
 {
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -36,14 +37,13 @@ public class CommandHandlerDispatcherRpc(
         
         try
         {
-            var receivedCommand = ReceivedCommand.Create(eventArgs.Message);
-            var commandRepository = requestScope.ServiceProvider.GetRequiredService<ICommandRepository>();
-            var commandHandler = requestScope.ServiceProvider.GetCommandHandler(receivedCommand);
+            var context = CommandContext.Create(eventArgs.Message);
+            var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
             
-            receivedCommand.SetCommand(eventArgs.Message, commandHandler.CommandType);
+            context.SetCommand(eventArgs.Message.Body, commandHandler.CommandType);
             
-            var response = await commandHandler.Handle(receivedCommand, commandRepository, eventArgs.CancellationToken);
-            await SendReplyToCommand(commandHandler, response, eventArgs);
+            await commandHandler.Handle(context, eventArgs.CancellationToken);
+            await SendReplyToCommand(commandHandler, context, eventArgs);
         }
         catch (Exception ex)
         {
@@ -53,12 +53,12 @@ public class CommandHandlerDispatcherRpc(
     
     private async Task SendReplyToCommand(
         ICommandMessageHandler handler,
-        CommandContext commandContext,
+        CommandContext commandContextContext,
         ProcessMessageEventArgs eventArgs)
     {
-        if (commandContext.Response is not null && eventArgs.Message.ReplyTo is not null)
+        if (commandContextContext.Response is not null && eventArgs.Message.ReplyTo is not null)
         {
-            var replyMessage = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(commandContext.Response))
+            var replyMessage = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(commandContextContext.Response))
             {
                 CorrelationId = eventArgs.Message.CorrelationId,
                 SessionId = eventArgs.Message.SessionId,
@@ -68,7 +68,7 @@ public class CommandHandlerDispatcherRpc(
             return;
         }
             
-        if (commandContext.Response is null && eventArgs.Message.ReplyTo is not null)
+        if (commandContextContext.Response is null && eventArgs.Message.ReplyTo is not null)
         {
             logger.LogWarning(
                 "Command handler {Handler} for message {MessageId} returned null but request message expected reply to queue {QueueName}.",
@@ -79,7 +79,7 @@ public class CommandHandlerDispatcherRpc(
             return;
         }
 
-        if (commandContext.Response is not null && eventArgs.Message.ReplyTo is null)
+        if (commandContextContext.Response is not null && eventArgs.Message.ReplyTo is null)
         {
             logger.LogWarning(
                 "Command handler {Handler} for message {MessageId} returned response but request didn't specify reply queue {QueueName}.",
@@ -100,10 +100,6 @@ public class CommandHandlerDispatcherRpc(
     public override Task StopAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Stopping processing of RPC commands.");
-        
-        requestTopicProcessor.ProcessMessageAsync -= OnProcessMessageAsync;
-        requestTopicProcessor.ProcessErrorAsync -= OnProcessErrorAsync;
-        
         return base.StopAsync(cancellationToken);
     }
 }

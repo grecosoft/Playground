@@ -2,19 +2,23 @@
 using System.Reflection;
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
+using Common.Messaging.Commands;
 using Common.Messaging.Entities;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
-namespace Common.Messaging.Core;
+namespace Common.Messaging.Core.Commands;
 
-public class MessagingService(
-    BusMessagingConfig busConfig,
+public class CommandMessagingService(
+    IOptions<MessagingConfig> messagingOptions,
     ServiceBusClient client,
-    ServiceBusSender rpcCommandSender,
-    ServiceBusSender asyncCommandSender) : IMessagingService
+    [FromKeyedServices("rpc")] ServiceBusSender rpcCommandSender,
+    [FromKeyedServices("async")] ServiceBusSender asyncCommandSender) : ICommandMessagingService
 {
     // Caches message associated metadata used to set properties 
     // when publishing message to the consuming service.
     private readonly ConcurrentDictionary<Type, MessageMetadata> _messageMetadata = new();
+    private readonly MessagingConfig _busConfig = messagingOptions.Value;
     
     public async Task<TResponse> SendCommandWithReplyAsync<TResponse>(
         ICommandMessage command,
@@ -46,21 +50,21 @@ public class MessagingService(
     }
     
     public async Task SendResponseToCommandAsync<TResponse>(
-        ReceivedCommand receivedCommand,
+        CommandContext commandContext,
         ICommandMessage<TResponse> command,
         CancellationToken token)
     {
         var message = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(command, command.GetType()))
         {
-            CorrelationId = receivedCommand.CorrelationId,
+            CorrelationId = commandContext.CorrelationId,
             ApplicationProperties =
             {
-                { "service_id", receivedCommand.ReplyToServiceId }
+                { "service_id", commandContext.ReplyToServiceId }
             }
         };
 
-        message.ApplicationProperties.Add(MessageProperties.CommandNamespace, receivedCommand.CommandNamespace);
-        message.ApplicationProperties.Add(MessageProperties.SendingServiceId, busConfig.ServiceId);
+        message.ApplicationProperties.Add(MessageProperties.CommandNamespace, commandContext.CommandNamespace);
+        message.ApplicationProperties.Add(MessageProperties.SendingServiceId, _busConfig.ServiceId);
         
         await asyncCommandSender.SendMessageAsync(message, token);
     }
@@ -77,7 +81,7 @@ public class MessagingService(
         {
             CorrelationId = correlationId,
             SessionId = correlationId,
-            ReplyTo = busConfig.RpcReplyQueue,
+            ReplyTo = _busConfig.RpcReplyQueue,
             ApplicationProperties =
             {
                 { "service_id", endpointInfo.ServiceId }
@@ -85,7 +89,7 @@ public class MessagingService(
         };
 
         message.ApplicationProperties.Add(MessageProperties.CommandNamespace, messageMetadata.MessageNamespace);
-        message.ApplicationProperties.Add(MessageProperties.SendingServiceId, busConfig.ServiceId);
+        message.ApplicationProperties.Add(MessageProperties.SendingServiceId, _busConfig.ServiceId);
         
         await sender.SendMessageAsync(message, token);
     }
@@ -93,13 +97,13 @@ public class MessagingService(
     private async Task<TResponse> WaitCommandResponse<TResponse>(string correlationId, CancellationToken token)
     {
         await using var sessionReceiver = await client.AcceptSessionAsync(
-            busConfig.RpcReplyQueue, 
+            _busConfig.RpcReplyQueue, 
             correlationId,
             new ServiceBusSessionReceiverOptions { ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete },
             token);
         
         var replyMessage = await sessionReceiver.ReceiveMessageAsync(
-            TimeSpan.FromSeconds(busConfig.RpcReplyTimeoutSeconds),
+            TimeSpan.FromSeconds(_busConfig.RpcReplyTimeoutSeconds),
             token);
 
         if (replyMessage == null)

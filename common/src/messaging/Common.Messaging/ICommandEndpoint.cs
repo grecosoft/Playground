@@ -6,7 +6,7 @@ public record EndpointInfo(
     string ServiceName,
     Guid ServiceId);
 
-public interface IServiceEndpoint
+public interface ICommandEndpoint
 {
     public EndpointInfo EndpointInfo { get; }
     

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Common.Messaging.Commands;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Messaging.Core;
 
@@ -6,10 +7,10 @@ public static class ServiceProviderExtensions
 {
     public static ICommandMessageHandler GetCommandHandler(
         this IServiceProvider serviceProvider,
-        ReceivedCommand receivedCommand)
+        CommandContext commandContext)
     {
         var handler = serviceProvider.GetKeyedService<ICommandMessageHandler>(
-            receivedCommand.CommandNamespace);
+            commandContext.CommandNamespace);
 
         return handler ?? throw new InvalidOperationException("");
     }

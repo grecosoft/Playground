@@ -1,5 +1,7 @@
 ﻿using Azure.Identity;
 using Azure.Messaging.ServiceBus;
+using Common.Messaging.Commands;
+using Common.Messaging.Core.Commands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -15,8 +17,10 @@ public static class ServiceRegistrations
         {
             var configSection = configuration.GetSection("BusMessaging");
         
-            var config = configSection.Get<BusMessagingConfig>() 
+            var config = configSection.Get<MessagingConfig>() 
                          ?? throw new NullReferenceException("BusMessagingConfig is null");
+            
+            services.Configure<MessagingConfig>(configSection);
 
             AddServiceBusClient(services, config);
             AddRpcCommandMessageHandling(services, config);
@@ -32,7 +36,7 @@ public static class ServiceRegistrations
         }
     }
 
-    private static void AddServiceBusClient(IServiceCollection services, BusMessagingConfig config)
+    private static void AddServiceBusClient(IServiceCollection services, MessagingConfig config)
     {
         services.AddSingleton(new ServiceBusClient(
             config.ServiceBusNamespace,
@@ -45,7 +49,7 @@ public static class ServiceRegistrations
     
     private static void AddRpcCommandMessageHandling(
         IServiceCollection services,
-        BusMessagingConfig config)
+        MessagingConfig config)
     {
         // Subscribes to the topic/subscription to receive RPC commands, which will be dispatched
         // to the appropriate handlers based on message properties.
@@ -62,7 +66,7 @@ public static class ServiceRegistrations
         });
         
         // Registers a sender for sending replies to RPC commands back to the originating service.
-        services.AddKeyedSingleton("rpc", (sp, _) =>
+        services.AddKeyedSingleton("rpc-reply", (sp, _) =>
         {
             var client = sp.GetRequiredService<ServiceBusClient>();
             return client.CreateSender(config.RpcReplyQueue);
@@ -73,7 +77,7 @@ public static class ServiceRegistrations
 
     private static void AddAsyncCommandMessageHandling(
         IServiceCollection services,
-        BusMessagingConfig config)
+        MessagingConfig config)
     {
         services.AddKeyedSingleton("async", (sp, _) =>
         {
@@ -92,17 +96,22 @@ public static class ServiceRegistrations
     
     private static void AddMessagingServices(
         IServiceCollection services,
-        BusMessagingConfig config)
+        MessagingConfig config)
     {
-        services.AddSingleton<MessagingService>(sp =>
+        services.AddKeyedSingleton("rpc", (sp, _) =>
         {
             var client = sp.GetRequiredService<ServiceBusClient>();
-            var rpcSender = client.CreateSender(config.RpcCommandTopic);
-            var asyncSender = client.CreateSender(config.AsyncCommandTopic);
-            return new MessagingService(config, client, rpcSender, asyncSender);
+            return client.CreateSender(config.RpcCommandTopic);
         });
-            
-        services.AddSingleton<IMessagingService>(sp => sp.GetRequiredService<MessagingService>());
+        
+        services.AddKeyedSingleton("async", (sp, _) =>
+        {
+            var client = sp.GetRequiredService<ServiceBusClient>();
+            return client.CreateSender(config.AsyncCommandTopic);
+        });
+        
+        services.AddSingleton<CommandMessagingService>();
+        services.AddSingleton<ICommandMessagingService>(sp => sp.GetRequiredService<CommandMessagingService>());
     }
     
     private static void AddCommandMessageHandlers(IServiceCollection services)
@@ -120,13 +129,13 @@ public static class ServiceRegistrations
         }
     }
     
-    private static void AddDependentServiceEndpoints(IServiceCollection serviceCollection, BusMessagingConfig config)
+    private static void AddDependentServiceEndpoints(IServiceCollection serviceCollection, MessagingConfig config)
     {
         foreach (var (serviceKey, serviceInfo) in config.DependentServices)
         {
-            serviceCollection.AddKeyedSingleton<IServiceEndpoint>(serviceKey, (sp, _)  =>
+            serviceCollection.AddKeyedSingleton<ICommandEndpoint>(serviceKey, (sp, _)  =>
             {
-                var messagingService = sp.GetRequiredService<MessagingService>();
+                var messagingService = sp.GetRequiredService<CommandMessagingService>();
 
                 var logger = new SerilogLoggerFactory(Log
                         .ForContext("DependentServiceName", serviceInfo.Name)
@@ -134,7 +143,7 @@ public static class ServiceRegistrations
                  
                     .CreateLogger(config.ServiceName);
                 
-                return new ServiceEndpoint(
+                return new CommandEndpoint(
                     logger, 
                     new EndpointInfo(serviceInfo.Name, serviceInfo.Id),
                     messagingService);

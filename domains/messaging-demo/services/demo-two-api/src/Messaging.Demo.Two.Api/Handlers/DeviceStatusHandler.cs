@@ -1,4 +1,5 @@
 ﻿using Common.Messaging;
+using Common.Messaging.Commands;
 using Messaging.Demo.Common.Commands;
 
 namespace Messaging.Demo.Two.Api.Handlers;
@@ -6,9 +7,9 @@ namespace Messaging.Demo.Two.Api.Handlers;
 public class DeviceStatusHandler : CommandHandlerBase<DeviceUpdateCommand, DeviceStatus>
 {
     protected override async Task HandleMessage(DeviceUpdateCommand command,
-        CommandContext<DeviceStatus> context,
+        CommandContext context,
         CancellationToken cancellationToken)
     {
-        await context.SaveCommandAsync(cancellationToken);
+        await context.CommandRepository.SaveCommand(context, cancellationToken);
     }
 }
