@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/common/">
+    <Project Path="../../common/src/Common.Bootstrapping/Common.Bootstrapping.csproj" />
     <Project Path="../../common/src/messaging/Common.Messaging.Core/Common.Messaging.Core.csproj" />
     <Project Path="../../common/src/messaging/Common.Messaging.Entities/Common.Messaging.Entities.csproj" />
     <Project Path="../../common/src/messaging/Common.Messaging/Common.Messaging.csproj" />

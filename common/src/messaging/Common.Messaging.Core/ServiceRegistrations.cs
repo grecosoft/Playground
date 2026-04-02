@@ -1,22 +1,31 @@
-﻿using Azure.Identity;
+﻿using System.Diagnostics.CodeAnalysis;
+using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using Common.Messaging.Commands;
 using Common.Messaging.Core.Commands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Common.Messaging.Core;
 
+[SuppressMessage("Performance", "CA1873:Avoid potentially expensive logging")]
 public static class ServiceRegistrations
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddBusMessaging(IConfiguration configuration)
+        public IServiceCollection AddBusMessaging(
+            ILogger bootstrapLogger,
+            IConfiguration configuration)
         {
+            
             var configSection = configuration.GetSection("ServiceMessaging");
         
             var config = configSection.Get<MessagingConfig>() 
                          ?? throw new NullReferenceException("BusMessagingConfig is null");
+            
+            bootstrapLogger.LogInformation(
+                "Configuring Service Messaging: {@Configuration}", config.ToLoggableProperties());
             
             services.Configure<MessagingConfig>(configSection);
 
@@ -37,7 +46,7 @@ public static class ServiceRegistrations
     private static void AddServiceBusClient(IServiceCollection services, MessagingConfig config)
     {
         services.AddSingleton(new ServiceBusClient(
-            config.ServiceBusNamespace,
+            config.ServiceBusHostName,
             new DefaultAzureCredential(),
             new ServiceBusClientOptions
             {

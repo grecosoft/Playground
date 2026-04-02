@@ -1,3 +1,4 @@
+using Common.Bootstrapping;
 using Common.Messaging;
 using Common.Messaging.Commands;
 using Common.Messaging.Core;
@@ -11,12 +12,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-Log.Logger = new LoggerConfiguration()
-    .Enrich.FromLogContext()
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
-    .CreateLogger();
+var boostrapLogger = builder.AddLogging(c =>
+{
+    c.WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
+});
 
-builder.Services.AddBusMessaging(builder.Configuration);
+builder.Services.AddBusMessaging(
+    boostrapLogger,
+    builder.Configuration);
+
 builder.Services.AddSingleton<ICommandRepository, CommandRepository>();
 
 var app = builder.Build();

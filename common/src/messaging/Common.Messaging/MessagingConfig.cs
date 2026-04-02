@@ -15,7 +15,7 @@ public class MessagingConfig
     /// <summary>
     /// The Azure Service Bus namespace that the solution's services use to communicate with each other.
     /// </summary>
-    public string ServiceBusNamespace { get; set; } = string.Empty;
+    public string ServiceBusHostName { get; set; } = string.Empty;
     
     /// <summary>
     /// A dictionary of dependent services that this service needs to communicate with,
@@ -51,6 +51,16 @@ public class MessagingConfig
     /// The name of the subscription used to receive asynchronous commands for this service.
     /// </summary>
     public string AsyncCommandSubscription => $"{ServiceName}-async-commands";
+
+    public object ToLoggableProperties() => new
+    {
+        ServiceId,
+        ServiceBusHostName,
+        RpcCommandTopic,
+        RpcCommandSubscription,
+        RpcReplyQueue,
+        RpcReplyTimeoutSeconds
+    };
 }
 
 public class DependentServiceOptions

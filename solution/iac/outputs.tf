@@ -50,6 +50,7 @@ output "servicebus" {
   value = {
     id   = azurerm_servicebus_namespace.service_bus.id
     name = azurerm_servicebus_namespace.service_bus.name
+    host_name = "${azurerm_servicebus_namespace.service_bus.name}.servicebus.windows.net"
   }
 }
 
