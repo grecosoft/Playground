@@ -1,5 +1,5 @@
 locals {
-  app_configs = [
+  common_configs = [
     {
       key    = "DatabaseHost"
       isJson = true

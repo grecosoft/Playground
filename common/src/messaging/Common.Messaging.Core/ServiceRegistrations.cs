@@ -13,7 +13,7 @@ public static class ServiceRegistrations
     {
         public IServiceCollection AddBusMessaging(IConfiguration configuration)
         {
-            var configSection = configuration.GetSection("BusMessaging");
+            var configSection = configuration.GetSection("ServiceMessaging");
         
             var config = configSection.Get<MessagingConfig>() 
                          ?? throw new NullReferenceException("BusMessagingConfig is null");
