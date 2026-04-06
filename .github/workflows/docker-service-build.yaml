@@ -103,7 +103,8 @@ jobs:
             - name: Build Final Image
               uses: docker/build-push-action@v6
               with:
-                context: ${{ inputs.service-root }}
+                context: "domains/messaging-demo"
+                file: ${{ inputs.service-root }}/Dockerfile
                 push: false
                 load: true
                 tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
