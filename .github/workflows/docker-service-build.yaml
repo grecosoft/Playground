@@ -6,8 +6,8 @@ on:
                 description: 'Name of the solution the service belongs to (used for Docker image naming)'
                 type: string
                 required: true
-            service-root:
-                description: 'Path to the service root directory'
+            domain-root:
+                description: 'Path to the domain root directory'
                 type: string
                 required: true
             service-name:
@@ -74,8 +74,8 @@ jobs:
             - name: Build and Run Tests, Export Test Results
               uses: docker/build-push-action@v6
               with:
-                context: "domains/messaging-demo"
-                file: ${{ inputs.service-root }}/Dockerfile
+                context: ${{ inputs.domain-root }}
+                file:  ${{ inputs.domain-root }}/${{ inputs.service-name }}/Dockerfile
                 target: test-results
                 secrets: |
                   READ_PACKAGE_TOKEN=${{ secrets.READ_PACKAGE_TOKEN }}
@@ -103,8 +103,8 @@ jobs:
             - name: Build Final Image
               uses: docker/build-push-action@v6
               with:
-                context: "domains/messaging-demo"
-                file: ${{ inputs.service-root }}/Dockerfile
+                context: ${{ inputs.domain-root }}
+                file:  ${{ inputs.domain-root }}/${{ inputs.service-name }}/Dockerfile
                 push: false
                 load: true
                 tags: ${{ steps.set-image-tag.outputs.IMAGE_TAG }}
