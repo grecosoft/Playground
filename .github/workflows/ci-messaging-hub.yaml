@@ -30,7 +30,8 @@ jobs:
       needs: build
       uses: ./.github/workflows/deploy-service-artifacts.yaml
       with:
-        service-root: './domains/messaging-demo/services/messaging-hub-api'
+        domain-root: './domains/messaging-demo'
+        service-name: 'messaging-hub-api'
     deploy-k8s:
       needs: deploy-artifacts
       uses: ./.github/workflows/kube-service-deploy.yaml

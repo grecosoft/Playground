@@ -2,7 +2,12 @@ name: Assemble service deployment artifacts
 on:
     workflow_call:
         inputs:
-            service-root:
+            domain-root:
+                description: 'Name of the service (used for Docker image naming)'
+                type: string
+                required: true
+
+            service-name:
                 description: 'Name of the service (used for Docker image naming)'
                 type: string
                 required: true
@@ -16,7 +21,7 @@ jobs:
     gather-deploy-artifacts:
         runs-on: ubuntu-latest
         env:
-            SERVICE_ROOT: ${{ inputs.service-root }}
+            DOMAIN_ROOT: ${{ inputs.domain-root }}
             ARTIFACTS_DIR: ${{ github.workspace }}/artifacts
         steps:
             - name: Checkout
@@ -27,7 +32,7 @@ jobs:
 
             - name: GenerateManifests
               run: |
-                for dir in $SERVICE_ROOT/k8s/envs/*; do
+                for dir in $DOMAIN_ROOT/services/$SERVICE_NAME/k8s/envs/*; do
                     echo "Processing: $dir"
                     (
                         ENV_NAME=$(basename $dir)
