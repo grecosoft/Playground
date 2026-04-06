@@ -8,6 +8,10 @@
   <Folder Name="/services/">
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj" />
     <Project Path="services/demo-two-api/src/Messaging.Demo.Two.Api/Messaging.Demo.Two.Api.csproj" />
+    <Project Path="services/messaging-hub-api/src/Messaging.Hub.Api/Messaging.Hub.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="services/messaging-hub-api/src/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj" />
   </Folder>
   <Project Path="Messaging.Demo.Common/Messaging.Demo.Common.csproj" />
 </Solution>

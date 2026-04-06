@@ -12,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.AddConfiguration();
+var credential = builder.AddTokenCredential();
+builder.AddConfiguration(credential);
 
 var boostrapLogger = builder.AddLogging(c =>
 {
