@@ -1,0 +1,50 @@
+name: CI-Solution-Service-One
+on: 
+  workflow_dispatch:
+  push:
+    branches: 
+      - main
+    paths:
+        - 'domains/messaging-demo/services/messaging-hub-api/**'
+
+permissions:
+  id-token: write
+  contents: read
+  checks: write
+
+jobs:
+    build:
+      uses: ./.github/workflows/docker-service-build.yaml
+      with:
+        solution-name: 'playground'
+        service-root: './domains/messaging-demo/services/messaging-hub-api'
+        service-name: 'messaging-hub-api'
+        image-registry: 'registryterrapin.azurecr.io'
+        image-tag: "1.0.0.${{ github.run_number }}"
+      secrets:
+        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }} 
+        READ_PACKAGE_TOKEN: ${{ secrets.READ_PACKAGE_TOKEN }}
+    deploy-artifacts:
+      needs: build
+      uses: ./.github/workflows/deploy-service-artifacts.yaml
+      with:
+        service-root: './domains/messaging-demo/services/messaging-hub-api'
+    deploy-k8s:
+      needs: deploy-artifacts
+      uses: ./.github/workflows/kube-service-deploy.yaml
+      with:
+        environment: 'dev'
+        deploy-environment-name: 'dev-eastus'
+        k8s-resource-group: 'infrastructure-dev-eastus'
+        k8s-cluster-name: 'aks-cluster' 
+        k8s-namespace: 'playground-dev-eastus'
+        solution-name: 'playground'
+        service-name: 'messaging-hub-api'
+        image-registry: 'registryterrapin.azurecr.io'
+        image-tag: "1.0.0.${{ github.run_number }}"
+      secrets:
+        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }} 
+        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
