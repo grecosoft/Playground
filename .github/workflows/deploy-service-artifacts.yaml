@@ -22,6 +22,7 @@ jobs:
         runs-on: ubuntu-latest
         env:
             DOMAIN_ROOT: ${{ inputs.domain-root }}
+            SERVICE_NAME: ${{ inputs.service-name }}
             ARTIFACTS_DIR: ${{ github.workspace }}/artifacts
         steps:
             - name: Checkout
