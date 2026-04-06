@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: service-config-map
+  name: messaging-hub-api-config
 data:
   CACHE_TTL_SECONDS: "300"
   FEATURE_FLAG_ENABLED: "true"
