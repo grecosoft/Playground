@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-one
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-one
+  template:
+    metadata:
+      labels:
+        azure.workload.identity/use: "true"
+        app: service-one
+    spec:
+      serviceAccountName: solution-sa
+      containers:
+        - name: service-one
+          image: registryterrapin.azurecr.io/playground/service-one:1.0.0.0
+          envFrom:
+            - configMapRef:
+                name: service-config-map
+          ports:
+            - containerPort: 80
+          volumeMounts: 
+            - name: config-volume
+              mountPath: /service/configs
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+      volumes:
+        - name: config-volume 
+          configMap: 
+            name: service-one-appconfig
