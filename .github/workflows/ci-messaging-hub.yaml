@@ -1,4 +1,4 @@
-name: CI-Solution-Service-One
+name: CI-Messaging-Hub-Api
 on: 
   workflow_dispatch:
   push:
