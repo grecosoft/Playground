@@ -3,10 +3,10 @@ kind: Kustomization
 
 resources:
   - deployment.yaml
-  - service.yaml
-  - serviceaccount.yaml
-  - configmap.yaml
-  - appconfig-provider.yaml
+  # - service.yaml
+  # - serviceaccount.yaml
+  # - configmap.yaml
+  # - appconfig-provider.yaml
 
 labels:
   - pairs:
