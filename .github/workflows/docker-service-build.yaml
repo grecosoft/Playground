@@ -74,7 +74,8 @@ jobs:
             - name: Build and Run Tests, Export Test Results
               uses: docker/build-push-action@v6
               with:
-                context: ${{ inputs.service-root }}
+                context: "domains/messaging-demo"
+                file: ${{ inputs.service-root }}/Dockerfile
                 target: test-results
                 secrets: |
                   READ_PACKAGE_TOKEN=${{ secrets.READ_PACKAGE_TOKEN }}
