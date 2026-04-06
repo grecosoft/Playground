@@ -12,14 +12,13 @@ COPY ["Messaging.Demo.Common/Messaging.Demo.Common.csproj", "./Messaging.Demo.Co
 COPY ["${SERVICE_SRC}/Messaging.Hub.Api/Messaging.Hub.Api.csproj", "./${SERVICE_SRC}/Messaging.Hub.Api/"]
 COPY ["${SERVICE_SRC}/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj", "./${SERVICE_SRC}/Messaging.Hub.Tests/"]
 
-# RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
-#     export READ_PACKAGE_TOKEN=$(cat /run/secrets/READ_PACKAGE_TOKEN) && \
-#     dotnet nuget add source "https://nuget.pkg.github.com/grecosoft/index.json" \
-#       --name github \
-#       --username github \
-#       --password $READ_PACKAGE_TOKEN \
-#       --store-password-in-clear-text \
-#     && dotnet restore "./${SERVICE_NAME}.sln"
+RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
+    export READ_PACKAGE_TOKEN=$(cat /run/secrets/READ_PACKAGE_TOKEN) && \
+    dotnet nuget add source "https://nuget.pkg.github.com/grecosoft/index.json" \
+      --name github \
+      --username github \
+      --password $READ_PACKAGE_TOKEN \
+      --store-password-in-clear-text 
 
 RUN dotnet restore ./${SERVICE_SRC}/Messaging.Hub.Api/Messaging.Hub.Api.csproj
 RUN dotnet restore ./${SERVICE_SRC}/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj
