@@ -11,7 +11,7 @@ WORKDIR /src
 # Copy csproj files and restore as distinct layers:
 COPY ["Messaging.Demo.Common/Messaging.Demo.Common.csproj", "./Messaging.Demo.Common/"]
 COPY ["${SERVICE_SRC}/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj", "./${SERVICE_SRC}/Messaging.Demo.One.Api/"]
-COPY ["${SERVICE_SRC}/Messaging.Demo.One.Api.Tests/Messaging.Demo.One.Api.Tests.csproj", "./${SERVICE_SRC}/Messaging.Demo.One.Api.Tests/"]
+COPY ["${SERVICE_SRC}/Messaging.Demo.One.Tests/Messaging.Demo.One.Api.Tests.csproj", "./${SERVICE_SRC}/Messaging.Demo.One.Tests/"]
 
 RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
     export READ_PACKAGE_TOKEN=$(cat /run/secrets/READ_PACKAGE_TOKEN) && \
@@ -27,10 +27,10 @@ RUN dotnet restore ./${SERVICE_SRC}/Messaging.Demo.One.Api.Tests/Messaging.Demo.
 
 # Copy the remaining source code:
 COPY ["${SERVICE_SRC}/Messaging.Demo.One.Api/", "./${SERVICE_SRC}/Messaging.Demo.One.Api/"]
-COPY ["${SERVICE_SRC}/Messaging.Demo.One.Api.Tests/", "./${SERVICE_SRC}/Messaging.Demo.One.Api.Tests/"]
+COPY ["${SERVICE_SRC}/Messaging.Demo.One.Tests/", "./${SERVICE_SRC}/Messaging.Demo.One.Tests/"]
 
 # Run tests and publish the API:
-RUN dotnet test ./${SERVICE_SRC}/Messaging.Demo.One.Api.Tests/Messaging.Demo.One.Api.Tests.csproj -c Release --no-restore --logger:trx --results-directory /test-results
+RUN dotnet test ./${SERVICE_SRC}/Messaging.Demo.One.Tests/Messaging.Demo.One.Api.Tests.csproj -c Release --no-restore --logger:trx --results-directory /test-results
 RUN dotnet publish ./${SERVICE_SRC}/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj -c Release -o /service/publish --no-restore   
 
 FROM scratch AS test-results
