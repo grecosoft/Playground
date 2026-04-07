@@ -1,14 +1,18 @@
 apiVersion: azconfig.io/v1
 kind: AzureAppConfigurationProvider
 metadata:
-  name: service-one-appconfig-provider
+  name:  demo-one-api-appconfig-provider
 spec:
   endpoint: ${APP_CONFIG_ENDPOINT}
   target:
-    configMapName: service-one-appconfig
+    configMapName: demo-one-api-appconfig
     configMapData: 
       type: json
-      key: config.json
+      key: appsettings.k8s.json
+  configuration:
+    selectors:
+      - keyFilter: "*"
+        labelFilter: demo-one-api
   auth:
     workloadIdentity:
-      serviceAccountName: solution-sa
+      serviceAccountName: demo-one-api-sa

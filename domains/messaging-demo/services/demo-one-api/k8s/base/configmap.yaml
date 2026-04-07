@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: service-config-map
+  name: demo-one-api-configmap
 data:
   CACHE_TTL_SECONDS: "300"
   FEATURE_FLAG_ENABLED: "true"

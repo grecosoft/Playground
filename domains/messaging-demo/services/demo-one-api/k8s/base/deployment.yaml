@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-one
+  name: demo-one-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: service-one
+      app: demo-one-api
   template:
     metadata:
       labels:
         azure.workload.identity/use: "true"
-        app: service-one
+        app: demo-one-api
     spec:
-      serviceAccountName: solution-sa
+      serviceAccountName: demo-one-api-sa
       containers:
-        - name: service-one
-          image: registryterrapin.azurecr.io/playground/service-one:1.0.0.0
+        - name: demo-one-api
+          image: registryworkingstork.azurecr.io/playground/demo-one-api:1.0.0.0
           envFrom:
             - configMapRef:
-                name: service-config-map
+                name: demo-one-api-configmap
           ports:
             - containerPort: 80
           volumeMounts: 
@@ -35,4 +35,4 @@ spec:
       volumes:
         - name: config-volume 
           configMap: 
-            name: service-one-appconfig
+            name: demo-one-api-appconfig

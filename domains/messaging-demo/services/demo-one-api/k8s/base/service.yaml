@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-one
+  name: demo-one-api-service
 spec:
   selector:
-    app: service-one
+    app: demo-one-api
   ports:
     - port: 80
       targetPort: 80
