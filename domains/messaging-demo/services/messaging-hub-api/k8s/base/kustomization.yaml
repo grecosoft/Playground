@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - deployment.yaml
   # - service.yaml
-  # - serviceaccount.yaml
+  - serviceaccount.yaml
   # - configmap.yaml
   # - appconfig-provider.yaml
 

@@ -10,10 +10,10 @@ spec:
   template:
     metadata:
       labels:
-        # azure.workload.identity/use: "true"
+        azure.workload.identity/use: "true"
         app: messaging-hub-api
     spec:
-      # serviceAccountName: solution-sa
+      serviceAccountName: messaging-hub-api-sa
       containers:
         - name: messaging-hub-api
           image: registryworkingstork.azurecr.io/playground/messaging-hub-api:1.0.0.0
