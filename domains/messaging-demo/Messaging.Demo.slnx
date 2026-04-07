@@ -11,6 +11,7 @@
     <Project Path="services/messaging-hub-api/src/Messaging.Hub.Api/Messaging.Hub.Api.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="services/demo-one-api/src/Messaging.Demo.One.Tests/Messaging.Demo.One.Tests.csproj" />
     <Project Path="services/messaging-hub-api/src/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj" />
   </Folder>
   <Project Path="Messaging.Demo.Common/Messaging.Demo.Common.csproj" />
