@@ -19,11 +19,6 @@
   </ItemGroup>
   
   <ItemGroup>
-<!--    <ProjectReference Include="..\..\..\..\..\..\common\src\messaging\Common.Messaging.Core\Common.Messaging.Core.csproj" />-->
-<!--    <ProjectReference Include="..\..\..\..\..\..\common\src\messaging\Common.Messaging.Entities\Common.Messaging.Entities.csproj" />-->
-<!--    <ProjectReference Include="..\..\..\..\..\..\common\src\messaging\Common.Messaging\Common.Messaging.csproj" />-->
-<!--    -->
-<!--    <ProjectReference Include="..\..\..\..\..\..\common\src\Common.Bootstrapping\Common.Bootstrapping.csproj" />-->
     <ProjectReference Include="..\..\..\..\Messaging.Demo.Common\Messaging.Demo.Common.csproj" />
   </ItemGroup>
 
