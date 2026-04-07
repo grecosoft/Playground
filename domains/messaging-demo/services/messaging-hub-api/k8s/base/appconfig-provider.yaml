@@ -1,14 +1,14 @@
 apiVersion: azconfig.io/v1
 kind: AzureAppConfigurationProvider
 metadata:
-  name: service-one-appconfig-provider
+  name:  messaging-hub-api-appconfig-provider
 spec:
   endpoint: ${APP_CONFIG_ENDPOINT}
   target:
-    configMapName: service-one-appconfig
+    configMapName: messaging-hub-api-appconfig
     configMapData: 
       type: json
       key: config.json
   auth:
     workloadIdentity:
-      serviceAccountName: solution-sa
+      serviceAccountName: messaging-hub-api-sa
