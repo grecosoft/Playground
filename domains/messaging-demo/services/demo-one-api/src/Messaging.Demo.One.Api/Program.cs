@@ -1,9 +1,4 @@
 using Common.Bootstrapping;
-using Common.Messaging;
-using Common.Messaging.Commands;
-using Common.Messaging.Core;
-using Common.Messaging.Core.Commands;
-using Messaging.Demo.Common.Commands;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,24 +33,24 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-app.MapGet("/send-rpc-command", async (
-    [FromKeyedServices("demo-two-api")]ICommandEndpoint  microserviceTwo,
-    CancellationToken cancellationToken) =>
-{
-    var command = new PingCommand("value-one", "value-two");
-    var response = await microserviceTwo.SendCommandWithReplyAsync(command, cancellationToken);
-    return Results.Ok(response);
-});
-
-app.MapGet("/send-async-command", async (
-    [FromKeyedServices("demo-two-api")]ICommandEndpoint  microserviceTwo,
-    CancellationToken cancellationToken) =>
-{
-
-    var command = new DeviceUpdateCommand(Guid.NewGuid().ToString());
-    await microserviceTwo.SendCommandAsync(command, cancellationToken);
-    return Results.Ok();
-});
+// app.MapGet("/send-rpc-command", async (
+//     [FromKeyedServices("demo-two-api")]ICommandEndpoint  microserviceTwo,
+//     CancellationToken cancellationToken) =>
+// {
+//     var command = new PingCommand("value-one", "value-two");
+//     var response = await microserviceTwo.SendCommandWithReplyAsync(command, cancellationToken);
+//     return Results.Ok(response);
+// });
+//
+// app.MapGet("/send-async-command", async (
+//     [FromKeyedServices("demo-two-api")]ICommandEndpoint  microserviceTwo,
+//     CancellationToken cancellationToken) =>
+// {
+//
+//     var command = new DeviceUpdateCommand(Guid.NewGuid().ToString());
+//     await microserviceTwo.SendCommandAsync(command, cancellationToken);
+//     return Results.Ok();
+// });
 
 
 
