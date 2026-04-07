@@ -1,8 +1,20 @@
+using Common.Bootstrapping;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+var credential = builder.AddTokenCredential();
+var boostrapLogger = builder.AddLogging(c =>
+{
+    c.WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
+});
+
+builder.AddConfiguration(boostrapLogger, credential);
 
 var app = builder.Build();
 

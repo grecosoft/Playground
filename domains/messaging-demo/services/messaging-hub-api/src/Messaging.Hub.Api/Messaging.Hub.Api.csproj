@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Common.Messaging.Entities" Version="1.0.0.17" />
+    <PackageReference Include="Common.Bootstrapping" Version="1.0.0.20" />
+    <PackageReference Include="Common.Messaging.Entities" Version="1.0.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.4" />
     <PackageReference Include="Polly" Version="8.6.6" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
   </ItemGroup>
 
   <ItemGroup>
