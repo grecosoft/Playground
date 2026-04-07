@@ -4,5 +4,6 @@
     <Project Path="messaging/Common.Messaging.Entities/Common.Messaging.Entities.csproj" />
     <Project Path="messaging\Common.Messaging\Common.Messaging.csproj" />
   </Folder>
+  <Project Path="Common.Bootstrapping/Common.Bootstrapping.csproj" />
   <Project Path="Common.Services.Tests/Common.Services.Tests.csproj" />
 </Solution>
