@@ -4,7 +4,7 @@ EXPOSE 5081
 
 FROM  mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
-ENV SERVICE_SRC=services/messaging-demo-api/src
+ENV SERVICE_SRC=services/demo-one-api/src
 
 WORKDIR /src
 
