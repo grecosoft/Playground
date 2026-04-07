@@ -5,7 +5,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - serviceaccount.yaml
-  # - configmap.yaml
+  - configmap.yaml
   - appconfig-provider.yaml
 
 labels:
