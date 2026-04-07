@@ -9,6 +9,10 @@ spec:
     configMapData: 
       type: json
       key: config.json
+  configuration:
+    selectors:
+      - labelFilter: messaging-hub-api
+
   auth:
     workloadIdentity:
       serviceAccountName: messaging-hub-api-sa
