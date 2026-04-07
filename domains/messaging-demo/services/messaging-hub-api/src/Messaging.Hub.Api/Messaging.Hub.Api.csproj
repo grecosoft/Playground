@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\common\src\Common.Bootstrapping\Common.Bootstrapping.csproj" />
     <ProjectReference Include="..\..\..\..\Messaging.Demo.Common\Messaging.Demo.Common.csproj" />
   </ItemGroup>
 
