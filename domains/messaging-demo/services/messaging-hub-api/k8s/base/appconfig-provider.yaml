@@ -8,7 +8,7 @@ spec:
     configMapName: messaging-hub-api-appconfig
     configMapData: 
       type: json
-      key: config.json
+      key: appsettings.k8s.json
   configuration:
     selectors:
       - keyFilter: "*"
