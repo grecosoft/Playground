@@ -17,7 +17,7 @@ labels:
 
   # Additional labels not used for selection but useful to be present on all resources for this service.
   - pairs:
-      department: IS-T
+      department: IST
     includeTemplates: true
 
 # Patch the name of the ConfigMap created by the Azure App Configuration Provider
