@@ -2,13 +2,79 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - deployment.yaml
-  - service.yaml
-  - serviceaccount.yaml
-  - configmap.yaml
-  - appconfig-provider.yaml
+  - ../../../../k8s/api
+
+namePrefix: demo-one-api-
 
 labels:
+  # Add domain and service labels are used to identify resources specific to this service for selection.
   - pairs:
-      solution.io/dept: policy
-      solution.io/team: underwriting
+      domain: messaging-demo
+      service: demo-one-api
+    includeTemplates: true 
+    includeSelectors: true 
+
+  # Additional labels not used for selection but useful to be present on all resources for this service.
+  - pairs:
+      department: IST
+
+# Add key/value pairs to the ConfigMap that will be mapped to environment variables in the deployment. 
+# This should only be used var values not stored in Azure App Configuration.
+configMapGenerator:
+- name: configmap 
+  literals:
+  - LOG_LEVEL=debug
+  - MAX_CONNECTIONS=100
+
+patches:
+  # Patch the name of the ConfigMap created by the Azure App Configuration Provider
+  # and the selectors specific to this service:
+  - target:
+      kind: AzureAppConfigurationProvider
+    patch: |-
+      apiVersion: azconfig.io/v1
+      kind: AzureAppConfigurationProvider
+      metadata:
+        name: demo-one-api-appconfig-provider
+      spec:
+        target:
+          configMapName: demo-one-api-appconfig
+        configuration:
+          selectors:
+            - keyFilter: "*"
+              labelFilter: demo-one-api
+
+  # Patch the following on the deployment:
+  #   - Patch the name of the service account to the service's associated workload identity.
+  #   - Patch name of the image to point to the correct image in the ACR. 
+  #     The build pipeline will update this with the correct image tag.
+  #   - Patch the volume named config-volume to point to the above named ConfigMap.
+  - target:
+      kind: Deployment
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: demo-one-api
+      spec:
+        template:
+          spec:
+            serviceAccountName: demo-one-api-sa
+            containers:
+              - name: service-api
+                image: registryworkingstork.azurecr.io/playground/demo-one-api:0.0.0.0
+            volumes:
+              - name: config-volume 
+                configMap: 
+                  name: demo-one-api-appconfig
+
+  # TODO:  Remove after set by the deploy pipeline. 
+  - target:
+      kind: ServiceAccount
+    patch: |-
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: demo-one-api-sa
+        annotations:
+          azure.workload.identity/client-id: 15110a40-02f0-4968-8299-a93a1efb7f7f
