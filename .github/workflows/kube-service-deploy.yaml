@@ -75,7 +75,7 @@ jobs:
                 path: ./manifests/
 
             - name: Load App Configuration
-              uses: ./.github/actions/load-app-config
+              uses: ./.github/actions/azure-app-config
               with:
                 appconfig-name: ac-dev-eastus-o4wtmt
                 label: ${{ inputs.service-name }}-deploy
