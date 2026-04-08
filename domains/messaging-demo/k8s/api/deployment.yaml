@@ -16,7 +16,7 @@ spec:
       serviceAccountName: messaging-hub-api-sa
       containers:
         - name: messaging-hub-api
-          image: <ci>
+          image: registryworkingstork.azurecr.io/playground/demo-one-api:1.0.0.0
           envFrom:
             - configMapRef:
                 name: messaging-hub-api-configmap
