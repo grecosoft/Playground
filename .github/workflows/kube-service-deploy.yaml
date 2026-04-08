@@ -74,6 +74,12 @@ jobs:
                 name: kubernetes-manifests-${{ github.run_id }}
                 path: ./manifests/
 
+            - name: Load App Configuration
+              uses: ./.github/actions/load-app-config
+              with:
+                appconfig-name: ${{ vars.APP_CONFIG_ENDPOINT }}
+                label: ${{ inputs.service-name }}-deploy
+
             - name: Set Manifest Variables
               run: |
                 export WORKLOAD_CLIENT_ID=${{ vars.WORKLOAD_CLIENT_ID }}
