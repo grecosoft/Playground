@@ -83,6 +83,11 @@ jobs:
                 appconfig-name: ac-dev-eastus-o4wtmt
                 label: ${{ inputs.service-name }}-deploy
 
+            - name: Test App Configuration Variables
+              run: |
+                echo "WORKLOAD_CLIENT_ID: $WORKLOAD_CLIENT_ID"
+                echo "WORKLOAD_TENANT_ID: $WORKLOAD_TENANT_ID"
+
             - name: Set Manifest Variables
               run: |
                 export WORKLOAD_CLIENT_ID=${{ vars.WORKLOAD_CLIENT_ID }}

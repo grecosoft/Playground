@@ -14,3 +14,4 @@ resource "azurerm_role_assignment" "app_config_users" {
   role_definition_name = "App Configuration Data Reader"
   scope                = local.solution.configuration.app_config_id
 }
+
