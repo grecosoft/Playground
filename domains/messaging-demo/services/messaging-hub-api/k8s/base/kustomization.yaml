@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - ../../../../k8s/api
-  - configmap.yaml
 
 namePrefix: messaging-hub-api-
 
@@ -19,9 +18,17 @@ labels:
   - pairs:
       department: IST
 
-# Patch the name of the ConfigMap created by the Azure App Configuration Provider
-# and the selectors specific to this service:
+# Add key/value pairs to the ConfigMap that will be mapped to environment variables in the deployment. 
+# This should only be used var values not stored in Azure App Configuration.
+configMapGenerator:
+- name: configmap 
+  literals:
+  - LOG_LEVEL=debug
+  - MAX_CONNECTIONS=100
+
 patches:
+  # Patch the name of the ConfigMap created by the Azure App Configuration Provider
+  # and the selectors specific to this service:
   - target:
       kind: AzureAppConfigurationProvider
     patch: |-
@@ -37,11 +44,11 @@ patches:
             - keyFilter: "*"
               labelFilter: messaging-hub-api
 
-# Patch the following on the deployment:
-#   - Patch the name of the service account to the service's associated workload identity.
-#   - Patch name of the image to point to the correct image in the ACR. 
-#     The build pipeline will update this with the correct image tag.
-#   - Patch the volume named config-volume to point to the above named ConfigMap.
+  # Patch the following on the deployment:
+  #   - Patch the name of the service account to the service's associated workload identity.
+  #   - Patch name of the image to point to the correct image in the ACR. 
+  #     The build pipeline will update this with the correct image tag.
+  #   - Patch the volume named config-volume to point to the above named ConfigMap.
   - target:
       kind: Deployment
     patch: |-
@@ -61,6 +68,7 @@ patches:
                 configMap: 
                   name: messaging-hub-api-appconfig
 
+  # TODO:  Remove after set by the deploy pipeline. 
   - target:
       kind: ServiceAccount
     patch: |-
