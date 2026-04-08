@@ -1,7 +1,7 @@
 apiVersion: azconfig.io/v1
 kind: AzureAppConfigurationProvider
 metadata:
-  name:  messaging-hub-api-appconfig-provider
+  name:  appconfig-provider
 spec:
   endpoint: ${APP_CONFIG_ENDPOINT}
   target:

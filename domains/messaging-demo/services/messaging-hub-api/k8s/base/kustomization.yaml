@@ -5,6 +5,21 @@ resources:
   - ../../../../k8s/api
   - configmap.yaml
 
+namePrefix: messaging-hub-api-
+
+labels:
+  # Add domain and service labels are used to identify resources specific to this service for selection.
+  - pairs:
+      domain: messaging-demo
+      service: messaging-hub-api
+    includeTemplates: true 
+    includeSelectors: true 
+
+  # Additional labels not used for selection but useful to be present on all resources for this service.
+  - pairs:
+      department: IS&T
+    includeTemplates: true
+
 # Patch the name of the ConfigMap created by the Azure App Configuration Provider
 # and the selectors specific to this service:
 patches:
@@ -40,8 +55,12 @@ patches:
                 configMap: 
                   name: messaging-hub-api-appconfig
 
-
-labels:
-  - pairs:
-      solution.io/dept: policy
-      solution.io/team: underwriting
+  - target:
+      kind: ServiceAccount
+    patch: |-
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: messaging-hub-api-sa
+        annotations:
+          azure.workload.identity/client-id: e75e84b5-b68c-47ef-a88b-419de6ab1af9
