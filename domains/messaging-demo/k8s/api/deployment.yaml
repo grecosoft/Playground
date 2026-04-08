@@ -16,7 +16,7 @@ spec:
       serviceAccountName: messaging-hub-api-sa
       containers:
         - name: messaging-hub-api
-          image: registryworkingstork.azurecr.io/playground/messaging-hub-api:1.0.0.0
+          image: <ci>
           envFrom:
             - configMapRef:
                 name: messaging-hub-api-configmap
@@ -35,4 +35,4 @@ spec:
       volumes:
         - name: config-volume 
           configMap: 
-            name: messaging-hub-api-appconfig
+            name: <patch>

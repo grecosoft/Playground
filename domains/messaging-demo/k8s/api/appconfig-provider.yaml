@@ -5,14 +5,14 @@ metadata:
 spec:
   endpoint: ${APP_CONFIG_ENDPOINT}
   target:
-    configMapName: messaging-hub-api-appconfig
+    configMapName: <patch>
     configMapData: 
       type: json
       key: appsettings.k8s.json
   configuration:
     selectors:
-      - keyFilter: "*"
-        labelFilter: messaging-hub-api
+      - keyFilter: <patch>
+        labelFilter: <patch>
   auth:
     workloadIdentity:
       serviceAccountName: messaging-hub-api-sa

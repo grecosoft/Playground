@@ -2,11 +2,44 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - deployment.yaml
-  - service.yaml
-  - serviceaccount.yaml
+  - ../../../../k8s/api
   - configmap.yaml
-  - appconfig-provider.yaml
+
+# Patch the name of the ConfigMap created by the Azure App Configuration Provider
+# and the selectors specific to this service:
+patches:
+  - target:
+      kind: AzureAppConfigurationProvider
+    patch: |-
+      apiVersion: azconfig.io/v1
+      kind: AzureAppConfigurationProvider
+      metadata:
+        name: messaging-hub-api-appconfig-provider
+      spec:
+        target:
+          configMapName: messaging-hub-api-appconfig
+        configuration:
+          selectors:
+            - keyFilter: "*"
+              labelFilter: messaging-hub-api
+
+# Patch the following on the deployment:
+#     - Patch the volume named config-volume to point to the above named ConfigMap.
+  - target:
+      kind: Deployment
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: messaging-hub-api
+      spec:
+        template:
+          spec:
+            volumes:
+              - name: config-volume 
+                configMap: 
+                  name: messaging-hub-api-appconfig
+
 
 labels:
   - pairs:

@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    azure.workload.identity/client-id: e75e84b5-b68c-47ef-a88b-419de6ab1af9
+    azure.workload.identity/tenant-id: ${WORKLOAD_TENANT_ID}
+  labels:
+    azure.workload.identity/use: "true"
+    solution.io/dept: policy
+    solution.io/team: underwriting
+  name: messaging-hub-api-sa
+---
+apiVersion: v1
+data:
+  CACHE_TTL_SECONDS: "300"
+  FEATURE_FLAG_ENABLED: "true"
+kind: ConfigMap
+metadata:
+  labels:
+    solution.io/dept: policy
+    solution.io/team: underwriting
+  name: messaging-hub-api-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    solution.io/dept: policy
+    solution.io/team: underwriting
+  name: messaging-hub-api-service
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: messaging-hub-api
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    solution.io/dept: policy
+    solution.io/team: underwriting
+  name: messaging-hub-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messaging-hub-api
+  template:
+    metadata:
+      labels:
+        app: messaging-hub-api
+        azure.workload.identity/use: "true"
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: messaging-hub-api-configmap
+        image: registryworkingstork.azurecr.io/playground/messaging-hub-api:1.0.0.0
+        name: messaging-hub-api
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        volumeMounts:
+        - mountPath: /service/configs
+          name: config-volume
+      serviceAccountName: messaging-hub-api-sa
+      volumes:
+      - configMap:
+          name: messaging-hub-api-appconfig
+        name: config-volume
+---
+apiVersion: azconfig.io/v1
+kind: AzureAppConfigurationProvider
+metadata:
+  labels:
+    solution.io/dept: policy
+    solution.io/team: underwriting
+  name: messaging-hub-api-appconfig-provider
+spec:
+  auth:
+    workloadIdentity:
+      serviceAccountName: messaging-hub-api-sa
+  configuration:
+    selectors:
+    - keyFilter: '*'
+      labelFilter: messaging-hub-api
+  endpoint: ${APP_CONFIG_ENDPOINT}
+  target:
+    configMapData:
+      key: appsettings.k8s.json
+      type: json
+    configMapName: messaging-hub-api-appconfig
