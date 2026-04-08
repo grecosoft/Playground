@@ -19,7 +19,7 @@ spec:
           image: registryworkingstork.azurecr.io/playground/messaging-hub-api:1.0.0.0
           envFrom:
             - configMapRef:
-                name: messaging-hub-api-configmap
+                name: messaging-hub-api-configmap 
           ports:
             - containerPort: 80
           volumeMounts: 
