@@ -24,6 +24,10 @@ output "solution_location" {
   value = local.location
 }
 
+output "solution_tenant_id" {
+  value = data.azurerm_client_config.current.tenant_id
+}
+
 output "solution_developers_group_id" {
   value = data.azuread_group.solution_developers.object_id
 }
