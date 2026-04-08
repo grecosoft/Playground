@@ -6,7 +6,7 @@ locals {
   service_configs = concat(
     local.common_configs, 
     module.messaging.service_config,
-    module.build.service_config
+    module.deploy.deploy_variables
   )
 }
 
@@ -35,8 +35,8 @@ module "messaging" {
   rpc_reply_timeout_seconds = 50
 }
 
-module "build" {
-  source = "../../../../../common/iac/modules/service_build"
+module "deploy" {
+  source = "../../../../../common/iac/modules/service_deploy"
 
   service_name = local.service_name
   workload_client_id = module.identity.client_id
