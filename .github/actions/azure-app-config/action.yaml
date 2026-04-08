@@ -25,10 +25,11 @@ runs:
           --name ${{ inputs.appconfig-name }} \
           --label ${{ inputs.label }} \
           --auth-mode login \
-          --output json \
-        | jq -r '.[] | "\(.key)=\(.value)"' \
-        | while IFS='=' read -r key value; do
-            trimmed_key=$(echo "$key" | sed "s|^${KEY_PREFIX}||")
-            sanitized_key=$(echo "$trimmed_key" | tr ':' '_' | tr '-' '_' | tr '[:lower:]' '[:upper:]')
-            echo "$sanitized_key=$value" >> $GITHUB_ENV
-          done
+           --output json  
+           # \
+        # | jq -r '.[] | "\(.key)=\(.value)"' \
+        # | while IFS='=' read -r key value; do
+        #     trimmed_key=$(echo "$key" | sed "s|^${KEY_PREFIX}||")
+        #     sanitized_key=$(echo "$trimmed_key" | tr ':' '_' | tr '-' '_' | tr '[:lower:]' '[:upper:]')
+        #     echo "$sanitized_key=$value" >> $GITHUB_ENV
+        #   done
