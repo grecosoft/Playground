@@ -6,7 +6,6 @@ metadata:
     azure.workload.identity/tenant-id: ${WORKLOAD_TENANT_ID}
   labels:
     azure.workload.identity/use: "true"
-    department: IST
     domain: messaging-demo
     service: messaging-hub-api
   name: messaging-hub-api-sa
@@ -18,7 +17,6 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    department: IST
     domain: messaging-demo
     service: messaging-hub-api
   name: messaging-hub-api-configmap
@@ -27,7 +25,6 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    department: IST
     domain: messaging-demo
     service: messaging-hub-api
   name: messaging-hub-api-service
@@ -44,7 +41,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    department: IST
     domain: messaging-demo
     service: messaging-hub-api
   name: messaging-hub-api-deployment
@@ -52,14 +48,12 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: messaging-hub-api
       domain: messaging-demo
       service: messaging-hub-api
   template:
     metadata:
       labels:
         azure.workload.identity/use: "true"
-        department: IST
         domain: messaging-demo
         service: messaging-hub-api
     spec:
@@ -91,7 +85,6 @@ apiVersion: azconfig.io/v1
 kind: AzureAppConfigurationProvider
 metadata:
   labels:
-    department: IST
     domain: messaging-demo
     service: messaging-hub-api
   name: messaging-hub-api-appconfig-provider

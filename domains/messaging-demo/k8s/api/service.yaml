@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: service
 spec:
+  selector:
+    domain: <patch>
+    service: <patch>
   ports:
     - port: 80
       targetPort: 80

@@ -6,7 +6,8 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: messaging-hub-api
+      domain: <patch>
+      service: <patch>
   template:
     metadata:
       labels:
