@@ -13,10 +13,10 @@ spec:
       labels:
         azure.workload.identity/use: "true"
     spec:
-      serviceAccountName: messaging-hub-api-sa
+      serviceAccountName: <patch>
       containers:
         - name: service-api
-          image: registryworkingstork.azurecr.io/playground/messaging-hub-api:1.0.0.0
+          image: <patch>
           envFrom:
             - configMapRef:
                 name: messaging-hub-api-configmap 

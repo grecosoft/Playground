@@ -16,9 +16,8 @@ labels:
     includeSelectors: true 
 
   # Additional labels not used for selection but useful to be present on all resources for this service.
-  # - pairs:
-  #     department: IST
-  #   includeTemplates: true
+  - pairs:
+      department: IST
 
 # Patch the name of the ConfigMap created by the Azure App Configuration Provider
 # and the selectors specific to this service:
@@ -39,7 +38,10 @@ patches:
               labelFilter: messaging-hub-api
 
 # Patch the following on the deployment:
-#     - Patch the volume named config-volume to point to the above named ConfigMap.
+#   - Patch the name of the service account to the service's associated workload identity.
+#   - Patch name of the image to point to the correct image in the ACR. 
+#     The build pipeline will update this with the correct image tag.
+#   - Patch the volume named config-volume to point to the above named ConfigMap.
   - target:
       kind: Deployment
     patch: |-
@@ -50,6 +52,10 @@ patches:
       spec:
         template:
           spec:
+            serviceAccountName: messaging-hub-api-sa
+            containers:
+              - name: service-api
+                image: registryworkingstork.azurecr.io/playground/messaging-hub-api:0.0.0.0
             volumes:
               - name: config-volume 
                 configMap: 
