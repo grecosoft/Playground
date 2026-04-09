@@ -6,8 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
+
+  <ItemGroup Condition="'$(UseProjectReferences)' == 'true'">
     <ProjectReference Include="..\..\..\common\src\messaging\Common.Messaging.Entities\Common.Messaging.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseProjectReferences)' != 'true'">
+    <PackageReference Include="Common.Messaging.Entities" Version="1.0.0.20" />
   </ItemGroup>
 
 </Project>

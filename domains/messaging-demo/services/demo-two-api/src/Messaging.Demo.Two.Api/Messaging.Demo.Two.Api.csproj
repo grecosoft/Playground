@@ -12,10 +12,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Messaging.Demo.Common\Messaging.Demo.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseProjectReferences)' == 'true'">
     <ProjectReference Include="..\..\..\..\..\..\common\src\messaging\Common.Messaging.Core\Common.Messaging.Core.csproj" />
     <ProjectReference Include="..\..\..\..\..\..\common\src\messaging\Common.Messaging.Entities\Common.Messaging.Entities.csproj" />
     <ProjectReference Include="..\..\..\..\..\..\common\src\messaging\Common.Messaging\Common.Messaging.csproj" />
-    <ProjectReference Include="..\..\..\..\Messaging.Demo.Common\Messaging.Demo.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseProjectReferences)' != 'true'">
+    <PackageReference Include="Common.Messaging.Core" Version="1.0.0.20" />
+    <PackageReference Include="Common.Messaging.Entities" Version="1.0.0.20" />
+    <PackageReference Include="Common.Messaging" Version="1.0.0.20" />
   </ItemGroup>
 
 </Project>
