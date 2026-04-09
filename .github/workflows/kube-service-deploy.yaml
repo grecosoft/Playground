@@ -90,8 +90,6 @@ jobs:
 
             - name: Set Manifest Variables
               run: |
-                # export WORKLOAD_CLIENT_ID=${{ vars.WORKLOAD_CLIENT_ID }}
-                # export WORKLOAD_TENANT_ID=${{ vars.WORKLOAD_TENANT_ID }} 
                 export APP_CONFIG_ENDPOINT=${{ vars.APP_CONFIG_ENDPOINT }}
 
                 envsubst < ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml > \

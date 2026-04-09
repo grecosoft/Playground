@@ -68,13 +68,3 @@ patches:
                 configMap: 
                   name: demo-one-api-appconfig
 
-  # TODO:  Remove after set by the deploy pipeline. 
-  - target:
-      kind: ServiceAccount
-    patch: |-
-      apiVersion: v1
-      kind: ServiceAccount
-      metadata:
-        name: demo-one-api-sa
-        annotations:
-          azure.workload.identity/client-id: 15110a40-02f0-4968-8299-a93a1efb7f7f
