@@ -60,3 +60,9 @@ variable "authorization" {
     redirect_uris = list(string)
   })
 }
+
+# Logging Variables:
+variable "Logging_SEQ_URL" {
+  description = "The URL of the Seq logging server."
+  type        = string
+}

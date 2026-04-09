@@ -83,3 +83,4 @@ module "messaging" {
   servicebus_namespace_id = azurerm_servicebus_namespace.service_bus.id
   solution_developers_group_id = data.azuread_group.solution_developers.object_id 
 }
+

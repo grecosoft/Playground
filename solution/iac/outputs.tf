@@ -41,13 +41,7 @@ output "kubernetes" {
 }
 
 output "configuration" {
-  value = {
-    key_vault_name = module.configuration.key_vault_name
-    key_vault_id = module.configuration.key_vault_id
-    key_vault_uri = module.configuration.key_vault_uri
-    app_config_name = module.configuration.app_config_name
-    app_config_id = module.configuration.app_config_id
-  }
+  value = local.solution_configuration
 }
 
 output "servicebus" {

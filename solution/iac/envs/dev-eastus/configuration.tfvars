@@ -21,3 +21,5 @@ authorization = {
     "http://localhost:8080"
   ]
 }
+
+Logging_SEQ_URL = "http://seq:5341"
