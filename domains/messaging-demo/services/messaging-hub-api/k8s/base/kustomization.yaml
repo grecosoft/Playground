@@ -42,9 +42,8 @@ patches:
         configuration:
           selectors:
             - keyFilter: "*"
-              labelFilter: solution-configs
-            - keyFilter: "*"
               labelFilter: messaging-hub-api
+            - labelFilter: solution-configs
 
   # Patch the following on the deployment:
   #   - Patch the name of the service account to the service's associated workload identity.
