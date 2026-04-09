@@ -80,7 +80,7 @@ jobs:
             - name: Load App Configuration
               uses: ./.github/actions/azure-app-config
               with:
-                appconfig-name: ac-dev-eastus-o4wtmt
+                appconfig-name: ${{ vars.APP_CONFIG_ENDPOINT }}
                 label: ${{ inputs.service-name }}-deploy
 
             - name: Test App Configuration Variables
