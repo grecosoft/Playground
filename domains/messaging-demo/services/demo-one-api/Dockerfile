@@ -30,8 +30,18 @@ COPY ["${SERVICE_SRC}/Messaging.Demo.One.Api/", "./${SERVICE_SRC}/Messaging.Demo
 COPY ["${SERVICE_SRC}/Messaging.Demo.One.Tests/", "./${SERVICE_SRC}/Messaging.Demo.One.Tests/"]
 
 # Run tests and publish the API:
-RUN dotnet test ./${SERVICE_SRC}/Messaging.Demo.One.Tests/Messaging.Demo.One.Tests.csproj -c Release --no-restore --logger:trx --results-directory /test-results
-RUN dotnet publish ./${SERVICE_SRC}/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj -c Release -o /service/publish --no-restore   
+RUN dotnet test ./${SERVICE_SRC}/Messaging.Demo.One.Tests/Messaging.Demo.One.Tests.csproj \
+  -c Release \
+  --no-restore \
+  --logger:trx \
+  --results-directory /test-results \
+  -p:UseProjectReferences=false
+
+RUN dotnet publish ./${SERVICE_SRC}/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj \
+  -c Release \
+  -o /service/publish \
+  --no-restore \
+  p:UseProjectReferences=false   
 
 FROM scratch AS test-results
 COPY --from=build /test-results .
