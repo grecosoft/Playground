@@ -80,7 +80,7 @@ jobs:
             - name: Load App Configuration
               uses: ./.github/actions/azure-app-config
               with:
-                appconfig-name: ${{ vars.APP_CONFIG_ENDPOINT }}
+                appconfig-name: ${{ vars.APP_CONFIG_SERVICE_NAME }}
                 label: ${{ inputs.service-name }}-deploy
 
             - name: Test App Configuration Variables
@@ -90,7 +90,7 @@ jobs:
 
             - name: Set Manifest Variables
               run: |
-                export APP_CONFIG_ENDPOINT=${{ vars.APP_CONFIG_ENDPOINT }}
+                export APP_CONFIG_ENDPOINT="https://${{ vars.APP_CONFIG_SERVICE_NAME }}.azconfig.io"
 
                 envsubst < ./manifests/${{ inputs.deploy-environment-name }}-resources.yaml > \
                     ./manifests/${{ inputs.deploy-environment-name }}-deploy-manifest.yaml
