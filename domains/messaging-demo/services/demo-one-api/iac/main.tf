@@ -43,7 +43,6 @@ module "deploy" {
   workload_tenant_id = module.identity.tenant_id
 }
 
-
 # The configuration for the service.
 module "configuration" {
   source               = "../../../../../common/iac/modules/service_configuration"

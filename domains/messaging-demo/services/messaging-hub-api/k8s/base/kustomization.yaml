@@ -68,13 +68,3 @@ patches:
                 configMap: 
                   name: messaging-hub-api-appconfig
 
-  # TODO:  Remove after set by the deploy pipeline. 
-  - target:
-      kind: ServiceAccount
-    patch: |-
-      apiVersion: v1
-      kind: ServiceAccount
-      metadata:
-        name: messaging-hub-api-sa
-        annotations:
-          azure.workload.identity/client-id: e75e84b5-b68c-47ef-a88b-419de6ab1af9

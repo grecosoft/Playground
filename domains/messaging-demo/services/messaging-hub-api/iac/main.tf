@@ -4,7 +4,8 @@ locals {
 
   # Service configurations consisting of common and module level settings:
   service_configs = concat(
-    local.common_configs
+    local.common_configs,
+    module.deploy.deploy_variables
   )
 }
 
@@ -17,6 +18,14 @@ module "identity" {
   location = local.solution_location
   namespace = local.solution_env_name
   oidc_issuer_url = local.solution.kubernetes.oidc_issuer_url
+}
+
+module "deploy" {
+  source = "../../../../../common/iac/modules/service_deploy"
+
+  service_name = local.service_name
+  workload_client_id = module.identity.client_id
+  workload_tenant_id = module.identity.tenant_id
 }
 
 # The configuration for the service.
