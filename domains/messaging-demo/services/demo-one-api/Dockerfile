@@ -41,7 +41,7 @@ RUN dotnet publish ./${SERVICE_SRC}/Messaging.Demo.One.Api/Messaging.Demo.One.Ap
   -c Release \
   -o /service/publish \
   --no-restore \
-  p:UseProjectReferences=false   
+  -p:UseProjectReferences=false   
 
 FROM scratch AS test-results
 COPY --from=build /test-results .
