@@ -18,17 +18,9 @@
     <Using Include="Xunit" />
   </ItemGroup>
   
-  <ItemGroup Condition="'$(UseProjectReferences)' != 'true'">
-    <PackageReference Include="Common.Bootstrapping" Version="1.0.0.20" />
-    <PackageReference Include="Common.Messaging.Entities" Version="1.0.0.20" />
-    <PackageReference Include="Common.Messaging.Core" Version="1.0.0.20" />
-    <PackageReference Include="Common.Messaging" Version="1.0.0.20" />
-  </ItemGroup>
-  
   <ItemGroup>
     <ProjectReference Include="..\Messaging.Demo.Two.Api\Messaging.Demo.Two.Api.csproj" />
     <ProjectReference Include="..\Messaging.Demo.Two.Domain\Messaging.Demo.Two.Domain.csproj" />
     <ProjectReference Include="..\Messaging.Demo.Two.Infra\Messaging.Demo.Two.Infra.csproj" />
   </ItemGroup>
-
 </Project>
