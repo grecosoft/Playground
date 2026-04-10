@@ -42,7 +42,7 @@ jobs:
         k8s-cluster-name: 'aks-cluster' 
         k8s-namespace: 'playground-dev-eastus'
         solution-name: 'playground'
-        service-name: 'demo-one-api'
+        service-name: 'demo-two-api'
         image-registry: 'registryworkingstork.azurecr.io'
         image-tag: "1.0.0.${{ github.run_number }}"
       secrets:
