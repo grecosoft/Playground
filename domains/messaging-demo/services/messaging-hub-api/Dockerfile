@@ -29,6 +29,7 @@ RUN dotnet restore ./${SERVICE_SRC}/Messaging.Hub.Api/Messaging.Hub.Api.csproj
 RUN dotnet restore ./${SERVICE_SRC}/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj
 
 # Copy all the source code:
+COPY ["Messaging.Demo.Common/", "./Messaging.Demo.Common/"]  
 COPY ["${SERVICE_SRC}/", "./${SERVICE_SRC}/"]
 
 # Run tests and publish the API:
