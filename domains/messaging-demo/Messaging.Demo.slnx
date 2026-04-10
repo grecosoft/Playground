@@ -5,10 +5,17 @@
     <Project Path="../../common/src/messaging/Common.Messaging.Entities/Common.Messaging.Entities.csproj" />
     <Project Path="../../common/src/messaging/Common.Messaging/Common.Messaging.csproj" />
   </Folder>
-  <Folder Name="/services/">
+  <Folder Name="/services/" />
+  <Folder Name="/services/demo-one-api/">
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj" />
+  </Folder>
+  <Folder Name="/services/demo-two-api/">
     <Project Path="services/demo-two-api/src/Messaging.Demo.Two.Api/Messaging.Demo.Two.Api.csproj" />
+  </Folder>
+  <Folder Name="/services/messaging-hub-api/">
     <Project Path="services/messaging-hub-api/src/Messaging.Hub.Api/Messaging.Hub.Api.csproj" />
+    <Project Path="services/messaging-hub-api/src/Messaging.Hub.Domain/Messaging.Hub.Domain.csproj" />
+    <Project Path="services/messaging-hub-api/src/Messaging.Hub.Infra/Messaging.Hub.Infra.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Tests/Messaging.Demo.One.Tests.csproj" />

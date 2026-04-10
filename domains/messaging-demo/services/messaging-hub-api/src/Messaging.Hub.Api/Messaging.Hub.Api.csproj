@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Messaging.Demo.Common\Messaging.Demo.Common.csproj" />
+    <ProjectReference Include="..\Messaging.Hub.Domain\Messaging.Hub.Domain.csproj" />
+    <ProjectReference Include="..\Messaging.Hub.Infra\Messaging.Hub.Infra.csproj" />
   </ItemGroup>
 
 </Project>
