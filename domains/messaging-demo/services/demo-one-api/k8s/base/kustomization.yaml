@@ -43,7 +43,8 @@ patches:
           selectors:
             - keyFilter: "*"
               labelFilter: solution-configs
-            - labelFilter: demo-one-api
+            - keyFilter: "*"
+              labelFilter: demo-one-api
 
   # Patch the following on the deployment:
   #   - Patch the name of the service account to the service's associated workload identity.
