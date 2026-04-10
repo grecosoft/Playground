@@ -12,6 +12,8 @@ var boostrapLogger = builder.AddLogging(c =>
 {
     c.WriteTo.Console(
         outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
+    
+    c.WriteTo.Seq(builder.Configuration["Logging:SeqUrl"] ?? "http://localhost:5341");
 });
 
 builder.AddConfiguration(boostrapLogger, credential);
