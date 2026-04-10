@@ -19,9 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Messaging.Hub.Api\Messaging.Hub.Api.csproj" />
-    <ProjectReference Include="..\Messaging.Hub.Domain\Messaging.Hub.Domain.csproj" />
-    <ProjectReference Include="..\Messaging.Hub.Infra\Messaging.Hub.Infra.csproj" />
+    <ProjectReference Include="..\Messaging.Demo.Two.Api\Messaging.Demo.Two.Api.csproj" />
+    <ProjectReference Include="..\Messaging.Demo.Two.Domain\Messaging.Demo.Two.Domain.csproj" />
+    <ProjectReference Include="..\Messaging.Demo.Two.Infra\Messaging.Demo.Two.Infra.csproj" />
   </ItemGroup>
 
 </Project>
