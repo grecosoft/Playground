@@ -11,8 +11,8 @@ WORKDIR /src
 # Copy csproj files and restore as distinct layers:
 COPY ["Messaging.Demo.Common/Messaging.Demo.Common.csproj", "./Messaging.Demo.Common/"]
 COPY ["${SERVICE_SRC}/Messaging.Hub.Api/Messaging.Hub.Api.csproj", "./${SERVICE_SRC}/Messaging.Hub.Api/"]
-COPY ["${SERVICE_SRC}/Messaging.Hub.Api/Messaging.Hub.Domain.csproj", "./${SERVICE_SRC}/Messaging.Hub.Domain/"]
-COPY ["${SERVICE_SRC}/Messaging.Hub.Api/Messaging.Hub.Infra.csproj", "./${SERVICE_SRC}/Messaging.Hub.Infra/"]
+COPY ["${SERVICE_SRC}/Messaging.Hub.Domain/Messaging.Hub.Domain.csproj", "./${SERVICE_SRC}/Messaging.Hub.Domain/"]
+COPY ["${SERVICE_SRC}/Messaging.Hub.Infra/Messaging.Hub.Infra.csproj", "./${SERVICE_SRC}/Messaging.Hub.Infra/"]
 
 COPY ["${SERVICE_SRC}/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj", "./${SERVICE_SRC}/Messaging.Hub.Tests/"]
 
