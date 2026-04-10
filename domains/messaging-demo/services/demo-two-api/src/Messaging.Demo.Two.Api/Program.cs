@@ -1,8 +1,6 @@
 using Common.Bootstrapping;
 using Common.Messaging;
 using Common.Messaging.Commands;
-using Common.Messaging.Core;
-using Common.Messaging.Core.Commands;
 using Messaging.Demo.Common.Commands;
 using Serilog;
 
@@ -21,11 +19,11 @@ var boostrapLogger = builder.AddLogging(c =>
 
 builder.AddConfiguration(boostrapLogger, credential);
 
-builder.Services.AddBusMessaging(
-    boostrapLogger,
-    builder.Configuration);
-
-builder.Services.AddSingleton<ICommandRepository, CommandRepository>();
+// builder.Services.AddBusMessaging(
+//     boostrapLogger,
+//     builder.Configuration);
+//
+// builder.Services.AddSingleton<ICommandRepository, CommandRepository>();
 
 var app = builder.Build();
 
