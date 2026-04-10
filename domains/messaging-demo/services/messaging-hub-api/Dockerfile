@@ -29,10 +29,12 @@ RUN dotnet restore ./${SERVICE_SRC}/Messaging.Hub.Api/Messaging.Hub.Api.csproj
 RUN dotnet restore ./${SERVICE_SRC}/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj
 
 # Copy the remaining source code:
-COPY ["${SERVICE_SRC}/Messaging.Hub.Api/", "./${SERVICE_SRC}/Messaging.Hub.Api/"]
-COPY ["${SERVICE_SRC}/Messaging.Hub.Domain/", "./${SERVICE_SRC}/Messaging.Hub.Domain/"]
-COPY ["${SERVICE_SRC}/Messaging.Hub.Infra/", "./${SERVICE_SRC}/Messaging.Hub.Infra/"]
-COPY ["${SERVICE_SRC}/Messaging.Hub.Tests/", "./${SERVICE_SRC}/Messaging.Hub.Tests/"]
+COPY ["${SERVICE_SRC}/", "./${SERVICE_SRC}/"]
+
+# COPY ["${SERVICE_SRC}/Messaging.Hub.Api/", "./${SERVICE_SRC}/Messaging.Hub.Api/"]
+# COPY ["${SERVICE_SRC}/Messaging.Hub.Domain/", "./${SERVICE_SRC}/Messaging.Hub.Domain/"]
+# COPY ["${SERVICE_SRC}/Messaging.Hub.Infra/", "./${SERVICE_SRC}/Messaging.Hub.Infra/"]
+# COPY ["${SERVICE_SRC}/Messaging.Hub.Tests/", "./${SERVICE_SRC}/Messaging.Hub.Tests/"]
 
 # Run tests and publish the API:
 RUN dotnet test ./${SERVICE_SRC}/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj \
