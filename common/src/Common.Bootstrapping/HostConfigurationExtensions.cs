@@ -40,7 +40,7 @@ public static class HostConfigurationExtensions
             return builder;
         }
         
-        // Add Azure App configuraiton for local development:
+        // Add Azure App configuration for local development:
         builder.Configuration.AddAzureAppConfiguration(options =>
         {
             options.Connect(new Uri(endpoint), tokenCredential);

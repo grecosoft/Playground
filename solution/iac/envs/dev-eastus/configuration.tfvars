@@ -22,4 +22,4 @@ authorization = {
   ]
 }
 
-Logging_SEQ_URL = "http://seq:5341"
+Logging_SEQ_URL = "http://datalust-seq:5341"
