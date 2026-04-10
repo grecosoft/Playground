@@ -11,6 +11,9 @@ WORKDIR /src
 # Copy csproj files and restore as distinct layers:
 COPY ["Messaging.Demo.Common/Messaging.Demo.Common.csproj", "./Messaging.Demo.Common/"]
 COPY ["${SERVICE_SRC}/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj", "./${SERVICE_SRC}/Messaging.Demo.One.Api/"]
+COPY ["${SERVICE_SRC}/Messaging.Demo.One.Domain/Messaging.Demo.One.Domain.csproj", "./${SERVICE_SRC}/Messaging.Demo.One.Domain/"]
+COPY ["${SERVICE_SRC}/Messaging.Demo.One.Infra/Messaging.Demo.One.Infra.csproj", "./${SERVICE_SRC}/Messaging.Demo.One.Infra/"]
+
 COPY ["${SERVICE_SRC}/Messaging.Demo.One.Tests/Messaging.Demo.One.Tests.csproj", "./${SERVICE_SRC}/Messaging.Demo.One.Tests/"]
 
 RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
@@ -25,9 +28,8 @@ RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
 RUN dotnet restore ./${SERVICE_SRC}/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj
 RUN dotnet restore ./${SERVICE_SRC}/Messaging.Demo.One.Tests/Messaging.Demo.One.Tests.csproj
 
-# Copy the remaining source code:
-COPY ["${SERVICE_SRC}/Messaging.Demo.One.Api/", "./${SERVICE_SRC}/Messaging.Demo.One.Api/"]
-COPY ["${SERVICE_SRC}/Messaging.Demo.One.Tests/", "./${SERVICE_SRC}/Messaging.Demo.One.Tests/"]
+# Copy all the source code:
+COPY ["${SERVICE_SRC}/", "./${SERVICE_SRC}/"]
 
 # Run tests and publish the API:
 RUN dotnet test ./${SERVICE_SRC}/Messaging.Demo.One.Tests/Messaging.Demo.One.Tests.csproj \
