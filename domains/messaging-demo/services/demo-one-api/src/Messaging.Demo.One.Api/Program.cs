@@ -19,7 +19,7 @@ var boostrapLogger = builder.AddLogging(c =>
 });
 
 // Add services to the container.
-builder.Services.AddOpenApi();
+// builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddBusMessaging(
@@ -34,13 +34,13 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    // app.MapOpenApi();
 }
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 
 app.MapGet("/send-rpc-command", async (
