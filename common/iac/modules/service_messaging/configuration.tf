@@ -1,6 +1,6 @@
 
 output "service_config" {
-  description = "Messaging configurations to be added to service's overall configuration."
+  description = "Messaging configuration used by a service to send messages to other solution services."
   value = concat([
     { key = "ServiceMessaging:ServiceBusHostName", value = lower(var.solution_servicebus.host_name) },
     { key = "ServiceMessaging:ServiceId", value = var.service_id },
