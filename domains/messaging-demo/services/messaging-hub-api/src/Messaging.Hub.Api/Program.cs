@@ -3,10 +3,6 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 var credential = builder.AddTokenCredential();
 builder.AddConfiguration(credential);
 
@@ -18,7 +14,10 @@ var boostrapLogger = builder.AddLogging(c =>
     c.WriteTo.Seq(builder.Configuration["Logging:SeqUrl"] ?? "http://localhost:5341");
 });
 
-boostrapLogger.LogError("Starting up...");
+// Add services to the container.
+builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -27,6 +26,9 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

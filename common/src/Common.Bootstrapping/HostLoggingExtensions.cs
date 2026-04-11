@@ -12,6 +12,7 @@ public static class HostLoggingExtensions
         Action<LoggerConfiguration> configure)
     {
         var loggerConfiguration = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
             .Enrich.FromLogContext();
         
         configure(loggerConfiguration);

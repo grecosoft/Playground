@@ -18,13 +18,13 @@ var boostrapLogger = builder.AddLogging(c =>
 
 // Add services to the container.
 builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddBusMessaging(
     boostrapLogger,
     builder.Configuration);
 
 builder.Services.AddSingleton<ICommandRepository, CommandRepository>();
-
 
 
 var app = builder.Build();
@@ -34,6 +34,9 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

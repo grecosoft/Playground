@@ -12,6 +12,7 @@
         "opencontainers",
         "registryterrapin",
         "secretvalue",
+        "Serilog",
         "serviceaccount",
         "servicebus",
         "snupkg",

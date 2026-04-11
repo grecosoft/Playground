@@ -1,9 +1,12 @@
 locals {
   common_configs = [
     {
+      key = "Serilog:MinimumLevel:Default"
+      value = var.Serilog_Log_Level
+    },
+    {
       key   = "Logging:SeqUrl"
       value = var.Logging_SEQ_URL
-      label = "solution-configs"
     }
   ]
 }
@@ -14,4 +17,5 @@ module "solution_configs" {
   
   solution_configuration = local.solution_configuration
   app_configs          = local.common_configs
+  label_name = "solution-configs"
 }

@@ -1,11 +1,10 @@
 using Common.Bootstrapping;
+using Common.Messaging.Commands;
+using Common.Messaging.Core;
+using Common.Messaging.Core.Commands;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 var credential = builder.AddTokenCredential();
 builder.AddConfiguration(credential);
@@ -16,11 +15,16 @@ var boostrapLogger = builder.AddLogging(c =>
         outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
 });
 
-// builder.Services.AddBusMessaging(
-//     boostrapLogger,
-//     builder.Configuration);
-//
-// builder.Services.AddSingleton<ICommandRepository, CommandRepository>();
+// Add services to the container.
+builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddBusMessaging(
+    boostrapLogger,
+    builder.Configuration);
+
+builder.Services.AddSingleton<ICommandRepository, CommandRepository>();
+
 
 var app = builder.Build();
 
@@ -50,6 +54,9 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

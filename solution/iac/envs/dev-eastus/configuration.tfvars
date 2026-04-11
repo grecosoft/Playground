@@ -22,4 +22,5 @@ authorization = {
   ]
 }
 
+Serilog_Log_Level = "Information"
 Logging_SEQ_URL = "http://datalust-seq:5341"

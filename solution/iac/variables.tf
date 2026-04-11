@@ -62,6 +62,11 @@ variable "authorization" {
 }
 
 # Logging Variables:
+variable "Serilog_Log_Level" {
+  description = "The default log level defined at the solution level."
+  default = "Information"
+}
+
 variable "Logging_SEQ_URL" {
   description = "The URL of the Seq logging server."
   type        = string
