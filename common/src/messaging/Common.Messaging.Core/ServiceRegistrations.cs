@@ -18,7 +18,6 @@ public static class ServiceRegistrations
             ILogger bootstrapLogger,
             IConfiguration configuration)
         {
-            
             var configSection = configuration.GetSection("ServiceMessaging");
         
             var config = configSection.Get<MessagingConfig>() 

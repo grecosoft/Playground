@@ -33,3 +33,8 @@ variable "rpc_reply_timeout_seconds" {
   type = number
   default = 5
 }
+
+variable "dependent_services" {
+  type = map(string)
+  default = {}
+} 

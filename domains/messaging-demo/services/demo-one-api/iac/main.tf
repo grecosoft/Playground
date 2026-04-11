@@ -33,6 +33,9 @@ module "messaging" {
   solution_messaging = local.solution.messaging
   solution_servicebus = local.solution.servicebus 
   rpc_reply_timeout_seconds = 50
+  dependent_services = {
+    "demo-two-api": "bae5fa24-b552-a42c-0e16-1d94b2c62f2d"
+  }
 }
 
 module "deploy" {
@@ -53,3 +56,4 @@ module "configuration" {
   app_config_overrides = var.env_app_configs
   vault_secrets        = local.vault_secrets 
 }
+

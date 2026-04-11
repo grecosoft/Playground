@@ -2,7 +2,6 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Extensions.Logging;
 
-
 namespace Common.Bootstrapping;
 
 public static class HostLoggingExtensions
