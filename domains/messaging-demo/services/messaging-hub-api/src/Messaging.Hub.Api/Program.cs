@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 var credential = builder.AddTokenCredential();
+builder.AddConfiguration(credential);
+
 var boostrapLogger = builder.AddLogging(c =>
 {
     c.WriteTo.Console(
@@ -16,7 +18,7 @@ var boostrapLogger = builder.AddLogging(c =>
     c.WriteTo.Seq(builder.Configuration["Logging:SeqUrl"] ?? "http://localhost:5341");
 });
 
-builder.AddConfiguration(boostrapLogger, credential);
+boostrapLogger.LogError("Starting up...");
 
 var app = builder.Build();
 

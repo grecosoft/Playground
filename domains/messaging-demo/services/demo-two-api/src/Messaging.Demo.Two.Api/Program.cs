@@ -8,13 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 var credential = builder.AddTokenCredential();
+builder.AddConfiguration(credential);
+
 var boostrapLogger = builder.AddLogging(c =>
 {
     c.WriteTo.Console(
         outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
 });
-
-builder.AddConfiguration(boostrapLogger, credential);
 
 // builder.Services.AddBusMessaging(
 //     boostrapLogger,

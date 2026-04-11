@@ -15,7 +15,6 @@ public static class HostConfigurationExtensions
     
     public static IHostApplicationBuilder AddConfiguration(
         this IHostApplicationBuilder builder,
-        ILogger bootstrapLogger,
         TokenCredential tokenCredential)
     {
         // Add the app settings used when developing locally.   When the service is deployed
@@ -32,9 +31,9 @@ public static class HostConfigurationExtensions
         {
             if (!File.Exists(KubeConfigFile))
             {
-                bootstrapLogger.LogError(
-                    "No Local App Configuration endpoint configured, and no Kubernetes config file found at {KubeConfigFile}. " +
-                    "Expected to find Local App Configuration endpoint in configuration key 'Service:AppConfig:Endpoint'", KubeConfigFile);
+                throw new InvalidOperationException(
+                    $"No Local App Configuration endpoint configured, and no Kubernetes config file found at ${KubeConfigFile}. " +
+                    "Expected to find Local App Configuration endpoint in configuration key 'Service:AppConfig:Endpoint'");
             }
             
             return builder;
