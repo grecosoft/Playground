@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
-ENV ASPNETCORE_URLS=http://+:5081
-EXPOSE 5081
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
 
 FROM  mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
