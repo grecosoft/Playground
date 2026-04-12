@@ -19,7 +19,7 @@ var boostrapLogger = builder.AddLogging(c =>
 });
 
 // Add services to the container.
-// builder.Services.AddOpenApi();
+builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddBusMessaging(
