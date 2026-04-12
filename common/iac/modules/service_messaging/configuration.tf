@@ -10,6 +10,6 @@ output "service_config" {
   ],
   [
     for k, v in var.dependent_services : 
-    { key = "ServiceMessaging:DependentService:${k}", value = v }
+    { key = "ServiceMessaging:DependentServices:${k}", value = v }
   ])
 }

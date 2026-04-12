@@ -4,7 +4,7 @@ namespace Common.Messaging;
 
 public record EndpointInfo(
     string ServiceName,
-    Guid ServiceId);
+    string ServiceId);
 
 public interface ICommandEndpoint
 {

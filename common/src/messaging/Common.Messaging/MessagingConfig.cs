@@ -21,7 +21,7 @@ public class MessagingConfig
     /// A dictionary of dependent services that this service needs to communicate with,
     /// where the key is the name of the service.
     /// </summary>
-    public Dictionary<string, DependentServiceOptions> DependentServices { get; init; } = [];
+    public Dictionary<string, string> DependentServices { get; init; } = [];
 
     /// <summary>
     /// The name of the topic used to send RPC style commands between a solution's services.
@@ -61,10 +61,4 @@ public class MessagingConfig
         RpcReplyQueue,
         RpcReplyTimeoutSeconds
     };
-}
-
-public class DependentServiceOptions
-{
-    public string Name { get; init; } = string.Empty;
-    public Guid Id { get; init; }
 }

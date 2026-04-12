@@ -137,13 +137,13 @@ public static class ServiceRegistrations
     
     private static void AddDependentServiceEndpoints(IServiceCollection serviceCollection, MessagingConfig config)
     {
-        foreach (var (serviceKey, serviceInfo) in config.DependentServices)
+        foreach (var (serviceKey, serviceId) in config.DependentServices)
         {
             serviceCollection.AddKeyedSingleton<ICommandEndpoint>(serviceKey, (sp, _)  =>
             {
                 var messagingService = sp.GetRequiredService<CommandMessagingService>();
                 return new CommandEndpoint(
-                    new EndpointInfo(serviceInfo.Name, serviceInfo.Id),
+                    new EndpointInfo(serviceKey, serviceId),
                     messagingService);
             });
         }
