@@ -1,5 +1,9 @@
 locals {
   common_configs = [
+     {
+      key   = "update_sentinel"
+      value = "0"
+    },
     {
       key    = "DatabaseHost22"
       isJson = true
