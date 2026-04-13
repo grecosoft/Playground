@@ -45,6 +45,11 @@ patches:
               labelFilter: solution-configs
             - keyFilter: "*"
               labelFilter: demo-one-api
+          refresh:
+            monitoring:
+              keyValues:
+                - key: "update_sentinel" 
+                  label: demo-one-api
         auth:
           workloadIdentity:
             serviceAccountName: demo-one-api-sa
