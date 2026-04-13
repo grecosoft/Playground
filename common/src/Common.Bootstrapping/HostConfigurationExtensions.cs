@@ -10,6 +10,7 @@ public static class HostConfigurationExtensions
 {
     private const string LocalDevConfigFile = "appsettings.local.json";
     private const string KubeConfigFile = "/service/configs/appsettings.k8s.json";
+    private const string KubeSecretsFile = "/services/secrets/secrets.k8s.secret.json";
     
     public static IHostApplicationBuilder AddConfiguration(
         this IHostApplicationBuilder builder,
@@ -20,6 +21,7 @@ public static class HostConfigurationExtensions
         // local file is excluded within the .dockerignore when the image is built.
         builder.Configuration.AddJsonFile(LocalDevConfigFile, optional: true);
         builder.Configuration.AddJsonFile(KubeConfigFile, optional: true);
+        builder.Configuration.AddJsonFile(KubeSecretsFile, optional: true);
         
         // Add the token credential to the container so it can be used when registering other azure services.
         builder.Services.AddSingleton(tokenCredential);
