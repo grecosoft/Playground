@@ -78,7 +78,7 @@ patches:
                   - secretRef:
                       name: messaging-hub-api-appconfig-secrets
             volumes:
-              - name: config-volume 
+              - name: appconfig-volume 
                 configMap: 
                   name: messaging-hub-api-appconfig
 

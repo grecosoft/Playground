@@ -16,7 +16,7 @@ locals {
 
   vault_secrets = [
     {
-      key    = "secret__value",
+      key    = "secret__value2",
       secret = "some value2"
     }
   ]
