@@ -20,8 +20,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: configmap 
-            - secretRef:
-                name: <patch>
           ports:
             - name: http
               containerPort: 8080
@@ -29,6 +27,8 @@ spec:
           volumeMounts: 
             - name: appconfig-volume
               mountPath: /service/configs
+            - name: appconfig-secrets-volume
+              mountPath: /service/secrets
           resources:
             requests:
               cpu: "100m"
@@ -40,5 +40,8 @@ spec:
         - name: appconfig-volume 
           configMap: 
             name: <patch>
+        - name: appconfig-secrets-volume 
+          secret: 
+            secretName: <patch>
 
 

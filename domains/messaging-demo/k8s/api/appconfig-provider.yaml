@@ -26,6 +26,9 @@ spec:
   secret:
     target:
       secretName: <patch>
+      secretData:
+        type: json
+        key: secrets.k8s.json
     refresh:
       enabled: true
       interval: 1m

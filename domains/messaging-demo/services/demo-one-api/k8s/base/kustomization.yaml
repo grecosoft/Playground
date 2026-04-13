@@ -91,4 +91,7 @@ patches:
               - name: appconfig-volume 
                 configMap: 
                   name: demo-one-api-appconfig
+              - name: appconfig-secrets-volume 
+                secret: 
+                  secretName: demo-one-api-appconfig-secrets
 
