@@ -33,7 +33,7 @@ var app = builder.Build();
 app.MapGet("/send-async-response/{correlationId}", async (
     string correlationId, 
     ICommandRepository commandRepository,
-    ICommandMessagingService  messagingService,
+    ICommandMessaging  messaging,
     CancellationToken cancellationToken) =>
 {
     var receivedCommand = await commandRepository.LoadCommand<DeviceUpdateCommand>(correlationId, cancellationToken);
@@ -41,7 +41,7 @@ app.MapGet("/send-async-response/{correlationId}", async (
     
     command.Response = new DeviceStatus(true);
     
-    await messagingService.SendResponseToCommandAsync(
+    await messaging.SendResponseToCommandAsync(
         receivedCommand, 
         command,
         cancellationToken);

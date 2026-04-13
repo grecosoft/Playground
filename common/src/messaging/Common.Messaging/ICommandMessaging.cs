@@ -3,11 +3,12 @@ using Common.Messaging.Entities;
 
 namespace Common.Messaging;
 
-public interface ICommandMessagingService
+public interface ICommandMessaging
 {
+    ICommandEndpoint GetServiceEndpoint(string serviceName);
+    
     Task SendResponseToCommandAsync<TResponse>(
         CommandContext commandContext,
         ICommandMessage<TResponse> command,
         CancellationToken token);
-
 }

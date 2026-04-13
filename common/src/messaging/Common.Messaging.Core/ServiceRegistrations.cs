@@ -37,7 +37,6 @@ public static class ServiceRegistrations
             // Registers services used for sending messages to other services, which will
             // be injected into command handlers and other services that need to send messages.
             AddMessagingServices(services, config);
-            AddDependentServiceEndpoints(services, config);
             return services;
         }
     }
@@ -116,8 +115,8 @@ public static class ServiceRegistrations
             return client.CreateSender(config.AsyncCommandTopic);
         });
         
-        services.AddSingleton<CommandMessagingService>();
-        services.AddSingleton<ICommandMessagingService>(sp => sp.GetRequiredService<CommandMessagingService>());
+        services.AddSingleton<CommandMessaging>();
+        services.AddSingleton<ICommandMessaging>(sp => sp.GetRequiredService<CommandMessaging>());
     }
     
     private static void AddCommandMessageHandlers(IServiceCollection services)
@@ -132,20 +131,6 @@ public static class ServiceRegistrations
                 typeof(ICommandMessageHandler),
                 handler.CommandNamespace,
                 handler.ImplementationType);
-        }
-    }
-    
-    private static void AddDependentServiceEndpoints(IServiceCollection serviceCollection, MessagingConfig config)
-    {
-        foreach (var (serviceKey, serviceId) in config.DependentServices)
-        {
-            serviceCollection.AddKeyedSingleton<ICommandEndpoint>(serviceKey, (sp, _)  =>
-            {
-                var messagingService = sp.GetRequiredService<CommandMessagingService>();
-                return new CommandEndpoint(
-                    new EndpointInfo(serviceKey, serviceId),
-                    messagingService);
-            });
         }
     }
 }

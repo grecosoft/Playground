@@ -44,21 +44,24 @@ app.UseSwaggerUI();
 
 
 app.MapGet("/send-rpc-command", async (
-    [FromKeyedServices("demo-two-api")]ICommandEndpoint  microserviceTwo,
+    ICommandMessaging commandMessaging,
     CancellationToken cancellationToken) =>
 {
     var command = new PingCommand("value-one", "value-two");
-    var response = await microserviceTwo.SendCommandWithReplyAsync(command, cancellationToken);
+    var endPoint = commandMessaging.GetServiceEndpoint("demo-two-api");
+    
+    var response = await endPoint.SendCommandWithReplyAsync(command, cancellationToken);
     return Results.Ok(response);
 });
 
 app.MapGet("/send-async-command", async (
-    [FromKeyedServices("demo-two-api")]ICommandEndpoint  microserviceTwo,
+    ICommandMessaging commandMessaging,
     CancellationToken cancellationToken) =>
 {
-
     var command = new DeviceUpdateCommand(Guid.NewGuid().ToString());
-    await microserviceTwo.SendCommandAsync(command, cancellationToken);
+    var endPoint = commandMessaging.GetServiceEndpoint("demo-two-api");
+    
+    await endPoint.SendCommandAsync(command, cancellationToken);
     return Results.Ok();
 });
 

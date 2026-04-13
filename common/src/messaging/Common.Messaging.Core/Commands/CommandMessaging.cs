@@ -11,48 +11,50 @@ using Microsoft.Extensions.Options;
 
 namespace Common.Messaging.Core.Commands;
 
-public class CommandMessagingService(
-    IOptions<MessagingConfig> messagingOptions,
-    ILogger<CommandMessagingService> logger,
-    ServiceBusClient client,
-    [FromKeyedServices("rpc")] ServiceBusSender rpcCommandSender,
-    [FromKeyedServices("async")] ServiceBusSender asyncCommandSender) : ICommandMessagingService
+public class CommandMessaging: ICommandMessaging
 {
+    public CommandMessaging( 
+        IOptions<MessagingConfig> messagingOptions,
+        ILogger<CommandMessaging> logger,
+        ServiceBusClient client,
+        [FromKeyedServices("rpc")] ServiceBusSender rpcCommandSender,
+        [FromKeyedServices("async")] ServiceBusSender asyncCommandSender)
+    {
+        _busConfig = messagingOptions.Value;
+        _logger = logger;
+        _client = client;
+        _rpcCommandSender = rpcCommandSender;
+        _asyncCommandSender = asyncCommandSender;
+        
+        AddCommandEndpoints(_busConfig);
+    }
+    
+    private readonly MessagingConfig _busConfig;
+    private readonly ILogger<CommandMessaging> _logger;
+    private readonly ServiceBusClient _client;
+    private readonly ServiceBusSender _rpcCommandSender;
+    private readonly ServiceBusSender _asyncCommandSender;
+    
     // Caches message associated metadata used to set properties 
     // when publishing message to the consuming service.
     private readonly ConcurrentDictionary<Type, MessageMetadata> _messageMetadata = new();
-    private readonly MessagingConfig _busConfig = messagingOptions.Value;
-
-    // Sends a command to a destination service and waits for a max specific
-    // amount of time for a response before timing out.
-    public async Task<TResponse> SendCommandWithReplyAsync<TResponse>(
-        ICommandMessage command,
-        EndpointInfo endpointInfo,
-        CancellationToken token)
+    private readonly Dictionary<string, CommandEndpoint> _commandEndpoints = new();
+    
+    public ICommandEndpoint GetServiceEndpoint(string serviceName)
     {
-        var correlationId = await SendCommandMessage(
-            rpcCommandSender,
-            endpointInfo,
-            command,
-            token);
-
-        return await WaitCommandResponse<TResponse>(correlationId, endpointInfo, token);
+        return _commandEndpoints.TryGetValue(serviceName, out var commandEndpoint) 
+             ? commandEndpoint : throw new InvalidOperationException($"Service '{serviceName}' is not registered.");
     }
-
-    // Sends a command to a destination service and expects a response to be sent back to the reply queue, but does not
-    // wait for the response.  This is useful for fire-and-forget style commands.  Also, response may never be received.
-    public Task SendCommandAsync<TResponse>(
-        ICommandMessage<TResponse> command,
-        EndpointInfo endpointInfo,
-        CancellationToken token)
+    
+    private void AddCommandEndpoints(MessagingConfig messagingConfig)
     {
-        return SendCommandMessage(
-            asyncCommandSender,
-            endpointInfo,
-            command,
-            token);
+        foreach (var dependentService in messagingConfig.DependentServices)
+        {
+            var endpointInfo = new EndpointInfo(dependentService.Key, dependentService.Value);
+            _commandEndpoints.Add(dependentService.Key, new CommandEndpoint(endpointInfo, this));
+        }
     }
-
+    
     // Sends a response to a previously received command. This is used by the service that receives the command and is \
     // processing it and wants to send a response sometime in the future.
     public async Task SendResponseToCommandAsync<TResponse>(
@@ -72,9 +74,39 @@ public class CommandMessagingService(
         message.ApplicationProperties.Add(MessageProperties.CommandNamespace, context.CommandNamespace);
         message.ApplicationProperties.Add(MessageProperties.SendingServiceId, _busConfig.ServiceId);
 
-        await asyncCommandSender.SendMessageAsync(message, token);
+        await _asyncCommandSender.SendMessageAsync(message, token);
+    }
+    
+    // Sends a command to a destination service and waits for a max specific
+    // amount of time for a response before timing out.
+    internal async Task<TResponse> SendCommandWithReplyAsync<TResponse>(
+        ICommandMessage command,
+        EndpointInfo endpointInfo,
+        CancellationToken token)
+    {
+        var correlationId = await SendCommandMessage(
+            _rpcCommandSender,
+            endpointInfo,
+            command,
+            token);
+
+        return await WaitCommandResponse<TResponse>(correlationId, endpointInfo, token);
     }
 
+    // Sends a command to a destination service and expects a response to be sent back to the reply queue, but does not
+    // wait for the response.  This is useful for fire-and-forget style commands.  Also, response may never be received.
+    internal Task SendCommandAsync<TResponse>(
+        ICommandMessage<TResponse> command,
+        EndpointInfo endpointInfo,
+        CancellationToken token)
+    {
+        return SendCommandMessage(
+            _asyncCommandSender,
+            endpointInfo,
+            command,
+            token);
+    }
+    
     private async Task<string> SendCommandMessage(
         ServiceBusSender sender,
         EndpointInfo endpointInfo,
@@ -96,7 +128,7 @@ public class CommandMessagingService(
             }
         };
         
-        logger.LogDebug(
+        _logger.LogDebug(
             "Sending command message for {Namespace} with correlation id {CorrelationId} to service {DestinationServiceId}",
             messageMetadata.MessageNamespace,
             message.CorrelationId,
@@ -108,7 +140,7 @@ public class CommandMessagingService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex,
+            _logger.LogError(ex,
                 "Sending command message for {Namespace} with correlation id {CorrelationId} to service {DestinationServiceId}",
                 messageMetadata.MessageNamespace,
                 message.CorrelationId,
@@ -120,12 +152,12 @@ public class CommandMessagingService(
 
     private async Task<TResponse> WaitCommandResponse<TResponse>(string correlationId, EndpointInfo endpointInfo, CancellationToken token)
     {
-        logger.LogDebug(
+       _logger.LogDebug(
             "Waiting for response for {CorrelationId} from service {DestinationServiceId}", 
             correlationId, 
             endpointInfo.ServiceId);
         
-        await using var sessionReceiver = await client.AcceptSessionAsync(
+        await using var sessionReceiver = await _client.AcceptSessionAsync(
             _busConfig.RpcReplyQueue,
             correlationId,
             new ServiceBusSessionReceiverOptions { ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete },
@@ -137,7 +169,7 @@ public class CommandMessagingService(
 
         if (replyMessage == null)
         {
-            logger.LogError(
+            _logger.LogError(
                 "Timed out waiting for response for {CorrelationId} from service {DestinationServiceId} after {TimeoutSeconds} seconds",
                 correlationId,
                 endpointInfo.ServiceId,
@@ -148,7 +180,7 @@ public class CommandMessagingService(
                 $"after {_busConfig.RpcReplyTimeoutSeconds} seconds");
         }
         
-        logger.LogDebug(
+        _logger.LogDebug(
             "Received response for {CorrelationId} from service {DestinationServiceId}", 
             correlationId, 
             endpointInfo.ServiceId);
