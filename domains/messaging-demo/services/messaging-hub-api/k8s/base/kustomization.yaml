@@ -45,6 +45,11 @@ patches:
               labelFilter: solution-configs
             - keyFilter: "*"
               labelFilter: messaging-hub-api
+          refresh:
+            monitoring:
+              keyValues:
+                - key: "update_sentinel" 
+                  label: messaging-hub-api
         auth:
           workloadIdentity:
             serviceAccountName: messaging-hub-api-sa
@@ -81,4 +86,6 @@ patches:
               - name: appconfig-volume 
                 configMap: 
                   name: messaging-hub-api-appconfig
-
+              - name: appconfig-secrets-volume 
+                secret: 
+                  secretName: messaging-hub-api-appconfig-secrets   
