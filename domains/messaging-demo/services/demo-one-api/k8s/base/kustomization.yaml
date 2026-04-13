@@ -59,6 +59,11 @@ patches:
           auth:
             workloadIdentity:
               serviceAccountName: demo-one-api-sa
+          refresh:
+            monitoring:
+              keyValues:
+                - key: "update_sentinel" 
+                  label: demo-one-api
 
   # Patch the following on the deployment:
   #   - Patch the name of the service account to the service's associated workload identity.

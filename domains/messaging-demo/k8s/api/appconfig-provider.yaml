@@ -28,7 +28,11 @@ spec:
       secretName: <patch>
     refresh:
       enabled: true
-      interval: 5m
+      interval: 1m
+      monitoring:
+        keyValues:
+          - key: "update_sentinel" 
+            label: <patch>
     auth:
       workloadIdentity:
         serviceAccountName: <patch>
