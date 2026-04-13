@@ -16,3 +16,9 @@ spec:
   auth:
     workloadIdentity:
       serviceAccountName: messaging-hub-api-sa
+  secret:
+    target:
+      secretName: test-config-secrets
+    auth:
+      workloadIdentity:
+        serviceAccountName: messaging-hub-api-sa

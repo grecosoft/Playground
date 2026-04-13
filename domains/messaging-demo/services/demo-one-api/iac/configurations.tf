@@ -20,9 +20,9 @@ locals {
   ]
 
   vault_secrets = [
-    # {
-    #   key    = "secret:value",
-    #   secret = "some value"
-    # }
+    {
+      key    = "secret:value",
+      secret = "some value"
+    }
   ]
 }
