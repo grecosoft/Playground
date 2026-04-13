@@ -41,6 +41,16 @@ public class CommandRepository : ICommandRepository
         return Task.FromResult(receivedCommand);
     }
 
+    public Task<IEnumerable<CommandContext>> GetPendingCommandsAsync(CancellationToken cancellationToken)
+    {
+        var pendingCommands = _commandStates.Values.Select(s => new CommandContext(
+            s.CorrelationId,
+            s.ReplyToService,
+            s.CommandNamespace));
+        
+        return Task.FromResult(pendingCommands);
+    }
+
     private record CommandState(
         string CorrelationId, 
         string ReplyToService,

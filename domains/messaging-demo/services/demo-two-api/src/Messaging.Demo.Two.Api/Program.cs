@@ -4,6 +4,7 @@ using Common.Messaging.Commands;
 using Common.Messaging.Core;
 using Common.Messaging.Core.Commands;
 using Messaging.Demo.Common.Commands;
+using Messaging.Demo.Two.Api.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,12 @@ builder.Services.AddSingleton<ICommandRepository, CommandRepository>();
 
 
 var app = builder.Build();
+
+app.MapGet("/pending/commands", async(ICommandRepository repository) =>
+{
+    var commands = await repository.GetPendingCommandsAsync(cancellationToken: CancellationToken.None);
+    return Results.Ok(commands.Select(c => new PendingCommandModel(c)));
+});
 
 app.MapGet("/send-async-response/{correlationId}", async (
     string correlationId, 
