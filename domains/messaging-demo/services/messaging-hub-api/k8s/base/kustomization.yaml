@@ -75,19 +75,10 @@ patches:
               - name: service-api
                 image: registryworkingstork.azurecr.io/playground/messaging-hub-api:0.0.0.0
                 envFrom:
-                  - configMapRef:
-                      name: configmap
                   - secretRef:
                       name: messaging-hub-api-appconfig-secrets
-                volumeMounts:
-                  - name: appconfig-secrets-volume
-                    mountPath: /service/secrets
-                    readOnly: true
             volumes:
               - name: config-volume 
                 configMap: 
                   name: messaging-hub-api-appconfig
-              - name: appconfig-secrets-volume
-                secret:
-                  secretName: messaging-hub-api-appconfig-secrets
 

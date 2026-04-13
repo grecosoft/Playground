@@ -75,19 +75,10 @@ patches:
               - name: service-api
                 image: registryworkingstork.azurecr.io/playground/demo-two-api:0.0.0.0
                 envFrom:
-                  - configMapRef:
-                      name: configmap
                   - secretRef:
                       name: demo-two-api-appconfig-secrets
-                volumeMounts:
-                  - name: appconfig-secrets-volume
-                    mountPath: /service/secrets
-                    readOnly: true
             volumes:
-              - name: config-volume 
+              - name: appconfig-volume 
                 configMap: 
                   name: demo-two-api-appconfig
-              - name: appconfig-secrets-volume
-                secret:
-                  secretName: demo-two-api-appconfig-secrets
 

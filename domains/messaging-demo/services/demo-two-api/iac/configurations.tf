@@ -14,5 +14,10 @@ locals {
     }
   ]
 
-  vault_secrets = []
+  vault_secrets = [
+    {
+      key    = "secret__value",
+      secret = "some value2"
+    }
+  ]
 }
