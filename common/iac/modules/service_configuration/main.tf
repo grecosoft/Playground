@@ -46,6 +46,6 @@ resource "azurerm_app_configuration_key" "service_secrets" {
   key                    = each.value.key
   type                   = "vault"
   label                  = each.value.label == null ? var.label_name : each.value.label
-  vault_key_reference    = "${var.solution_configuration.key_vault_uri}${azurerm_key_vault_secret.service_secrets[each.key].resource_versionless_id}"
+  vault_key_reference    = "${var.solution_configuration.key_vault_uri}secrets/${azurerm_key_vault_secret.service_secrets[each.key].name}"
 }
 
