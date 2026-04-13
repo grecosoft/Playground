@@ -45,6 +45,11 @@ patches:
               labelFilter: solution-configs
             - keyFilter: "*"
               labelFilter: demo-two-api
+          refresh:
+            monitoring:
+              keyValues:
+                - key: "update_sentinel" 
+                  label: demo-two-api
         auth:
           workloadIdentity:
             serviceAccountName: demo-two-api-sa
@@ -81,4 +86,7 @@ patches:
               - name: appconfig-volume 
                 configMap: 
                   name: demo-two-api-appconfig
+              - name: appconfig-secrets-volume 
+                secret: 
+                  secretName: demo-two-api-appconfig-secrets
 
