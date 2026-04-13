@@ -22,3 +22,7 @@ spec:
     auth:
       workloadIdentity:
         serviceAccountName: messaging-hub-api-sa
+    keyVault:
+      auth:
+        workloadIdentity:
+          serviceAccountName: messaging-hub-api-sa
