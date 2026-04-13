@@ -26,30 +26,8 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          startupProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - |
-                  if [ -z "$(ls -A /service/secrets 2>/dev/null)" ]; then
-                    echo "App configuration secrets are missing or empty at /service/secrets. Verify AzureAppConfigurationProvider secret sync and Key Vault RBAC." >&2
-                    exit 1
-                  fi
-            periodSeconds: 5
-            failureThreshold: 24
-            timeoutSeconds: 2
-          readinessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - test -n "$(ls -A /service/secrets 2>/dev/null)"
-            periodSeconds: 10
-            failureThreshold: 3
-            timeoutSeconds: 2
           volumeMounts: 
-            - name: config-volume
+            - name: appconfig-volume
               mountPath: /service/configs
           resources:
             requests:
@@ -59,6 +37,8 @@ spec:
               cpu: "250m"
               memory: "256Mi"
       volumes:
-        - name: config-volume 
+        - name: appconfig-volume 
           configMap: 
             name: <patch>
+
+
