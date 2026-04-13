@@ -45,6 +45,15 @@ patches:
               labelFilter: solution-configs
             - keyFilter: "*"
               labelFilter: demo-one-api
+        auth:
+          workloadIdentity:
+            serviceAccountName: demo-one-api-sa
+        secret:
+          target:
+            secretName: demo-one-api-appconfig-secrets
+          auth:
+            workloadIdentity:
+              serviceAccountName: demo-one-api-sa
 
   # Patch the following on the deployment:
   #   - Patch the name of the service account to the service's associated workload identity.
@@ -65,8 +74,20 @@ patches:
             containers:
               - name: service-api
                 image: registryworkingstork.azurecr.io/playground/demo-one-api:0.0.0.0
+                envFrom:
+                  - configMapRef:
+                      name: configmap
+                  - secretRef:
+                      name: demo-one-api-appconfig-secrets
+                volumeMounts:
+                  - name: appconfig-secrets-volume
+                    mountPath: /service/secrets
+                    readOnly: true
             volumes:
               - name: config-volume 
                 configMap: 
                   name: demo-one-api-appconfig
+              - name: appconfig-secrets-volume
+                secret:
+                  secretName: demo-one-api-appconfig-secrets
 

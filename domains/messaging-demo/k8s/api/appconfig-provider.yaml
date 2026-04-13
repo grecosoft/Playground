@@ -15,13 +15,13 @@ spec:
         labelFilter: <patch>
   auth:
     workloadIdentity:
-      serviceAccountName: messaging-hub-api-sa
+      serviceAccountName: <patch>
   secret:
     target:
-      secretName: test-config-secrets
+      secretName: <patch>
+    refresh:
+      enabled: true
+      interval: 5m
     auth:
       workloadIdentity:
-        serviceAccountName: messaging-hub-api-sa
-      keyVaults:
-        - uri: https://ac-dev-eastus-o4wtmt.azconfig.io
-          serviceAccountName: messaging-hub-api-sa
+        serviceAccountName: <patch>
