@@ -22,7 +22,6 @@ spec:
     auth:
       workloadIdentity:
         serviceAccountName: messaging-hub-api-sa
-    keyVault:
-      auth:
-        workloadIdentity:
+      keyVaults:
+        - uri: https://ac-dev-eastus-o4wtmt.azconfig.io
           serviceAccountName: messaging-hub-api-sa
