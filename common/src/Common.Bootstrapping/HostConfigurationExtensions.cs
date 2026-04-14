@@ -53,6 +53,8 @@ public static class HostConfigurationExtensions
                 options.Select(KeyFilter.Any, label);
             }
         });
+        
+        builder.Configuration.AddJsonFile(LocalDevConfigFile, optional: true);
         return builder;
     }
 }

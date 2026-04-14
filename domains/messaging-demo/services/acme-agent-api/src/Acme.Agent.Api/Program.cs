@@ -1,3 +1,4 @@
+using Acme.Agent.Api;
 using Common.Bootstrapping;
 using Serilog;
 
@@ -16,6 +17,7 @@ var boostrapLogger = builder.AddLogging(c =>
 // Add services to the container.
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
+builder.AddServices(boostrapLogger);
 
 var app = builder.Build();
 

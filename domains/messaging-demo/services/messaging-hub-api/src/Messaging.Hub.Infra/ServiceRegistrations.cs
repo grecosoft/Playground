@@ -18,7 +18,7 @@ public static class ServiceRegistrations
         ILogger bootstrapLogger)
     {
         var config = builder.Configuration.Get<MessagingHubConfig>() 
-                     ?? throw new NullReferenceException("BusMessagingConfig is null");
+                     ?? throw new NullReferenceException("MessagingHubConfig is null");
         
         bootstrapLogger.LogInformation(
             "Configuring Service Messaging: {@Configuration}", config.ToLoggableProperties());

@@ -45,7 +45,8 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.MapGet("/hub/token", async (
+app.MapGet("/hub/{agentId}/token", async (
+    string agentId,
     ServiceManager manager,
     CancellationToken cancellationToken) =>
 {
