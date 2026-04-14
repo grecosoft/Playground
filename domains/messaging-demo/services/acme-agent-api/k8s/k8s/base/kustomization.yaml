@@ -1,0 +1,92 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../../k8s/api
+
+namePrefix: acme-agent-api-
+
+labels:
+  # Add domain and service labels are used to identify resources specific to this service for selection.
+  - pairs:
+      domain: messaging-demo
+      service: acme-agent-api
+    includeTemplates: true 
+    includeSelectors: true 
+
+  # Additional labels not used for selection but useful to be present on all resources for this service.
+  - pairs:
+      department: IST
+
+# Add key/value pairs to the ConfigMap that will be mapped to environment variables in the deployment. 
+# This should only be used var values not stored in Azure App Configuration.
+configMapGenerator:
+- name: configmap 
+  literals:
+  - LOG_LEVEL=debug
+  - MAX_CONNECTIONS=100
+
+patches:
+  # Patch the name of the ConfigMap created by the Azure App Configuration Provider
+  # and the selectors specific to this service:
+  - target:
+      kind: AzureAppConfigurationProvider
+    patch: |-
+      apiVersion: azconfig.io/v1
+      kind: AzureAppConfigurationProvider
+      metadata:
+        name: acme-agent-api-appconfig-provider
+      spec:
+        target:
+          configMapName: acme-agent-api-appconfig
+        configuration:
+          selectors:
+            - keyFilter: "*"
+              labelFilter: solution-configs
+            - keyFilter: "*"
+              labelFilter: acme-agent-api
+          refresh:
+            monitoring:
+              keyValues:
+                - key: "update_sentinel" 
+                  label: acme-agent-api
+        auth:
+          workloadIdentity:
+            serviceAccountName: acme-agent-api-sa
+        secret:
+          target:
+            secretName: acme-agent-api-appconfig-secrets
+          auth:
+            workloadIdentity:
+              serviceAccountName: acme-agent-api-sa
+
+  # Patch the following on the deployment:
+  #   - Patch the name of the service account to the service's associated workload identity.
+  #   - Patch name of the image to point to the correct image in the ACR. 
+  #     The build pipeline will update this with the correct image tag.
+  #   - Patch the volume named config-volume to point to the above named ConfigMap.
+  - target:
+      kind: Deployment
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: acme-agent-api
+      spec:
+        template:
+          spec:
+            serviceAccountName: acme-agent-api-sa
+            containers:
+              - name: service-api
+                image: registryworkingstork.azurecr.io/playground/acme-agent-api:0.0.0.0
+                envFrom:
+                  - secretRef:
+                      name: acme-agent-api-appconfig-secrets
+            volumes:
+              - name: appconfig-volume 
+                configMap: 
+                  name: acme-agent-api-appconfig
+              - name: appconfig-secrets-volume 
+                secret: 
+                  secretName: acme-agent-api-appconfig-secrets
+
