@@ -6,6 +6,9 @@
     <Project Path="../../common/src/messaging/Common.Messaging/Common.Messaging.csproj" />
   </Folder>
   <Folder Name="/services/" />
+  <Folder Name="/services/acme-agent-api/">
+    <Project Path="services/acme-agent-api/src/Acme.Agent.Api/Acme.Agent.Api.csproj" />
+  </Folder>
   <Folder Name="/services/demo-one-api/">
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj" />
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Domain/Messaging.Demo.One.Domain.csproj" />
@@ -22,6 +25,7 @@
     <Project Path="services/messaging-hub-api/src/Messaging.Hub.Infra/Messaging.Hub.Infra.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="services/acme-agent-api/src/Acme.Agent.Tests/Acme.Agent.Tests.csproj" />
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Tests/Messaging.Demo.One.Tests.csproj" />
     <Project Path="services/demo-two-api/src/Messaging.Demo.Two.Tests/Messaging.Demo.Two.Tests.csproj" />
     <Project Path="services/messaging-hub-api/src/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj" />
