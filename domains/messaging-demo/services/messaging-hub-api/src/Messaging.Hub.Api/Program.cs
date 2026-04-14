@@ -11,12 +11,15 @@ var builder = WebApplication.CreateBuilder(args);
 var credential = builder.AddTokenCredential();
 builder.AddConfiguration(credential);
 
-var boostrapLogger = builder.AddLogging(c =>
+var boostrapLogger = builder.AddLogging(logConfig =>
 {
-    c.WriteTo.Console(
-        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
-    
-    c.WriteTo.Seq(builder.Configuration["Logging:SeqUrl"] ?? "http://localhost:5341");
+    logConfig.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
+     
+    var seqUrl = builder.Configuration.GetValue<string>("Logging:SeqUrl") ?? string.Empty;
+    if (!string.IsNullOrWhiteSpace(seqUrl))
+    {
+        logConfig.WriteTo.Seq(seqUrl);
+    }
 });
 
 builder.AddSignalRMessaging(boostrapLogger);

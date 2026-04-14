@@ -1,6 +1,0 @@
-@Messaging.Demo.Two.Api_HostAddress = http://localhost:5187
-
-GET {{Messaging.Demo.Two.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

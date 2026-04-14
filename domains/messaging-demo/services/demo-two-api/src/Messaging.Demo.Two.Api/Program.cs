@@ -12,10 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 var credential = builder.AddTokenCredential();
 builder.AddConfiguration(credential);
 
-var boostrapLogger = builder.AddLogging(c =>
+var boostrapLogger = builder.AddLogging(logConfig =>
 {
-    c.WriteTo.Console(
-        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
+    logConfig.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
+     
+    var seqUrl = builder.Configuration.GetValue<string>("Logging:SeqUrl") ?? string.Empty;
+    if (!string.IsNullOrWhiteSpace(seqUrl))
+    {
+        logConfig.WriteTo.Seq(seqUrl);
+    }
 });
 
 // Add services to the container.
