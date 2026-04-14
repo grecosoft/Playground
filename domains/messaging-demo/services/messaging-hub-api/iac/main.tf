@@ -4,7 +4,8 @@ locals {
 
   # Service configurations consisting of common and module level settings:
   service_configs = concat(
-    local.common_configs,
+    local.common_configs, 
+    module.messaging.service_config,
     module.deploy.deploy_variables
   )
 }

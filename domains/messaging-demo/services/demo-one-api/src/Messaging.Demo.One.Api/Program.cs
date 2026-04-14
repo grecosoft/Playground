@@ -3,6 +3,7 @@ using Common.Messaging;
 using Common.Messaging.Commands;
 using Common.Messaging.Core;
 using Common.Messaging.Core.Commands;
+using Messaging.Demo.Common;
 using Messaging.Demo.Common.Commands;
 using Serilog;
 
@@ -48,7 +49,7 @@ app.MapGet("/send-rpc-command", async (
     CancellationToken cancellationToken) =>
 {
     var command = new PingCommand("value-one", "value-two");
-    var endPoint = commandMessaging.GetServiceEndpoint("demo-two-api");
+    var endPoint = commandMessaging.GetServiceEndpoint(ServiceEndpoints.DemoServiceTwo);
     
     var response = await endPoint.SendCommandWithReplyAsync(command, cancellationToken);
     return Results.Ok(response);
@@ -59,10 +60,21 @@ app.MapGet("/send-async-command", async (
     CancellationToken cancellationToken) =>
 {
     var command = new DeviceUpdateCommand(Guid.NewGuid().ToString());
-    var endPoint = commandMessaging.GetServiceEndpoint("demo-two-api");
+    var endPoint = commandMessaging.GetServiceEndpoint(ServiceEndpoints.DemoServiceTwo);
     
     await endPoint.SendCommandAsync(command, cancellationToken);
     return Results.Ok();
+});
+
+app.MapGet("/send-ping-command", async (
+    ICommandMessaging commandMessaging,
+    CancellationToken cancellationToken) =>
+{
+    var command = new PingCommand("value-one", "value-two");
+    var endPoint = commandMessaging.GetServiceEndpoint(ServiceEndpoints.MessagingHubApi);
+    
+    var response = await endPoint.SendCommandWithReplyAsync(command, cancellationToken);
+    return Results.Ok(response);
 });
 
 app.Run();

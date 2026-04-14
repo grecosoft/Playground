@@ -1,4 +1,7 @@
 using Common.Bootstrapping;
+using Common.Messaging.Commands;
+using Common.Messaging.Core;
+using Common.Messaging.Core.Commands;
 using Messaging.Hub.Infra;
 using Microsoft.Azure.SignalR.Management;
 using Serilog;
@@ -22,6 +25,11 @@ builder.AddSignalRMessaging(boostrapLogger);
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddBusMessaging(
+    boostrapLogger,
+    builder.Configuration);
+
+builder.Services.AddSingleton<ICommandRepository, CommandRepository>();
 
 var app = builder.Build();
 
