@@ -63,3 +63,12 @@ output "messaging" {
     command_async_topic_id = module.messaging.command_async_topic_id
   }
 }
+
+output "signalr" {
+  value = {
+    id   = azurerm_signalr_service.signalr.id
+    name = azurerm_signalr_service.signalr.name
+    host_name = azurerm_signalr_service.signalr.hostname
+    endpoint = "https://${azurerm_signalr_service.signalr.hostname}"
+  }
+}

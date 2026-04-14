@@ -20,6 +20,21 @@ module "identity" {
   oidc_issuer_url = local.solution.kubernetes.oidc_issuer_url
 }
 
+# Allows the service to send messages to over solutions services over Service Bus.
+module "messaging" {  
+  source = "../../../../../common/iac/modules/service_messaging"
+
+  solution_name = local.solution_name
+  service_name = local.service_name
+  service_id = module.identity.service_id
+  service_principal_id = module.identity.principal_id
+  developers_group_id = local.solution_developers_group_id 
+  solution_messaging = local.solution.messaging
+  solution_servicebus = local.solution.servicebus 
+  rpc_reply_timeout_seconds = 50
+  dependent_services = {}
+}
+
 module "deploy" {
   source = "../../../../../common/iac/modules/service_deploy"
 

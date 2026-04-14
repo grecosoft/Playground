@@ -1,4 +1,6 @@
 using Common.Bootstrapping;
+using Messaging.Hub.Infra;
+using Microsoft.Azure.SignalR.Management;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,8 @@ var boostrapLogger = builder.AddLogging(c =>
     
     c.WriteTo.Seq(builder.Configuration["Logging:SeqUrl"] ?? "http://localhost:5341");
 });
+
+builder.AddSignalRMessaging(boostrapLogger);
 
 // Add services to the container.
 builder.Services.AddOpenApi();
@@ -31,29 +35,20 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+app.UseRouting();
 
-var summaries = new[]
+app.MapGet("/hub/token", async (
+    ServiceManager manager,
+    CancellationToken cancellationToken) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    var serviceHubContext = await manager.CreateHubContextAsync("ConnectorHub/negotiate", cancellationToken);
+    var negotiationResponse = await serviceHubContext.NegotiateAsync(new NegotiationOptions
+    {
+        // TODO:  Set userid and other claims if needed.
+        // See https://learn.microsoft.com/azure/azure-signalr/signalr-concept-negotiation?tabs=serverless%2Csignal
+    }, cancellationToken);
+    return Results.Ok(negotiationResponse.AccessToken);
+});
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
+app.MapConnectorHub();
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

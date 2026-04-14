@@ -5,28 +5,10 @@ locals {
       value = "0"
     },
     {
-      key    = "DatabaseHost22"
-      isJson = true
-      value = jsonencode({
-        value1 = 1000
-        value2 = 2000
-        settings = [
-          { v1 = 12 },
-          { v2 = 44 }
-        ]
-      })
-    },
-    {
-      key   = "DatabasePort22"
-      value = 5432
-      label = "test-label"
+      key    = "SignalREndpoint"
+      value = local.solution.signalr.endpoint
     }
   ]
 
-  vault_secrets = [
-    {
-      key    = "secret__value3",
-      secret = "some value3"
-    }
-  ]
+  vault_secrets = []
 }

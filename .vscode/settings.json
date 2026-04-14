@@ -15,6 +15,7 @@
         "Serilog",
         "serviceaccount",
         "servicebus",
+        "signalr",
         "snupkg",
         "terraformstatestorage",
         "uami",

@@ -15,3 +15,8 @@ resource "azurerm_role_assignment" "app_config_users" {
   scope                = local.solution.configuration.app_config_id
 }
 
+resource "azurerm_role_assignment" "signalr_server" {
+  principal_id         = local.service_principal_id
+  role_definition_name = "SignalR App Server"
+  scope                = local.solution.signalr.id
+}
