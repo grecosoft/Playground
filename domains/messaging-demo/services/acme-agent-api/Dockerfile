@@ -12,6 +12,14 @@ WORKDIR /src
 COPY ["${SERVICE_SRC}/Acme.Agent.Api/Acme.Agent.Api.csproj", "./${SERVICE_SRC}/Acme.Agent.Api/"]
 COPY ["${SERVICE_SRC}/Acme.Agent.Tests/Acme.Agent.Tests.csproj", "./${SERVICE_SRC}/Acme.Agent.Tests/"]
 
+RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
+    export READ_PACKAGE_TOKEN=$(cat /run/secrets/READ_PACKAGE_TOKEN) && \
+    dotnet nuget add source "https://nuget.pkg.github.com/grecosoft/index.json" \
+      --name github \
+      --username github \
+      --password $READ_PACKAGE_TOKEN \
+      --store-password-in-clear-text 
+      
 # Restore dependencies for both the API and the tests:
 RUN dotnet restore ./${SERVICE_SRC}/Acme.Agent.Api/Acme.Agent.Api.csproj
 RUN dotnet restore ./${SERVICE_SRC}/Acme.Agent.Tests/Acme.Agent.Tests.csproj
