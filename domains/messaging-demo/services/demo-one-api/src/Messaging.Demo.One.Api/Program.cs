@@ -44,7 +44,7 @@ app.UseSwaggerUI();
 // app.UseHttpsRedirection();
 
 
-app.MapGet("/send-rpc-command", async (
+app.MapPost("/send-rpc-command", async (
     ICommandMessaging commandMessaging,
     CancellationToken cancellationToken) =>
 {
@@ -55,7 +55,7 @@ app.MapGet("/send-rpc-command", async (
     return Results.Ok(response);
 });
 
-app.MapGet("/send-async-command", async (
+app.MapPost("/send-async-command", async (
     ICommandMessaging commandMessaging,
     CancellationToken cancellationToken) =>
 {
@@ -66,15 +66,15 @@ app.MapGet("/send-async-command", async (
     return Results.Ok();
 });
 
-app.MapGet("/send-ping-command", async (
+app.MapPost("/send-ping-command", async (
     ICommandMessaging commandMessaging,
     CancellationToken cancellationToken) =>
 {
     var command = new PingCommand("value-one", "value-two");
     var endPoint = commandMessaging.GetServiceEndpoint(ServiceEndpoints.MessagingHubApi);
     
-    var response = await endPoint.SendCommandWithReplyAsync(command, cancellationToken);
-    return Results.Ok(response);
+    await endPoint.SendCommandAsync(command, cancellationToken);
+    return Results.Ok();
 });
 
 app.Run();

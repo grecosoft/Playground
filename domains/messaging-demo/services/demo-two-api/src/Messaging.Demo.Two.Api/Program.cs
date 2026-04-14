@@ -37,7 +37,7 @@ app.MapGet("/pending/commands", async(ICommandRepository repository) =>
     return Results.Ok(commands.Select(c => new PendingCommandModel(c)));
 });
 
-app.MapGet("/send-async-response/{correlationId}", async (
+app.MapPost("/send-async-response/{correlationId}", async (
     string correlationId, 
     ICommandRepository commandRepository,
     ICommandMessaging  messaging,
