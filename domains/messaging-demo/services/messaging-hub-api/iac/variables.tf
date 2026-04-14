@@ -33,38 +33,11 @@ variable "env_app_configs" {
   default = []
 }
 
-# variable "environment_overrides" {
-#   description = "Used to provide module and application configuration overrides for a specific environment."
-#   type = object({
-
-#     // Environment specific service configurations merged with common service configurations. 
-#     service_configs = map(
-#       list(object({
-#         key    = string                # The key of the configuration
-#         value  = any                   # The value.  This can be a simple value or jsonencode 
-#         label  = optional(string)      # The label of the value.  If not specified, label_name is used
-#         isJson = optional(bool, false) # Indicates that the value contains encoded json
-#       }))
-#     )
-
-#     // overrides solution authorization module.
-#     solution_auth = object({
-#       redirect_uris = list(string)
-#     })
-#   })
-# }
-
 # Developer related variables:
 variable "developer_group_name" {
   description = "The name of the Azure AD group that contains the developers who will have access to the solution's resources."
   type        = string
 }
-
-# # Kubernetes workload identity variables:
-# variable "namespace" {
-#   type        = string
-#   description = "The Kubernetes namespace to create ServiceAccount for the workload identity."
-# }
 
 # Remote state configuration variables:
 variable "storage_resource_group_name" {
@@ -80,4 +53,10 @@ variable "storage_account_name" {
 variable "solution_container_name" {
   description = "The name of the container containing the state of the solution."
   type        = string
+}
+
+// Environment level configuration variables:
+variable "Serilog_Log_Level" {
+  description = "The default log level defined at the environment level."
+  default = "Information"
 }

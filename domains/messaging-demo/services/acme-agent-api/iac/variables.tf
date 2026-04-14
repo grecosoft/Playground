@@ -34,7 +34,6 @@ variable "env_app_configs" {
 }
 
 
-
 # Developer related variables:
 variable "developer_group_name" {
   description = "The name of the Azure AD group that contains the developers who will have access to the solution's resources."
@@ -55,4 +54,10 @@ variable "storage_account_name" {
 variable "solution_container_name" {
   description = "The name of the container containing the state of the solution."
   type        = string
+}
+
+// Environment level configuration variables:
+variable "Serilog_Log_Level" {
+  description = "The default log level defined at the environment level."
+  default = "Information"
 }

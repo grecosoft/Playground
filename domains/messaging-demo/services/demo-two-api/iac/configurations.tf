@@ -5,16 +5,8 @@ locals {
       value = "0"
     },
     {
-      key    = "DatabaseHost"
-      isJson = true
-      value = jsonencode({
-        value1 = 1000
-        value2 = 2000
-        settings = [
-          { v1 = 12 },
-          { v2 = 44 }
-        ]
-      })
+      key   = "Serilog:MinimumLevel:Default"
+      value = var.Serilog_Log_Level
     }
   ]
 

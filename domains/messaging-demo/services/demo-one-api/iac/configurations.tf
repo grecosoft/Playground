@@ -5,6 +5,10 @@ locals {
       value = "0"
     },
     {
+      key   = "Serilog:MinimumLevel:Default"
+      value = var.Serilog_Log_Level
+    },
+    {
       key    = "DatabaseHost"
       isJson = true
       value = jsonencode({
@@ -15,11 +19,6 @@ locals {
           { v2 = 44 }
         ]
       })
-    },
-    {
-      key   = "DatabasePort"
-      value = 5432
-      label = "test-label"
     }
   ]
 

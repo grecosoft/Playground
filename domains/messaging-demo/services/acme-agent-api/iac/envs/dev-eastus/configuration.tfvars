@@ -14,3 +14,4 @@ solution_container_name     = "playground-dev-eastus"
 
 # Environment Overrides:
 env_app_configs = []
+Serilog_Log_Level = "Debug"

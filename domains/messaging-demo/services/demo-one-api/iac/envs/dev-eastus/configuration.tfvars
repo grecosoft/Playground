@@ -20,3 +20,5 @@ env_app_configs = [
     label = "test-label"
   }
 ]
+
+Serilog_Log_Level = "Debug"
