@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Extensions.Logging;
 
@@ -17,6 +18,10 @@ public static class HostLoggingExtensions
         configure(loggerConfiguration);
         
         Log.Logger = loggerConfiguration.CreateLogger();
+        
+        builder.Logging.ClearProviders();
+        builder.Logging.SetMinimumLevel(LogLevel.Debug);
+        builder.Logging.AddSerilog(Log.Logger);
         
         return new SerilogLoggerFactory(Log.Logger)
             .CreateLogger("bootstrap");
