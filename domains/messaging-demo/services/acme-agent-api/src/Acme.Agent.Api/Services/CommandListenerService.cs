@@ -14,7 +14,7 @@ public class CommandListenerService(
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _connection = new HubConnectionBuilder()
-            .WithUrl($"{_agentConfig.SignalREndpoint}/client/?hub=ConnectorHub", options =>
+            .WithUrl($"{_agentConfig.MessagingHubApi}/ConnectorHub", options =>
             {
                 options.AccessTokenProvider = () => messagingHubService.GetHubTokenAsync("acme", stoppingToken)!;
             })
