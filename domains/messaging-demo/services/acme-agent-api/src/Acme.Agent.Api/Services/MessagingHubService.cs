@@ -3,11 +3,13 @@
 public class MessagingHubService(
     HttpClient httpClient) : IMessagingHubService
 {
-    public async Task<string> GetHubTokenAsync(string agentId, CancellationToken ct)
+    public async Task<string> GetAgentTokenAsync(Guid customerId, string identity, CancellationToken ct)
     {
-        var response = await httpClient.GetFromJsonAsync<string>(
-            $"hub/{agentId}/token", ct);
+        var response = await httpClient.GetFromJsonAsync<TokenResponse>(
+            $"{customerId}/hub/{identity}/token", ct);
             
-        return response ?? throw new InvalidOperationException("Agent Hub Token not returned");
+        return response?.Token ?? throw new InvalidOperationException("Agent Hub Token not returned");
     }
+    
+    private record TokenResponse(string Token);
 }

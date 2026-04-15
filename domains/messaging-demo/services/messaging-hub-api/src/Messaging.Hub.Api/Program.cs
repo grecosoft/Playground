@@ -3,6 +3,8 @@ using Common.Messaging.Commands;
 using Common.Messaging.Core;
 using Common.Messaging.Core.Commands;
 using Messaging.Hub.Api;
+using Messaging.Hub.Api.Models;
+using Messaging.Hub.Domain;
 using Microsoft.Azure.SignalR.Management;
 using Serilog;
 
@@ -48,18 +50,19 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.MapGet("/hub/{agentId}/token", async (
-    string agentId,
-    ServiceManager manager,
-    CancellationToken cancellationToken) =>
+app.MapGet("{customerId:guid}/hub/{identity}/token", async (
+    Guid customerId,
+    string identity,
+    IAgentNegotiateService negotiationService,
+    CancellationToken ct) =>
 {
-    var serviceHubContext = await manager.CreateHubContextAsync("ConnectorHub/negotiate", cancellationToken);
-    var negotiationResponse = await serviceHubContext.NegotiateAsync(new NegotiationOptions
+    var result = await negotiationService.GetTokenAsync(customerId, identity, ct);
+    return result switch
     {
-        // TODO:  Set userid and other claims if needed.
-        // See https://learn.microsoft.com/azure/azure-signalr/signalr-concept-negotiation?tabs=serverless%2Csignal
-    }, cancellationToken);
-    return Results.Ok(negotiationResponse.AccessToken);
+        { AgentNotFound: true } => Results.NotFound(),
+        { TokenNotGenerated: true } => Results.BadRequest("Token could not be generated"),
+        _ => Results.Ok(new NegotiationModel(result.Token))
+    };
 });
 
 app.MapConnectorHub();

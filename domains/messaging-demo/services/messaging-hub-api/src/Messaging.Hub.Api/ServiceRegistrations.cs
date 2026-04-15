@@ -1,4 +1,5 @@
 ﻿using Azure.Identity;
+using Messaging.Hub.Api.Services;
 using Messaging.Hub.Domain;
 using Messaging.Hub.Infra;
 using Microsoft.Azure.SignalR;
@@ -41,6 +42,10 @@ public static class ServiceRegistrations
             .BuildServiceManager();
         
         builder.Services.AddSingleton(serviceManager);
+        
+        builder.Services.AddScoped<IAgentNegotiateService, AgentNegotiateService>();
+        builder.Services.AddScoped<IAgentRepository, AgentRepository>();
+        
         return builder;
     }
     

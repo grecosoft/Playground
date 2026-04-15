@@ -13,10 +13,18 @@ public class CommandListenerService(
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        if (!Guid.TryParse(_agentConfig.CustomerId, out var customerId))
+        {
+            logger.LogError("Invalid customer id: {customerId}", _agentConfig.CustomerId);
+            return;
+        }
+        
         _connection = new HubConnectionBuilder()
             .WithUrl($"{_agentConfig.MessagingHubApi}/ConnectorHub", options =>
             {
-                options.AccessTokenProvider = () => messagingHubService.GetHubTokenAsync("acme", stoppingToken)!;
+                options.AccessTokenProvider = () => messagingHubService.GetAgentTokenAsync(
+                    customerId,
+                    _agentConfig.AgentIdentity, stoppingToken)!;
             })
             .WithAutomaticReconnect([
                 TimeSpan.FromSeconds(0),

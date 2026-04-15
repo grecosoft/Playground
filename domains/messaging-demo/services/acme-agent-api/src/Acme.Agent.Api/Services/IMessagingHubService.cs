@@ -2,5 +2,5 @@
 
 public interface IMessagingHubService
 {
-    Task<string> GetHubTokenAsync(string agentId, CancellationToken ct);
+    Task<string> GetAgentTokenAsync(Guid customerId, string identity, CancellationToken ct);
 }
