@@ -2,7 +2,7 @@ using Common.Bootstrapping;
 using Common.Messaging.Commands;
 using Common.Messaging.Core;
 using Common.Messaging.Core.Commands;
-using Messaging.Hub.Infra;
+using Messaging.Hub.Api;
 using Microsoft.Azure.SignalR.Management;
 using Serilog;
 

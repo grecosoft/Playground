@@ -1,14 +1,10 @@
 ﻿using Azure.Identity;
 using Messaging.Hub.Domain;
-using Microsoft.AspNetCore.Builder;
+using Messaging.Hub.Infra;
 using Microsoft.Azure.SignalR;
 using Microsoft.Azure.SignalR.Management;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-namespace Messaging.Hub.Infra;
+namespace Messaging.Hub.Api;
 
 public static class ServiceRegistrations
 {
