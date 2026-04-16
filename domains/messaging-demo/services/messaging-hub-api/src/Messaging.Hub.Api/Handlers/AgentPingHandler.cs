@@ -21,8 +21,6 @@ public class AgentPingHandler(
         
         await connectorHub.Clients
             .User(command.AgentId)
-            .SendAsync("command-message", command.EchoMessage, cancellationToken);
-        
-       // await connectorHub.Clients.All.SendAsync("command-message", command.EchoMessage, cancellationToken);
+            .SendAsync(context.CommandNamespace, command, cancellationToken);
     }
 }

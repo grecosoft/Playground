@@ -71,18 +71,7 @@ app.MapPost("/send-async-command", async (
     return Results.Ok();
 });
 
-app.MapPost("/send-ping-command", async (
-    ICommandMessaging commandMessaging,
-    CancellationToken cancellationToken) =>
-{
-    var command = new PingCommand("value-one", "value-two");
-    var endPoint = commandMessaging.GetServiceEndpoint(ServiceEndpoints.MessagingHubApi);
-    
-    await endPoint.SendCommandAsync(command, cancellationToken);
-    return Results.Ok();
-});
-
-app.MapPost("/company/{companyId:guid}/{agentId}", async (
+app.MapPost("/company/{companyId:guid}/{agentId}/ping", async (
     Guid companyId,
     string  agentId,
     string message,

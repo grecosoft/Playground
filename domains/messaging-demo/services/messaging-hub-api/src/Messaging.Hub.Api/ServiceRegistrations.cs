@@ -3,13 +3,11 @@ using Azure.Identity;
 using Messaging.Hub.Domain;
 using Messaging.Hub.Infra;
 using Microsoft.Azure.SignalR;
-using Microsoft.Azure.SignalR.Management;
 
 namespace Messaging.Hub.Api;
 
 public static class ServiceRegistrations
 {
-  
     public static IHostApplicationBuilder AddSignalRMessaging(
         this IHostApplicationBuilder builder,
         ILogger bootstrapLogger)
@@ -40,22 +38,8 @@ public static class ServiceRegistrations
                 ];
             };
         });
-
-        var serviceManager = new ServiceManagerBuilder()
-            .WithOptions(options =>
-            {
-                options.ServiceEndpoints =
-                [
-                    new ServiceEndpoint(new Uri(config.SignalREndpoint), credential)
-                ];
-                    
-            })
-            .BuildServiceManager();
-        
-        builder.Services.AddSingleton(serviceManager);
         
         builder.Services.AddScoped<IAgentRepository, AgentRepository>();
-        
         return builder;
     }
     

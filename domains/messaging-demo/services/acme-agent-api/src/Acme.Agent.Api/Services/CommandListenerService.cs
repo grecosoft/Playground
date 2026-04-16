@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using Acme.Agent.Api.Commands;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
 
 namespace Acme.Agent.Api.Services;
@@ -13,12 +14,6 @@ public class CommandListenerService(
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (!Guid.TryParse(_agentConfig.CustomerId, out var customerId))
-        {
-            logger.LogError("Invalid customer id: {customerId}", _agentConfig.CustomerId);
-            return;
-        }
-        
         _connection = new HubConnectionBuilder()
             .WithUrl($"{_agentConfig.MessagingHubApi}/connectorhub?agentIdentity={_agentConfig.AgentIdentity}")
             .WithAutomaticReconnect([
@@ -34,11 +29,20 @@ public class CommandListenerService(
             logger.LogInformation("Received command: {command}", command);
             // handle command...
         });
+        
+        HandleAgentPingCommand(_connection);
 
         await _connection.StartAsync(stoppingToken);
-
-        // Keep alive until cancelled
         await Task.Delay(Timeout.Infinite, stoppingToken);
+    }
+
+    private void HandleAgentPingCommand(HubConnection connection)
+    {
+        connection.On<AgentPingCommand>("agent.commands.ping", command =>
+        {
+            logger.LogInformation("Received Ping Command: {command}", command);
+            // handle command...
+        });
     }
     
     public override async Task StopAsync(CancellationToken cancellationToken)
