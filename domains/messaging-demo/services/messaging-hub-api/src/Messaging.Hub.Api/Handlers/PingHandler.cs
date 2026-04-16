@@ -13,8 +13,10 @@ public class PingMessageHandler(
         CommandContext context,
         CancellationToken cancellationToken)
     {
-
         context.SetResponse(new PingResponse($"Pong-{command.ValueOne}/{command.ValueOne}-{Guid.NewGuid()}"));
+        
+        await connectorHub.Clients.User("agent1").SendAsync("command-message", command.ValueOne, cancellationToken);
+        
         await connectorHub.Clients.All.SendAsync("command-message", command.ValueOne, cancellationToken);
     }
 }

@@ -3,9 +3,6 @@ using Common.Messaging.Commands;
 using Common.Messaging.Core;
 using Common.Messaging.Core.Commands;
 using Messaging.Hub.Api;
-using Messaging.Hub.Api.Models;
-using Messaging.Hub.Domain;
-using Microsoft.Azure.SignalR.Management;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,21 +46,6 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
-app.MapGet("{customerId:guid}/hub/{identity}/token", async (
-    Guid customerId,
-    string identity,
-    IAgentNegotiateService negotiationService,
-    CancellationToken ct) =>
-{
-    var result = await negotiationService.GetTokenAsync(customerId, identity, ct);
-    return result switch
-    {
-        { AgentNotFound: true } => Results.NotFound(),
-        { TokenNotGenerated: true } => Results.BadRequest("Token could not be generated"),
-        _ => Results.Ok(new NegotiationModel(result.Token))
-    };
-});
 
 app.MapConnectorHub();
 app.Run();

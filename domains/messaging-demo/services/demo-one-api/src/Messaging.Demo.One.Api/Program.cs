@@ -82,4 +82,18 @@ app.MapPost("/send-ping-command", async (
     return Results.Ok();
 });
 
+app.MapPost("/company/{companyId:guid}/{agentId}", async (
+    Guid companyId,
+    string  agentId,
+    string message,
+    ICommandMessaging commandMessaging,
+    CancellationToken ct) =>
+{
+    var command = new AgentPingCommand(companyId, agentId, message);
+    var endPoint = commandMessaging.GetServiceEndpoint(ServiceEndpoints.MessagingHubApi);
+    
+    var response = await endPoint.SendCommandWithReplyAsync(command, ct);
+    return Results.Ok(response);
+});
+
 app.Run();

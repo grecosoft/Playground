@@ -1,5 +1,5 @@
-﻿using Azure.Identity;
-using Messaging.Hub.Api.Services;
+﻿using System.Security.Claims;
+using Azure.Identity;
 using Messaging.Hub.Domain;
 using Messaging.Hub.Infra;
 using Microsoft.Azure.SignalR;
@@ -28,6 +28,17 @@ public static class ServiceRegistrations
             [
                 new ServiceEndpoint(new Uri(config.SignalREndpoint), credential)
             ];
+            
+            options.ClaimsProvider = context =>
+            {
+                // NOTE:  This is just for the POC.  The first step is that the client needs to
+                // Call an api of the service to obtain a JTW containing these claims.
+                var agentIdentity = context.Request.Query["agentIdentity"].ToString();
+                return
+                [
+                    new Claim(ClaimTypes.NameIdentifier, agentIdentity)
+                ];
+            };
         });
 
         var serviceManager = new ServiceManagerBuilder()
@@ -43,7 +54,6 @@ public static class ServiceRegistrations
         
         builder.Services.AddSingleton(serviceManager);
         
-        builder.Services.AddScoped<IAgentNegotiateService, AgentNegotiateService>();
         builder.Services.AddScoped<IAgentRepository, AgentRepository>();
         
         return builder;
@@ -53,7 +63,7 @@ public static class ServiceRegistrations
     {
         appBuilder.UseEndpoints(endpoints =>
         {
-            endpoints.MapHub<ConnectorHub>("/ConnectorHub");
+            endpoints.MapHub<ConnectorHub>("/connectorhub");
         });
         
         return appBuilder;

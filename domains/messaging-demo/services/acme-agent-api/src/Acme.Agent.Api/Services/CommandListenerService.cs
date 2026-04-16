@@ -20,12 +20,7 @@ public class CommandListenerService(
         }
         
         _connection = new HubConnectionBuilder()
-            .WithUrl($"{_agentConfig.MessagingHubApi}/ConnectorHub", options =>
-            {
-                options.AccessTokenProvider = () => messagingHubService.GetAgentTokenAsync(
-                    customerId,
-                    _agentConfig.AgentIdentity, stoppingToken)!;
-            })
+            .WithUrl($"{_agentConfig.MessagingHubApi}/connectorhub?agentIdentity={_agentConfig.AgentIdentity}")
             .WithAutomaticReconnect([
                 TimeSpan.FromSeconds(0),
                 TimeSpan.FromSeconds(5),
