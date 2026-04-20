@@ -31,10 +31,12 @@ public class CommandListenerService(
 
     private void HandleAgentPingCommand(HubConnection connection)
     {
-        connection.On<AgentPingCommand>("agent.commands.ping", command =>
+        connection.On<AgentPingCommand, AgentPingResponse>("agent.commands.ping", command =>
         {
             logger.LogInformation("Received Ping Command: {command}", command);
             // handle command...
+            
+            return new AgentPingResponse($"Echo: {command.EchoMessage}", Guid.NewGuid().ToString());
         });
     }
     

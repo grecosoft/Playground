@@ -15,20 +15,13 @@ public class AgentPingHandler(
         CommandContext context,
         CancellationToken cancellationToken)
     {
-        var response = new AgentPingResponse(
-            command.EchoMessage,
-            Guid.NewGuid().ToString());
-        
-        context.SetResponse(response);
         
         var agentConnectionId = connectionManager.GetConnection(command.AgentId);
         
-        await connectorHub.Clients
+        var agentResponse = await connectorHub.Clients
             .Client(agentConnectionId!)
-            .SendAsync(context.CommandNamespace, command, cancellationToken);
+            .InvokeAsync<AgentPingResponse>(context.CommandNamespace, command, cancellationToken);
         
-        // await connectorHub.Clients
-        //     .User(command.AgentId)
-        //     .SendAsync(context.CommandNamespace, command, cancellationToken);
+        context.SetResponse(agentResponse);
     }
 }
