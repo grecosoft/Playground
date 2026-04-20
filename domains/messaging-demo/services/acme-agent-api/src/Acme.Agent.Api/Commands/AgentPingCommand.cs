@@ -4,3 +4,5 @@ public record AgentPingCommand(
     Guid CompanyId,
     string AgentId,
     string EchoMessage) ;
+    
+public record AgentPingResponse(string Message, string Status);

@@ -39,7 +39,8 @@ public static class ServiceRegistrations
             };
         });
         
-        builder.Services.AddScoped<IAgentRepository, AgentRepository>();
+        builder.Services.AddSingleton<IAgentRepository, AgentRepository>();
+        builder.Services.AddSingleton<IConnectionManager, ConnectionManager>();
         return builder;
     }
     

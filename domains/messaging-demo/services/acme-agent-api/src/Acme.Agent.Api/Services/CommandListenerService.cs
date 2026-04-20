@@ -6,8 +6,7 @@ namespace Acme.Agent.Api.Services;
 
 public class CommandListenerService(
     ILogger<CommandListenerService> logger,
-    IOptions<AgentConfig> agentConfigOptions,
-    IMessagingHubService messagingHubService) : BackgroundService
+    IOptions<AgentConfig> agentConfigOptions) : BackgroundService
 {
     private readonly AgentConfig _agentConfig = agentConfigOptions.Value;
     private HubConnection? _connection;
@@ -23,12 +22,6 @@ public class CommandListenerService(
                 TimeSpan.FromSeconds(30)
             ])
             .Build();
-
-        _connection.On<string>("command-message", command =>
-        {
-            logger.LogInformation("Received command: {command}", command);
-            // handle command...
-        });
         
         HandleAgentPingCommand(_connection);
 
