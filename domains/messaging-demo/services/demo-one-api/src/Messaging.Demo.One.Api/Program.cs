@@ -85,4 +85,18 @@ app.MapPost("/company/{companyId:guid}/{agentId}/ping", async (
     return Results.Ok(response);
 });
 
+app.MapPost("/company/{companyId:guid}/{agentId}/status", async (
+    Guid companyId,
+    string  agentId,
+    LogSeverityType minLogSeverity,
+    ICommandMessaging commandMessaging,
+    CancellationToken ct) =>
+{
+    var command = new AgentStatusSummaryCommand(companyId, agentId, minLogSeverity);
+    var endPoint = commandMessaging.GetServiceEndpoint(ServiceEndpoints.MessagingHubApi);
+    
+    await endPoint.SendCommandAsync(command, ct);
+    return Results.Ok();
+});
+
 app.Run();

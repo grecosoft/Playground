@@ -15,7 +15,6 @@ public class AgentPingHandler(
         CommandContext context,
         CancellationToken cancellationToken)
     {
-        
         var agentConnectionId = connectionManager.GetConnection(command.AgentId);
         
         var agentResponse = await connectorHub.Clients

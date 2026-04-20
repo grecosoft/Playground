@@ -36,13 +36,14 @@ public class ConnectorHub(
             "Agent: {Identifier} with: {ConnectionId} disconnected",
             Context.UserIdentifier, 
             Context.ConnectionId);
-        
+         
         return base.OnDisconnectedAsync(exception);
+    }
+
+    public string SendResponseToCommand(string correlationId, string response)
+    {
+        return Guid.NewGuid().ToString();
     }
 }
 
-// Add methods here to send both an RPC style method that returns a response to the caller,
-// and a fire-and-forget method that sends a message to the client without expecting a response.
-
-// Add method that can be called from the client passing a repose and the corresponding CorrelationId
-// Then look up the correlationId in the pending request repository and send replay back to clling service. 
+ 

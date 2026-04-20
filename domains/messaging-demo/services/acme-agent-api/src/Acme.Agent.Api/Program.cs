@@ -1,5 +1,7 @@
 using Acme.Agent.Api;
+using Acme.Agent.Api.Commands;
 using Common.Bootstrapping;
+using Microsoft.AspNetCore.SignalR.Client;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +40,12 @@ app.UseSwaggerUI();
 // app.UseHttpsRedirection();
 
 
-app.MapGet("/send-command-response", () => Results.Ok());
+app.MapPost("/send-status-summary/{correlationId}/", async (string correlationId, HubConnection hub) =>
+{
+    await hub.InvokeAsync<string>(
+        "SendResponseToCommand",
+        correlationId, 
+        new AgentStatusSummaryResponse(DateTime.UtcNow, LogSeverityType.Warning, []));
+});
 
 app.Run();
