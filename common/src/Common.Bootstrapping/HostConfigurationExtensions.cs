@@ -28,7 +28,7 @@ public static class HostConfigurationExtensions
         builder.Configuration.AddJsonFile(KubeConfigFile, optional: true);
         builder.Configuration.AddJsonFile(KubeSecretsFile, optional: true);
         
-        // Add the token credential to the container so it can be used when registering other azure services.
+        // Add the token credential to the container so it can be used when registering other azure services:
         builder.Services.AddSingleton(tokenCredential);
         
         var endpoint = builder.Configuration["Service:AppConfig:Endpoint"];
