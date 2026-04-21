@@ -16,16 +16,5 @@
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.32.0" />
     <PackageReference Include="Microsoft.Azure.SignalR.Management" Version="1.32.0" />
   </ItemGroup>
-
-  <!-- Common Project References: Used during local development -->
-  <!-- Optional and can be removed but can be included for common project development -->
-  <ItemGroup Condition="'$(UseProjectReferences)' == 'true'">
-    <ProjectReference Include="..\..\..\..\..\..\common\src\messaging\Common.Messaging\Common.Messaging.csproj" />
-  </ItemGroup>
-
-  <!-- Common NuGet References: Used during service deployment -->
-  <ItemGroup Condition="'$(UseProjectReferences)' != 'true'">
-    <PackageReference Include="Common.Messaging" Version="1.0.0.33" />
-  </ItemGroup>
-
+  
 </Project>
