@@ -27,7 +27,7 @@ public class CommandRepository : ICommandRepository
         return Task.CompletedTask;
     }
 
-    public Task<CommandContext> LoadCommand<T>(string correlationId, CancellationToken cancellationToken)
+    public Task<CommandContext> LoadTypedContext<T>(string correlationId, CancellationToken cancellationToken)
         where T : ICommandMessage
     {
         if (!_commandStates.TryGetValue(correlationId, out var commandState))
@@ -41,6 +41,23 @@ public class CommandRepository : ICommandRepository
             commandState.CommandNamespace);
         
         receivedCommand.SetCommand(BinaryData.FromString(commandState.Command), typeof(T));
+        
+        return Task.FromResult(receivedCommand);
+    }
+
+    public Task<CommandContext> LoadContext(string correlationId, CancellationToken cancellationToken)
+    {
+        if (!_commandStates.TryGetValue(correlationId, out var commandState))
+        {
+            throw new KeyNotFoundException($"Command {correlationId} not found.");
+        }
+
+        var receivedCommand = new CommandContext(
+            commandState.CorrelationId,
+            commandState.ReplyToService,
+            commandState.CommandNamespace);
+        
+        receivedCommand.SetCommandData(BinaryData.FromString(commandState.Command));
         
         return Task.FromResult(receivedCommand);
     }

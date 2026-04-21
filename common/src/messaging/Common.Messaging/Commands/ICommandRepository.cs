@@ -6,9 +6,11 @@ public interface ICommandRepository
 {
     Task SaveCommand(CommandContext commandContext, CancellationToken cancellationToken);
 
-    Task<CommandContext> LoadCommand<T>(string correlationId, CancellationToken cancellationToken)
+    Task<CommandContext> LoadTypedContext<T>(string correlationId, CancellationToken cancellationToken)
         where T : ICommandMessage;
 
+    Task<CommandContext> LoadContext(string correlationId, CancellationToken cancellationToken);
+    
     Task DeleteCommand(string correlationId, CancellationToken cancellationToken);
     
     Task<IEnumerable<CommandContext>> GetPendingCommandsAsync(CancellationToken cancellationToken);

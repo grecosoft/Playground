@@ -49,7 +49,7 @@ app.MapPost("/send-async-response/{correlationId}", async (
     ICommandMessaging  messaging,
     CancellationToken cancellationToken) =>
 {
-    var receivedCommand = await commandRepository.LoadCommand<DeviceUpdateCommand>(correlationId, cancellationToken);
+    var receivedCommand = await commandRepository.LoadTypedContext<DeviceUpdateCommand>(correlationId, cancellationToken);
     var command = (DeviceUpdateCommand)receivedCommand.Command;
     
     command.Response = deviceStatus;

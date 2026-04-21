@@ -10,6 +10,7 @@ public class CommandContext(
     string commandNamespace)
 {
     private ICommandMessage? _command;
+    private BinaryData? _commandData;
     private ICommandRepository? _commandRepository;
 
     public string CorrelationId { get; } = correlationId;
@@ -17,7 +18,8 @@ public class CommandContext(
     public string CommandNamespace { get; } = commandNamespace;
 
     public ICommandMessage Command => _command ?? throw new InvalidOperationException("Command not set.");
-
+    public BinaryData CommandData => _commandData ?? throw new InvalidOperationException("Command data not set.");
+    
     public ICommandRepository CommandRepository => _commandRepository
                                                    ?? throw new InvalidOperationException("CommandRepository not set.");
 
@@ -37,10 +39,22 @@ public class CommandContext(
         if (_command is not null)
             throw new InvalidOperationException("Command has already been set.");
 
+        _commandData = data;
+        
         _command = (ICommandMessage)(
             JsonSerializer.Deserialize(data, commandType)
             ?? throw new InvalidOperationException($"Failed to deserialize message body to type '{commandType.Name}'.")
         );
+    }
+
+    public void SetCommandData(BinaryData data)
+    {
+        if (_commandData is not null)
+        {
+            throw new InvalidOperationException("Command has already been set.");
+        }
+        
+        _commandData = data;
     }
 
     public void SetCommandRepository(ICommandRepository repository)

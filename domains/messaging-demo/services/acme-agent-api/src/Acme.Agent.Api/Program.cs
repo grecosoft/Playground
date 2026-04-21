@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Acme.Agent.Api;
 using Acme.Agent.Api.Commands;
 using Common.Bootstrapping;
@@ -42,10 +43,12 @@ app.UseSwaggerUI();
 
 app.MapPost("/send-status-summary/{correlationId}/", async (string correlationId, HubConnection hub) =>
 {
+    var response = new AgentStatusSummaryResponse(DateTime.UtcNow, LogSeverityType.Warning, []);
+    
     await hub.InvokeAsync<string>(
         "SendResponseToCommand",
         correlationId, 
-        new AgentStatusSummaryResponse(DateTime.UtcNow, LogSeverityType.Warning, []));
+        JsonSerializer.Serialize(response));
 });
 
 app.Run();
