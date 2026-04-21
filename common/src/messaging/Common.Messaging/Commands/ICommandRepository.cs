@@ -8,6 +8,8 @@ public interface ICommandRepository
 
     Task<CommandContext> LoadCommand<T>(string correlationId, CancellationToken cancellationToken)
         where T : ICommandMessage;
+
+    Task DeleteCommand(string correlationId, CancellationToken cancellationToken);
     
     Task<IEnumerable<CommandContext>> GetPendingCommandsAsync(CancellationToken cancellationToken);
 }

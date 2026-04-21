@@ -44,6 +44,7 @@ app.MapGet("/pending/commands", async(ICommandRepository repository) =>
 
 app.MapPost("/send-async-response/{correlationId}", async (
     string correlationId, 
+    DeviceStatus deviceStatus,
     ICommandRepository commandRepository,
     ICommandMessaging  messaging,
     CancellationToken cancellationToken) =>
@@ -51,7 +52,7 @@ app.MapPost("/send-async-response/{correlationId}", async (
     var receivedCommand = await commandRepository.LoadCommand<DeviceUpdateCommand>(correlationId, cancellationToken);
     var command = (DeviceUpdateCommand)receivedCommand.Command;
     
-    command.Response = new DeviceStatus(true);
+    command.Response = deviceStatus;
     
     await messaging.SendResponseToCommandAsync(
         receivedCommand, 
@@ -60,8 +61,6 @@ app.MapPost("/send-async-response/{correlationId}", async (
     
     return Results.Ok();
 });
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

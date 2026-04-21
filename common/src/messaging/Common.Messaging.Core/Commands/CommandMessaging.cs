@@ -22,18 +22,22 @@ public class CommandMessaging: ICommandMessaging
     /// </summary>
     /// <param name="messagingOptions">Messaging related configurations.</param>
     /// <param name="logger">Configured logger.</param>
+    /// <param name="commandRepository">Repository containing pending commands.</param>
     /// <param name="client">Reference to the Service Bus Client.</param>
     /// <param name="rpcCommandSender">Used to send RPC style of commands.</param>
     /// <param name="asyncCommandSender">Used to send asynchronous commands having future responses.</param>
     public CommandMessaging( 
         IOptions<MessagingConfig> messagingOptions,
         ILogger<CommandMessaging> logger,
+        ICommandRepository commandRepository,
         ServiceBusClient client,
         [FromKeyedServices("rpc")] ServiceBusSender rpcCommandSender,
         [FromKeyedServices("async")] ServiceBusSender asyncCommandSender)
     {
         _busConfig = messagingOptions.Value;
         _logger = logger;
+        _commandRepository = commandRepository;
+        
         _client = client;
         _rpcCommandSender = rpcCommandSender;
         _asyncCommandSender = asyncCommandSender;
@@ -43,6 +47,7 @@ public class CommandMessaging: ICommandMessaging
     
     private readonly MessagingConfig _busConfig;
     private readonly ILogger<CommandMessaging> _logger;
+    private readonly ICommandRepository _commandRepository;
     
     private readonly ServiceBusClient _client;
     private readonly ServiceBusSender _rpcCommandSender;
@@ -75,7 +80,7 @@ public class CommandMessaging: ICommandMessaging
     public async Task SendResponseToCommandAsync<TResponse>(
         CommandContext context,
         ICommandMessage<TResponse> command,
-        CancellationToken token)
+        CancellationToken ct)
     {
         var message = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(command, command.GetType()))
         {
@@ -91,7 +96,8 @@ public class CommandMessaging: ICommandMessaging
             }
         };
         
-        await _asyncCommandSender.SendMessageAsync(message, token);
+        await _asyncCommandSender.SendMessageAsync(message, ct);
+        await _commandRepository.DeleteCommand(context.CorrelationId, ct);
     }
     
     // Sends a command to a destination service and waits for a max specific

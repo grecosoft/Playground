@@ -45,6 +45,13 @@ public class CommandRepository : ICommandRepository
         return Task.FromResult(receivedCommand);
     }
 
+    public Task DeleteCommand(string correlationId, CancellationToken cancellationToken)
+    {
+        return !_commandStates.TryGetValue(correlationId, out var commandState) 
+            ? throw new KeyNotFoundException($"Command {correlationId} not found.")
+            : Task.CompletedTask;
+    }
+
     public Task<IEnumerable<CommandContext>> GetPendingCommandsAsync(CancellationToken cancellationToken)
     {
         var pendingCommands = _commandStates.Values.Select(s => new CommandContext(

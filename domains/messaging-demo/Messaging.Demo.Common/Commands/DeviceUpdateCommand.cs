@@ -8,4 +8,10 @@ public record DeviceUpdateCommand(string DeviceId) : ICommandMessage<DeviceStatu
     public DeviceStatus? Response { get; set; }
 }
 
-public record DeviceStatus(bool IsEnabled);
+public record DeviceStatus(
+    bool IsEnabled,
+    int BatteryLevel,
+    bool IsCharging,
+    string City,
+    string State,
+    string ZipCode);
