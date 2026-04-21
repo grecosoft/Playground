@@ -24,10 +24,10 @@
 
   <!-- Common NuGet References: Used during service deployment -->
   <ItemGroup Condition="'$(UseProjectReferences)' != 'true'">
-    <PackageReference Include="Common.Bootstrapping" Version="1.0.0.34" />
-    <PackageReference Include="Common.Messaging.Entities" Version="1.0.0.34" />
-    <PackageReference Include="Common.Messaging.Core" Version="1.0.0.34" />
-    <PackageReference Include="Common.Messaging" Version="1.0.0.34" />
+    <PackageReference Include="Common.Bootstrapping" Version="1.0.0.35" />
+    <PackageReference Include="Common.Messaging.Entities" Version="1.0.0.35" />
+    <PackageReference Include="Common.Messaging.Core" Version="1.0.0.35" />
+    <PackageReference Include="Common.Messaging" Version="1.0.0.35" />
   </ItemGroup>
   
   <ItemGroup>
