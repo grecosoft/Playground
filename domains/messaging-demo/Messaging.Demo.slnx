@@ -7,19 +7,23 @@
   </Folder>
   <Folder Name="/services/" />
   <Folder Name="/services/acme-agent-api/">
+    <File Path="services/acme-agent-api/README.md" />
     <Project Path="services/acme-agent-api/src/Acme.Agent.Api/Acme.Agent.Api.csproj" />
   </Folder>
   <Folder Name="/services/demo-one-api/">
+    <File Path="services/demo-one-api/README.md" />
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj" />
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Domain/Messaging.Demo.One.Domain.csproj" />
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Infra/Messaging.Demo.One.Infra.csproj" />
   </Folder>
   <Folder Name="/services/demo-two-api/">
+    <File Path="services/demo-two-api/README.md" />
     <Project Path="services/demo-two-api/src/Messaging.Demo.Two.Api/Messaging.Demo.Two.Api.csproj" />
     <Project Path="services/demo-two-api/src/Messaging.Demo.Two.Domain/Messaging.Demo.Two.Domain.csproj" />
     <Project Path="services/demo-two-api/src/Messaging.Demo.Two.Infra/Messaging.Demo.Two.Infra.csproj" />
   </Folder>
   <Folder Name="/services/messaging-hub-api/">
+    <File Path="services/messaging-hub-api/README.md" />
     <Project Path="services/messaging-hub-api/src/Messaging.Hub.Api/Messaging.Hub.Api.csproj" />
     <Project Path="services/messaging-hub-api/src/Messaging.Hub.Domain/Messaging.Hub.Domain.csproj" />
     <Project Path="services/messaging-hub-api/src/Messaging.Hub.Infra/Messaging.Hub.Infra.csproj" />

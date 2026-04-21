@@ -12,10 +12,10 @@ namespace Common.Messaging.Core.Commands;
 /// and dispatches them to the appropriate command handlers for processing.  After the handler is invoked,
 /// the response is returned to the originating service on the reply queue.
 /// </summary>
-/// <param name="logger"></param>
-/// <param name="serviceProvider"></param>
-/// <param name="requestTopicProcessor"></param>
-/// <param name="replyQueueSender"></param>
+/// <param name="logger">Logger.</param>
+/// <param name="serviceProvider">Service provider used to create scope to execute handler within.</param>
+/// <param name="requestTopicProcessor">The processor on which the commands are received.</param>
+/// <param name="replyQueueSender">Used to sent replay to command back to calling service.</param>
 public class CommandHandlerDispatcherRpc(
     ILogger<CommandHandlerDispatcherRpc> logger,
     IServiceProvider serviceProvider,

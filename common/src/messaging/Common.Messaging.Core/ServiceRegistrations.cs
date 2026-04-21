@@ -18,6 +18,7 @@ public static class ServiceRegistrations
             ILogger bootstrapLogger,
             IConfiguration configuration)
         {
+            // Load and log the messaging configuration:
             var configSection = configuration.GetSection("ServiceMessaging");
         
             var config = configSection.Get<MessagingConfig>() 
@@ -27,15 +28,12 @@ public static class ServiceRegistrations
                 "Configuring Service Messaging: {@Configuration}", config.ToLoggableProperties());
             
             services.Configure<MessagingConfig>(configSection);
-
+            
             AddServiceBusClient(services, config);
             AddRpcCommandMessageHandling(services, config);
             AddAsyncCommandMessageHandling(services, config);
             
             AddCommandMessageHandlers(services);
-            
-            // Registers services used for sending messages to other services, which will
-            // be injected into command handlers and other services that need to send messages.
             AddMessagingServices(services, config);
             return services;
         }
@@ -48,7 +46,7 @@ public static class ServiceRegistrations
             new DefaultAzureCredential(),
             new ServiceBusClientOptions
             {
-                
+                // TODO:  Determine which settings to expose as configurations.
             }));
     }
     
@@ -66,6 +64,7 @@ public static class ServiceRegistrations
                 config.RpcCommandSubscription, 
                 new ServiceBusProcessorOptions
                 {
+                    // TODO:  Determine which settings to expose as configurations.
                     ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
                 });
         });
@@ -92,7 +91,7 @@ public static class ServiceRegistrations
                 config.AsyncCommandSubscription, 
                 new ServiceBusProcessorOptions
                 {
-              
+                    // TODO:  Determine which settings to expose as configurations.
                 });
         });
         

@@ -4,6 +4,10 @@ using Common.Messaging.Entities;
 
 namespace Common.Messaging.Core.Commands;
 
+/// <summary>
+/// NOTE:  This is a simple in-memory implementation of the command repository for demonstration purposes.
+/// In a production system, you would likely want to implement this using a durable storage mechanism such as a database.
+/// </summary>
 public class CommandRepository : ICommandRepository
 {
     private readonly Dictionary<string, CommandState> _commandStates = new();
@@ -36,7 +40,7 @@ public class CommandRepository : ICommandRepository
             commandState.ReplyToService,
             commandState.CommandNamespace);
         
-        receivedCommand.SetCommand(BinaryData.FromString(commandState.command), typeof(T));
+        receivedCommand.SetCommand(BinaryData.FromString(commandState.Command), typeof(T));
         
         return Task.FromResult(receivedCommand);
     }
@@ -55,5 +59,5 @@ public class CommandRepository : ICommandRepository
         string CorrelationId, 
         string ReplyToService,
         string CommandNamespace,
-        string command);
+        string Command);
 }

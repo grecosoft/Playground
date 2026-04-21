@@ -20,7 +20,6 @@ public static class HostLoggingExtensions
         Log.Logger = loggerConfiguration.CreateLogger();
         
         builder.Logging.ClearProviders();
-        builder.Logging.SetMinimumLevel(LogLevel.Debug);
         builder.Logging.AddSerilog(Log.Logger);
         
         return new SerilogLoggerFactory(Log.Logger)

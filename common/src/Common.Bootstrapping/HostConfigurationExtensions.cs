@@ -8,7 +8,12 @@ namespace Common.Bootstrapping;
 
 public static class HostConfigurationExtensions
 {
+    // This is the name of the local configuration file that is used when developing locally.
+    // This file is excluded from the docker image when built, and should not be included in production deployments. 
     private const string LocalDevConfigFile = "appsettings.local.json";
+    
+    // These files are created by the K8S AzureAppConfigurationProvider when the service is deployed to Kubernetes,
+    // and contain the configuration values pulled from Azure App Configuration and Key Vault.
     private const string KubeConfigFile = "/service/configs/appsettings.k8s.json";
     private const string KubeSecretsFile = "/services/secrets/secrets.k8s.secret.json";
     

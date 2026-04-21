@@ -13,6 +13,18 @@ namespace Common.Messaging.Core.Commands;
 
 public class CommandMessaging: ICommandMessaging
 {
+    /// <summary>
+    /// Core implementation of the command messaging system.  This class is responsible for sending commands
+    /// to other services and sending responses back to calling services for previously received commands.
+    /// When the CommandMessaging class is instantiated, it creates CommandEndpoint instances for each dependent
+    /// service configured in the MessagingConfig. The CommandEndpoint instances are used to send commands to the
+    /// appropriate service endpoints.
+    /// </summary>
+    /// <param name="messagingOptions">Messaging related configurations.</param>
+    /// <param name="logger">Configured logger.</param>
+    /// <param name="client">Reference to the Service Bus Client.</param>
+    /// <param name="rpcCommandSender">Used to send RPC style of commands.</param>
+    /// <param name="asyncCommandSender">Used to send asynchronous commands having future responses.</param>
     public CommandMessaging( 
         IOptions<MessagingConfig> messagingOptions,
         ILogger<CommandMessaging> logger,
@@ -31,14 +43,16 @@ public class CommandMessaging: ICommandMessaging
     
     private readonly MessagingConfig _busConfig;
     private readonly ILogger<CommandMessaging> _logger;
+    
     private readonly ServiceBusClient _client;
     private readonly ServiceBusSender _rpcCommandSender;
     private readonly ServiceBusSender _asyncCommandSender;
+
+    private readonly Dictionary<string, CommandEndpoint> _commandEndpoints = new();
     
     // Caches message associated metadata used to set properties 
     // when publishing message to the consuming service.
     private readonly ConcurrentDictionary<Type, MessageMetadata> _messageMetadata = new();
-    private readonly Dictionary<string, CommandEndpoint> _commandEndpoints = new();
     
     public ICommandEndpoint GetServiceEndpoint(string serviceName)
     {
@@ -55,8 +69,9 @@ public class CommandMessaging: ICommandMessaging
         }
     }
     
-    // Sends a response to a previously received command. This is used by the service that receives the command and is \
-    // processing it and wants to send a response sometime in the future.
+    // Sends a response to a previously received command back to the originating service.  This method is used
+    // within a service that receives commands, and needs to send a response back to the caller of the command.
+    // The caller of the command is not expected to be waiting for an immediate response,
     public async Task SendResponseToCommandAsync<TResponse>(
         CommandContext context,
         ICommandMessage<TResponse> command,
@@ -67,13 +82,15 @@ public class CommandMessaging: ICommandMessaging
             CorrelationId = context.CorrelationId,
             ApplicationProperties =
             {
-                { "service_id", context.SendingServiceId }
+                // Specified so the command response is delivered back to the service that originally send the command.
+                { MessageProperties.EndpointServiceId, context.SendingServiceId },
+                
+                // Message metadata:
+                { MessageProperties.CommandNamespace, context.CommandNamespace },
+                { MessageProperties.SendingServiceId, _busConfig.ServiceId }
             }
         };
-
-        message.ApplicationProperties.Add(MessageProperties.CommandNamespace, context.CommandNamespace);
-        message.ApplicationProperties.Add(MessageProperties.SendingServiceId, _busConfig.ServiceId);
-
+        
         await _asyncCommandSender.SendMessageAsync(message, token);
     }
     
@@ -82,19 +99,19 @@ public class CommandMessaging: ICommandMessaging
     internal async Task<TResponse> SendCommandWithReplyAsync<TResponse>(
         ICommandMessage command,
         EndpointInfo endpointInfo,
-        CancellationToken token)
+        CancellationToken ct)
     {
         var correlationId = await SendCommandMessage(
             _rpcCommandSender,
             endpointInfo,
             command,
-            token);
+            ct);
 
-        return await WaitCommandResponse<TResponse>(correlationId, endpointInfo, token);
+        return await WaitCommandResponse<TResponse>(correlationId, endpointInfo, ct);
     }
 
-    // Sends a command to a destination service and expects a response to be sent back to the reply queue, but does not
-    // wait for the response.  This is useful for fire-and-forget style commands.  Also, response may never be received.
+    // Sends a command to a destination service and expects a response to be sent back on the reply queue, but does not
+    // wait for the response.  
     internal Task SendCommandAsync<TResponse>(
         ICommandMessage<TResponse> command,
         EndpointInfo endpointInfo,
@@ -115,6 +132,7 @@ public class CommandMessaging: ICommandMessaging
     {
         var correlationId = Activity.Current?.TraceId.ToString() ?? Guid.NewGuid().ToString();
         var messageMetadata = GetMessageMetadata(command.GetType());
+        
         var message = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(command, command.GetType()))
         {
             CorrelationId = correlationId,
@@ -150,7 +168,10 @@ public class CommandMessaging: ICommandMessaging
         return correlationId;
     }
 
-    private async Task<TResponse> WaitCommandResponse<TResponse>(string correlationId, EndpointInfo endpointInfo, CancellationToken token)
+    private async Task<TResponse> WaitCommandResponse<TResponse>(
+        string correlationId,
+        EndpointInfo endpointInfo,
+        CancellationToken ct)
     {
        _logger.LogDebug(
             "Waiting for response for {CorrelationId} from service {DestinationServiceId}", 
@@ -161,11 +182,11 @@ public class CommandMessaging: ICommandMessaging
             _busConfig.RpcReplyQueue,
             correlationId,
             new ServiceBusSessionReceiverOptions { ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete },
-            token);
+            ct);
 
         var replyMessage = await sessionReceiver.ReceiveMessageAsync(
             TimeSpan.FromSeconds(_busConfig.RpcReplyTimeoutSeconds),
-            token);
+            ct);
 
         if (replyMessage == null)
         {

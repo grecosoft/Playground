@@ -10,11 +10,15 @@ public record CommandDispatchInfo(
 
 public static class MessageTypeExtensions
 {
+    /// <summary>
+    /// Scans a list of types searching for concrete classes responsible for handling commands.
+    /// TODO:  Add validation logic to validate there is only one handler per command type.
+    /// </summary>
+    /// <param name="types">List of types to search.</param>
+    /// <returns>Information used at runtime to dispatch a handler for a given command.</returns>
     public static IEnumerable<CommandDispatchInfo> GetCommandDispatches(this IEnumerable<TypeInfo> types)
     {
-        return AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(a => a.DefinedTypes)
-            .Where(t =>
+        return types.Where(t =>
                 t is { IsClass: true, IsAbstract: false } &&
                 t.ImplementedInterfaces.Contains(typeof(ICommandMessageHandler)))
             .SelectMany(GetCommandDispatches);

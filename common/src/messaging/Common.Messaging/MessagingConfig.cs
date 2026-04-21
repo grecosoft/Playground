@@ -1,15 +1,24 @@
 ﻿namespace Common.Messaging;
 
+/// <summary>
+/// Configuration settings for messaging between services within a solution.
+/// All the needed values are set by the service_messaging Terraform module.
+/// </summary>
 public class MessagingConfig
 {
     /// <summary>
-    /// The unique identifier of the service within the solution, used for service discovery
-    /// and routing messages to the correct service.
+    /// The unique identifier of the service within the solution, used for routing messages to the correct service.
     /// </summary>
     public string ServiceId { get; set; } = string.Empty;
     
+    /// <summary>
+    /// The name of the solution in which the service exists.
+    /// </summary>
     public string SolutionName { get; set; } = string.Empty;
     
+    /// <summary>
+    /// The name of the service.
+    /// </summary>
     public string ServiceName { get; set; } = string.Empty;
     
     /// <summary>
@@ -19,10 +28,17 @@ public class MessagingConfig
     
     /// <summary>
     /// A dictionary of dependent services that this service needs to communicate with,
-    /// where the key is the name of the service.
+    /// where the key is the name of the service and the value is its identity.
     /// </summary>
     public Dictionary<string, string> DependentServices { get; init; } = [];
 
+    /// <summary>
+    /// The number of seconds to wait for a response to an RPC style of command.
+    /// </summary>
+    public int RpcReplyTimeoutSeconds { get; set; } = 50;
+    
+    
+    
     /// <summary>
     /// The name of the topic used to send RPC style commands between a solution's services.
     /// </summary>
@@ -39,8 +55,6 @@ public class MessagingConfig
     /// </summary>
     public string RpcReplyQueue => $"{SolutionName}-command-rpc-reply-queue";
     
-    public int RpcReplyTimeoutSeconds { get; set; } = 50;
-
     /// <summary>
     /// The name of the topic used to send asynchronous commands between a solution's services,
     /// where the sender does not expect an immediate response from the receiving service.

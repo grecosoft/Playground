@@ -6,6 +6,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Common.Messaging.Core.Commands;
 
+/// <summary>
+/// Subscribes to the Service Bus topic/subscription on which asynchronous commands are delevered between services for
+/// commands targeting this service, and dispatches received commands to the appropriate command handler for processing.
+/// </summary>
+/// <param name="logger">Logger.</param>
+/// <param name="serviceProvider">Service provider used to create scope to execute handler within.</param>
+/// <param name="requestTopicProcessor">The processor on which the commands are received.</param>
 public class CommandHandlerDispatcherAsync(
     ILogger<CommandHandlerDispatcherAsync> logger,
     IServiceProvider serviceProvider,
@@ -55,7 +62,17 @@ public class CommandHandlerDispatcherAsync(
     
     private Task OnProcessErrorAsync(ProcessErrorEventArgs eventArgs)
     {
-        logger.LogError(eventArgs.Exception, "Exception processing message received on {QueueName}", eventArgs.EntityPath);
+        logger.LogError(
+            eventArgs.Exception, 
+            "Exception processing message received on {QueueName}",
+            eventArgs.EntityPath);
+        
         return Task.CompletedTask;
+    }
+    
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        logger.LogInformation("Stopping processing of Async commands.");
+        return base.StopAsync(cancellationToken);
     }
 }

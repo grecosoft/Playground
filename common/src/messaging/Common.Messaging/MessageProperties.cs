@@ -10,6 +10,9 @@ public static class MessageProperties
     /// </summary>
     public const string SendingServiceId = "sending-service-id";
     
+    /// <summary>
+    /// The identity of the service to which the command should be delivered.
+    /// </summary>
     public const string EndpointServiceId = "service_id";
     
     /// <summary>
@@ -23,20 +26,6 @@ public static class MessageProperties
     /// <param name="message">The message containing properties to be retrieved.</param>
     extension(ServiceBusReceivedMessage message)
     {
-        public T GetRequiredEnumProperty<T>(string key)
-        {
-            if (message.ApplicationProperties.TryGetValue(key, out var commandTypeValue)
-                && commandTypeValue is not null 
-                && Enum.TryParse(typeof(T), commandTypeValue.ToString(), out var commandType))
-            {
-                return (T)commandType;
-            }
-        
-            throw new ArgumentException(
-                $"Received message is missing required application property '{key}'.",
-                nameof(key));
-        }
-
         public string GetRequiredStringProperty(string key)
         {
             if (!message.ApplicationProperties.TryGetValue(key, out var value) 
