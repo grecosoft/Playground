@@ -81,9 +81,7 @@ public class CommandMessaging: ICommandMessaging
         CommandContext context,
         CancellationToken ct)
     {
-        var payload = new CommandPayload(
-            BinaryData.FromBytes(JsonSerializer.SerializeToUtf8Bytes(context.Command, context.Command.GetType())),
-            BinaryData.FromObjectAsJson(context.Response));
+        var payload = CreateCommandPayload(context);
         
         var message = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(payload))
         {
@@ -101,6 +99,18 @@ public class CommandMessaging: ICommandMessaging
         
         await _asyncCommandSender.SendMessageAsync(message, ct);
         await _commandRepository.DeleteCommand(context.CorrelationId, ct);
+    }
+    
+    private CommandPayload CreateCommandPayload(CommandContext context)
+    {
+        if (!context.ResponseData.IsEmpty)
+        {
+            return new CommandPayload(context.CommandData, context.ResponseData);
+        }
+        
+        return new CommandPayload(
+            BinaryData.FromBytes(JsonSerializer.SerializeToUtf8Bytes(context.Command, context.Command.GetType())),
+            BinaryData.FromObjectAsJson(context.Response));
     }
     
     // Sends a command to a destination service and waits for a max specific

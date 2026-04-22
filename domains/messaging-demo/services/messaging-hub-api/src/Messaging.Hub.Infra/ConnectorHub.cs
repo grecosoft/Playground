@@ -1,11 +1,15 @@
-﻿using Messaging.Hub.Domain;
+﻿using Common.Messaging;
+using Common.Messaging.Commands;
+using Messaging.Hub.Domain;
 using Microsoft.Extensions.Logging;
 
 namespace Messaging.Hub.Infra;
 
 public class ConnectorHub(
     ILogger<ConnectorHub> logger,
-    IConnectionManager connectionManager) : Microsoft.AspNetCore.SignalR.Hub
+    IConnectionManager connectionManager,
+    ICommandRepository commandRepository,
+    ICommandMessaging commandMessaging) : Microsoft.AspNetCore.SignalR.Hub
 {
     public override Task OnConnectedAsync()
     {
@@ -47,9 +51,12 @@ public class ConnectorHub(
     /// <param name="correlationId"></param>
     /// <param name="response"></param>
     /// <returns></returns>
-    public string SendResponseToCommand(string correlationId, string response)
+    public async Task SendResponseToCommand(string correlationId, string response)
     {
-        return Guid.NewGuid().ToString();
+        var context = await commandRepository.LoadContextContext(correlationId, Context.ConnectionAborted);
+        context.SetResponse(BinaryData.FromString(response));
+        
+        await commandMessaging.SendResponseToCommandAsync(context, Context.ConnectionAborted);
     }
 }
 

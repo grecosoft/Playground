@@ -46,7 +46,6 @@ public class CommandHandlerDispatcherAsync(
             
             var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
             
-            
             context.SetCommand(payload.Command, commandHandler.CommandType);
             if (payload.HasResponse)
             {

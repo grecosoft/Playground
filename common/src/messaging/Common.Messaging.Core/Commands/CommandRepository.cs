@@ -45,7 +45,7 @@ public class CommandRepository : ICommandRepository
         return Task.FromResult(receivedCommand);
     }
 
-    public Task<CommandContext> LoadContext(string correlationId, CancellationToken cancellationToken)
+    public Task<CommandContext> LoadContextContext(string correlationId, CancellationToken cancellationToken)
     {
         if (!_commandStates.TryGetValue(correlationId, out var commandState))
         {

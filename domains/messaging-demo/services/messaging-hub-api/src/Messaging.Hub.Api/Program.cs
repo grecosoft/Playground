@@ -2,6 +2,7 @@ using Common.Bootstrapping;
 using Common.Messaging.Commands;
 using Common.Messaging.Core;
 using Common.Messaging.Core.Commands;
+using Messaging.Demo.Two.Api.Models;
 using Messaging.Hub.Api;
 using Serilog;
 
@@ -48,4 +49,11 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.MapConnectorHub();
+
+app.MapGet("/pending/commands", async(ICommandRepository repository) =>
+{
+    var commands = await repository.GetPendingCommandsAsync(cancellationToken: CancellationToken.None);
+    return Results.Ok(commands.Select(c => new PendingCommandModel(c)));
+});
+
 app.Run();

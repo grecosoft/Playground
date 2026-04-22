@@ -22,6 +22,7 @@ public class CommandContext(
 
     public ICommandMessage Command => _command ?? throw new InvalidOperationException("Command not set.");
     public BinaryData CommandData => _commandData ?? throw new InvalidOperationException("Command data not set.");
+    public BinaryData ResponseData => _responseData ?? throw new InvalidOperationException("Response data not set.");
     
     public ICommandRepository CommandRepository => _commandRepository
                                                    ?? throw new InvalidOperationException("CommandRepository not set.");
@@ -61,6 +62,16 @@ public class CommandContext(
             JsonSerializer.Deserialize(data, responseType)
             ?? throw new InvalidOperationException($"Failed to deserialize message body to type '{responseType.Name}'.");
     }
+    
+    public void SetResponse(BinaryData data)
+    {
+        if (_responseData is not null)
+            throw new InvalidOperationException("ResponseData has already been set.");
+
+        _responseData = data;
+    }
+    
+    
 
     public void SetCommandData(BinaryData data)
     {

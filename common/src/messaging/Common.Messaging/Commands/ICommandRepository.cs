@@ -9,7 +9,7 @@ public interface ICommandRepository
     Task<CommandContext> LoadTypedContext<T>(string correlationId, CancellationToken cancellationToken)
         where T : ICommandMessage;
 
-    Task<CommandContext> LoadContext(string correlationId, CancellationToken cancellationToken);
+    Task<CommandContext> LoadContextContext(string correlationId, CancellationToken cancellationToken);
     
     Task DeleteCommand(string correlationId, CancellationToken cancellationToken);
     

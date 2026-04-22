@@ -1,20 +1,22 @@
-﻿namespace Acme.Agent.Api.Commands;
+﻿using System.Text.Json.Serialization;
+
+namespace Acme.Agent.Api.Commands;
 
 public record AgentStatusSummaryCommand(
-    Guid CompanyId,
-    string AgentId,
-    LogSeverityType MinLogLeven);
+    [property: JsonPropertyName("companyId")] Guid CompanyId,
+    [property: JsonPropertyName("AgentId")] string AgentId,
+    [property: JsonPropertyName("MinLogLevel")] LogSeverityType MinLogLevel);
 
 public record AgentStatusSummaryResponse(
-    DateTimeOffset GeneratedTimestamp,
-    LogSeverityType OverallSeverity,
-    ComponentStatus[] ComponentStatuses);
+    [property: JsonPropertyName("generatedTimestamp")] DateTimeOffset GeneratedTimestamp,
+    [property: JsonPropertyName("overallSeverity")] LogSeverityType OverallSeverity,
+    [property: JsonPropertyName("componentStatuses")] ComponentStatus[] ComponentStatuses);
     
 public record ComponentStatus(
-    string  ComponentId, 
-    DateTimeOffset CreatedTimestamp,
-    string LastLogMessage,
-    LogSeverityType LogSeverity);
+    [property: JsonPropertyName("componentId")] string  ComponentId, 
+    [property: JsonPropertyName("createdTimestamp")] DateTimeOffset CreatedTimestamp,
+    [property: JsonPropertyName("lastLogMessage")] string LastLogMessage,
+    [property: JsonPropertyName("logSeverity")] LogSeverityType LogSeverity);
     
 public enum LogSeverityType
 {

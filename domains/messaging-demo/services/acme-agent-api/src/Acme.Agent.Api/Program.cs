@@ -43,9 +43,15 @@ app.UseSwaggerUI();
 
 app.MapPost("/send-status-summary/{correlationId}/", async (string correlationId, HubConnection hub) =>
 {
-    var response = new AgentStatusSummaryResponse(DateTime.UtcNow, LogSeverityType.Warning, []);
+    var response = new AgentStatusSummaryResponse(
+        DateTime.UtcNow,
+        LogSeverityType.Warning,
+        [
+            new ComponentStatus("typewriter", DateTime.UtcNow, "Disk space low", LogSeverityType.Warning),
+            new ComponentStatus("coffee-machine", DateTime.UtcNow, "Out of coffee", LogSeverityType.Error)
+        ]);
     
-    await hub.InvokeAsync<string>(
+    await hub.SendAsync(
         "SendResponseToCommand",
         correlationId, 
         JsonSerializer.Serialize(response));
