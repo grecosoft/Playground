@@ -1,3 +1,7 @@
-﻿namespace Messaging.Demo.Common.Commands;
+﻿using System.Text.Json.Serialization;
 
-public record AgentCommand(Guid CompanyId, string AgentId);
+namespace Messaging.Demo.Common.Commands;
+
+public record AgentCommand(
+    [property: JsonPropertyName("companyId")] Guid CompanyId,
+    [property: JsonPropertyName("agentId")] string AgentId);
