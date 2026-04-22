@@ -10,7 +10,13 @@ public abstract class CommandHandlerBase<TCommand, TResponse> : ICommandMessageH
 
     public async Task Handle(CommandContext commandContext, CancellationToken cancellationToken)
     {
-        await HandleMessage((TCommand)commandContext.Command, commandContext, cancellationToken);
+        var command = (TCommand)commandContext.Command;
+        if (commandContext.Response is not null)
+        {
+            command.Response = (TResponse)commandContext.Response;
+        }
+        
+        await HandleMessage(command, commandContext, cancellationToken);
     }
     
     protected abstract Task HandleMessage(TCommand command, CommandContext context, CancellationToken cancellationToken);

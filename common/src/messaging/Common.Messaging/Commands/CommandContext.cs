@@ -9,8 +9,11 @@ public class CommandContext(
     string sendingServiceId,
     string commandNamespace)
 {
-    private ICommandMessage? _command;
     private BinaryData? _commandData;
+    private ICommandMessage? _command;
+    
+    private BinaryData? _responseData;
+
     private ICommandRepository? _commandRepository;
 
     public string CorrelationId { get; } = correlationId;
@@ -45,6 +48,18 @@ public class CommandContext(
             JsonSerializer.Deserialize(data, commandType)
             ?? throw new InvalidOperationException($"Failed to deserialize message body to type '{commandType.Name}'.")
         );
+    }
+    
+    public void SetResponse(BinaryData data, Type responseType)
+    {
+        if (Response is not null)
+            throw new InvalidOperationException("Response has already been set.");
+
+        _responseData = data;
+        
+        Response = 
+            JsonSerializer.Deserialize(data, responseType)
+            ?? throw new InvalidOperationException($"Failed to deserialize message body to type '{responseType.Name}'.");
     }
 
     public void SetCommandData(BinaryData data)

@@ -24,12 +24,9 @@ public interface ICommandMessaging
     /// </summary>
     /// <param name="commandContext">Describes the service from which the original command was received.
     /// This includes the identity of the service and the correlation id of the original command.</param>
-    /// <param name="command">The command to be sent back to the originating service containing the response.</param>
     /// <param name="tc">The cancellation token.</param>
-    /// <typeparam name="TResponse">The type of the response associated with the command.</typeparam>
     /// <returns>Future result.</returns>
-    Task SendResponseToCommandAsync<TResponse>(
+    Task SendResponseToCommandAsync(
         CommandContext commandContext,
-        ICommandMessage<TResponse> command,
         CancellationToken tc);
 }

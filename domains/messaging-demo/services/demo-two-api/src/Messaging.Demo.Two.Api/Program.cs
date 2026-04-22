@@ -50,13 +50,10 @@ app.MapPost("/send-async-response/{correlationId}", async (
     CancellationToken cancellationToken) =>
 {
     var receivedCommand = await commandRepository.LoadTypedContext<DeviceUpdateCommand>(correlationId, cancellationToken);
-    var command = (DeviceUpdateCommand)receivedCommand.Command;
-    
-    command.Response = deviceStatus;
+    receivedCommand.SetResponse(deviceStatus);
     
     await messaging.SendResponseToCommandAsync(
         receivedCommand, 
-        command,
         cancellationToken);
     
     return Results.Ok();

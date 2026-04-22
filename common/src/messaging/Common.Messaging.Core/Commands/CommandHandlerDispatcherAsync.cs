@@ -1,4 +1,5 @@
-﻿using Azure.Messaging.ServiceBus;
+﻿using System.Text.Json;
+using Azure.Messaging.ServiceBus;
 using Common.Messaging.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,8 +37,21 @@ public class CommandHandlerDispatcherAsync(
             var context = CommandContext.Create(eventArgs.Message);
             using var _ = logger.BeginScope(context.ToDictionary());
             
+            var payload = JsonSerializer.Deserialize<CommandPayload>(eventArgs.Message.Body);
+            if (payload is null)
+            {
+                // TODO:  log error
+                return;
+            }
+            
             var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
-            context.SetCommand(eventArgs.Message.Body, commandHandler.CommandType);
+            
+            
+            context.SetCommand(payload.Command, commandHandler.CommandType);
+            if (payload.HasResponse)
+            {
+                context.SetResponse(payload.Response, commandHandler.ResponseType!);
+            }
 
             var commandRepository = requestScope.ServiceProvider.GetService<ICommandRepository>();
             if (commandRepository is not null)

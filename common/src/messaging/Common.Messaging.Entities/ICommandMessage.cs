@@ -12,7 +12,7 @@ public interface ICommandMessage: IMessage
 /// Defines a command and it associated response type.
 /// </summary>
 /// <typeparam name="TResponse">The expected immediate or future response.</typeparam>
-public interface ICommandMessage<out TResponse> : ICommandMessage
+public interface ICommandMessage<TResponse> : ICommandMessage
 {
-    TResponse? Response { get; }
+    TResponse? Response { get; set; }
 }

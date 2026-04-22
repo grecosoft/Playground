@@ -77,12 +77,15 @@ public class CommandMessaging: ICommandMessaging
     // Sends a response to a previously received command back to the originating service.  This method is used
     // within a service that receives commands, and needs to send a response back to the caller of the command.
     // The caller of the command is not expected to be waiting for an immediate response,
-    public async Task SendResponseToCommandAsync<TResponse>(
+    public async Task SendResponseToCommandAsync(
         CommandContext context,
-        ICommandMessage<TResponse> command,
         CancellationToken ct)
     {
-        var message = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(command, command.GetType()))
+        var payload = new CommandPayload(
+            BinaryData.FromBytes(JsonSerializer.SerializeToUtf8Bytes(context.Command, context.Command.GetType())),
+            BinaryData.FromObjectAsJson(context.Response));
+        
+        var message = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(payload))
         {
             CorrelationId = context.CorrelationId,
             ApplicationProperties =
@@ -138,8 +141,12 @@ public class CommandMessaging: ICommandMessaging
     {
         var correlationId = Activity.Current?.TraceId.ToString() ?? Guid.NewGuid().ToString();
         var messageMetadata = GetMessageMetadata(command.GetType());
+
+        var payload = new CommandPayload(
+            BinaryData.FromBytes(JsonSerializer.SerializeToUtf8Bytes(command, command.GetType())),
+            BinaryData.Empty);
         
-        var message = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(command, command.GetType()))
+        var message = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(payload))
         {
             CorrelationId = correlationId,
             SessionId = correlationId,
@@ -211,8 +218,11 @@ public class CommandMessaging: ICommandMessaging
             "Received response for {CorrelationId} from service {DestinationServiceId}", 
             correlationId, 
             endpointInfo.ServiceId);
+        
+        var payload = JsonSerializer.Deserialize<CommandPayload>(replyMessage.Body) 
+            ?? throw new InvalidOperationException("Failed to deserialize response message body to CommandResponse.");
 
-        var response = JsonSerializer.Deserialize<TResponse>(replyMessage.Body);
+        var response = JsonSerializer.Deserialize<TResponse>(payload.Response);
         return response ?? throw new InvalidOperationException(
             $"Failed to deserialize response message body to type '{typeof(TResponse).Name}'.");
     }

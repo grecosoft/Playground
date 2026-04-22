@@ -40,8 +40,15 @@ public class CommandHandlerDispatcherRpc(
             var context = CommandContext.Create(eventArgs.Message);
             using var _ = logger.BeginScope(context.ToDictionary());
             
+            var payload = JsonSerializer.Deserialize<CommandPayload>(eventArgs.Message.Body);
+            if (payload is null)
+            {
+                // TODO:  log error
+                return;
+            }
+            
             var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
-            context.SetCommand(eventArgs.Message.Body, commandHandler.CommandType);
+            context.SetCommand(payload.Command, commandHandler.CommandType);
             
             logger.LogDebug(
                 "Dispatching command message {MessageId} to handler {Handler} of type {CommandType}.",
@@ -69,7 +76,11 @@ public class CommandHandlerDispatcherRpc(
                 $"Command handler {handler.GetType().Name} did not set a response on the command context.");
         }
         
-        var replyMessage = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(context.Response))
+        var payload = new CommandPayload(
+            BinaryData.FromObjectAsJson(context.Command),
+            BinaryData.FromObjectAsJson(context.Response));
+        
+        var replyMessage = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(payload))
         {
             CorrelationId = eventArgs.Message.CorrelationId,
             SessionId = eventArgs.Message.SessionId,
