@@ -20,11 +20,13 @@ public class CommandListenerService(
     {
         connection.On<AgentPingCommand, AgentPingResponse>("agent.commands.ping", command =>
         {
-            logger.LogInformation("Received Ping Command: {command}", command);
+            logger.LogInformation("Received Ping Command: {@command}", command);
             
             // handle command...
             
-            return new AgentPingResponse($"Echo: {command.EchoMessage}", Guid.NewGuid().ToString());
+            return new AgentPingResponse(
+                $"Echo: {command.EchoMessage}", 
+                Guid.NewGuid().ToString());
         });
     }
     
@@ -32,7 +34,10 @@ public class CommandListenerService(
     {
         connection.On<string, AgentStatusSummaryCommand>("agent.commands.status.summary", (correlationId, command) =>
         {
-            logger.LogInformation("Received Status Summary Command: {command}", command);
+            logger.LogInformation(
+                "Received Status Summary Command: {@command} for correlation {id}",
+                command, 
+                correlationId);
             
             // Queue command for processing....
             // This will be work done by the agent and reported back when complete, so no response is returned here.

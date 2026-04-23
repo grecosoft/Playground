@@ -14,8 +14,8 @@ namespace Common.Messaging.Core.Commands;
 public class CommandMessaging: ICommandMessaging
 {
     /// <summary>
-    /// Core implementation of the command messaging system.  This class is responsible for sending commands
-    /// to other services and sending responses back to calling services for previously received commands.
+    /// Core implementation of the command messaging. This class is responsible for sending commands to
+    /// other services and sending responses back to calling services for previously received commands.
     /// When the CommandMessaging class is instantiated, it creates CommandEndpoint instances for each dependent
     /// service configured in the MessagingConfig. The CommandEndpoint instances are used to send commands to the
     /// appropriate service endpoints.
@@ -34,7 +34,7 @@ public class CommandMessaging: ICommandMessaging
         [FromKeyedServices("rpc")] ServiceBusSender rpcCommandSender,
         [FromKeyedServices("async")] ServiceBusSender asyncCommandSender)
     {
-        _busConfig = messagingOptions.Value;
+        _msgConfig = messagingOptions.Value;
         _logger = logger;
         _commandRepository = commandRepository;
         
@@ -42,10 +42,10 @@ public class CommandMessaging: ICommandMessaging
         _rpcCommandSender = rpcCommandSender;
         _asyncCommandSender = asyncCommandSender;
         
-        AddCommandEndpoints(_busConfig);
+        AddCommandEndpoints(_msgConfig);
     }
     
-    private readonly MessagingConfig _busConfig;
+    private readonly MessagingConfig _msgConfig;
     private readonly ILogger<CommandMessaging> _logger;
     private readonly ICommandRepository _commandRepository;
     
@@ -93,21 +93,35 @@ public class CommandMessaging: ICommandMessaging
                 
                 // Message metadata:
                 { MessageProperties.CommandNamespace, context.CommandNamespace },
-                { MessageProperties.SendingServiceId, _busConfig.ServiceId }
+                { MessageProperties.SendingServiceId, _msgConfig.ServiceId }
             }
         };
-        
-        await _asyncCommandSender.SendMessageAsync(message, ct);
-        await _commandRepository.DeleteCommandCommand(context.CorrelationId, ct);
+
+        try
+        {
+            await _asyncCommandSender.SendMessageAsync(message, ct);
+            await _commandRepository.DeleteCommandCommand(context.CorrelationId, ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Failed to send response for command with correlation id {CorrelationId} to service {ServiceId}.",
+                context.CorrelationId,
+                context.SendingServiceId);
+        }
     }
     
-    private CommandPayload CreateCommandPayload(CommandContext context)
+    private static CommandPayload CreateCommandPayload(CommandContext context)
     {
+        // This is the case if the response originates from an external client for which the
+        // command type used by internal services isn't known.
         if (!context.ResponseData.IsEmpty)
         {
             return new CommandPayload(context.CommandData, context.ResponseData);
         }
         
+        // This is the case when the response originates from an internal service that has access to the command type,
+        // and can serialize the response based on the command handler's response type.
         return new CommandPayload(
             BinaryData.FromBytes(JsonSerializer.SerializeToUtf8Bytes(context.Command, context.Command.GetType())),
             BinaryData.FromObjectAsJson(context.Response));
@@ -127,6 +141,52 @@ public class CommandMessaging: ICommandMessaging
             ct);
 
         return await WaitCommandResponse<TResponse>(correlationId, endpointInfo, ct);
+    }
+    
+    private async Task<TResponse> WaitCommandResponse<TResponse>(
+        string correlationId,
+        EndpointInfo endpointInfo,
+        CancellationToken ct)
+    {
+       _logger.LogDebug(
+            "Waiting for response for {CorrelationId} from service {DestinationServiceId}", 
+            correlationId, 
+            endpointInfo.ServiceId);
+        
+        await using var sessionReceiver = await _client.AcceptSessionAsync(
+            _msgConfig.RpcReplyQueue,
+            correlationId,
+            new ServiceBusSessionReceiverOptions { ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete },
+            ct);
+
+        var replyMessage = await sessionReceiver.ReceiveMessageAsync(
+            TimeSpan.FromSeconds(_msgConfig.RpcReplyTimeoutSeconds),
+            ct);
+
+        if (replyMessage == null)
+        {
+            _logger.LogError(
+                "Timed out waiting for response for {CorrelationId} from service {DestinationServiceId} after {TimeoutSeconds} seconds",
+                correlationId,
+                endpointInfo.ServiceId,
+                _msgConfig.RpcReplyTimeoutSeconds);
+            
+            throw new TimeoutException(
+                $"Timed out waiting for response for {correlationId} from service {endpointInfo.ServiceId} " + 
+                $"after {_msgConfig.RpcReplyTimeoutSeconds} seconds");
+        }
+        
+        _logger.LogDebug(
+            "Received response for {CorrelationId} from service {DestinationServiceId}", 
+            correlationId, 
+            endpointInfo.ServiceId);
+        
+        var payload = JsonSerializer.Deserialize<CommandPayload>(replyMessage.Body) 
+            ?? throw new InvalidOperationException("Failed to deserialize CommandPayload.");
+
+        var response = JsonSerializer.Deserialize<TResponse>(payload.Response);
+        return response ?? throw new InvalidOperationException(
+            $"Failed to deserialize response message body to type '{typeof(TResponse).Name}'.");
     }
 
     // Sends a command to a destination service and expects a response to be sent back on the reply queue, but does not
@@ -160,12 +220,12 @@ public class CommandMessaging: ICommandMessaging
         {
             CorrelationId = correlationId,
             SessionId = correlationId,
-            ReplyTo = _busConfig.RpcReplyQueue,
+            ReplyTo = _msgConfig.RpcReplyQueue,
             ApplicationProperties =
             {
                 { MessageProperties.EndpointServiceId, endpointInfo.ServiceId },
                 { MessageProperties.CommandNamespace, messageMetadata.MessageNamespace },
-                { MessageProperties.SendingServiceId, _busConfig.ServiceId }
+                { MessageProperties.SendingServiceId, _msgConfig.ServiceId }
             }
         };
         
@@ -190,53 +250,7 @@ public class CommandMessaging: ICommandMessaging
         
         return correlationId;
     }
-
-    private async Task<TResponse> WaitCommandResponse<TResponse>(
-        string correlationId,
-        EndpointInfo endpointInfo,
-        CancellationToken ct)
-    {
-       _logger.LogDebug(
-            "Waiting for response for {CorrelationId} from service {DestinationServiceId}", 
-            correlationId, 
-            endpointInfo.ServiceId);
-        
-        await using var sessionReceiver = await _client.AcceptSessionAsync(
-            _busConfig.RpcReplyQueue,
-            correlationId,
-            new ServiceBusSessionReceiverOptions { ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete },
-            ct);
-
-        var replyMessage = await sessionReceiver.ReceiveMessageAsync(
-            TimeSpan.FromSeconds(_busConfig.RpcReplyTimeoutSeconds),
-            ct);
-
-        if (replyMessage == null)
-        {
-            _logger.LogError(
-                "Timed out waiting for response for {CorrelationId} from service {DestinationServiceId} after {TimeoutSeconds} seconds",
-                correlationId,
-                endpointInfo.ServiceId,
-                _busConfig.RpcReplyTimeoutSeconds);
-            
-            throw new TimeoutException(
-                $"Timed out waiting for response for {correlationId} from service {endpointInfo.ServiceId} " + 
-                $"after {_busConfig.RpcReplyTimeoutSeconds} seconds");
-        }
-        
-        _logger.LogDebug(
-            "Received response for {CorrelationId} from service {DestinationServiceId}", 
-            correlationId, 
-            endpointInfo.ServiceId);
-        
-        var payload = JsonSerializer.Deserialize<CommandPayload>(replyMessage.Body) 
-            ?? throw new InvalidOperationException("Failed to deserialize response message body to CommandResponse.");
-
-        var response = JsonSerializer.Deserialize<TResponse>(payload.Response);
-        return response ?? throw new InvalidOperationException(
-            $"Failed to deserialize response message body to type '{typeof(TResponse).Name}'.");
-    }
-
+    
     private MessageMetadata GetMessageMetadata(Type messageType)
     {
         return _messageMetadata.GetOrAdd(messageType, t =>

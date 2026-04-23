@@ -34,7 +34,6 @@ public class CommandHandlerDispatcherRpc(
     {
         // Create service scope to execute the request within:
         using var requestScope = serviceProvider.CreateScope();
-        
         try
         {
             var context = CommandContext.Create(eventArgs.Message);
@@ -43,10 +42,13 @@ public class CommandHandlerDispatcherRpc(
             var payload = JsonSerializer.Deserialize<CommandPayload>(eventArgs.Message.Body);
             if (payload is null)
             {
-                // TODO:  log error
+                logger.LogError(
+                    "The received message could not be deserialized into type: {PayloadType}.",
+                    nameof(CommandPayload));
                 return;
             }
             
+            // Resolve the command handler and set the command on the context:
             var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
             context.SetCommand(payload.Command, commandHandler.CommandType);
             
@@ -56,6 +58,8 @@ public class CommandHandlerDispatcherRpc(
                 commandHandler,
                 commandHandler.CommandType);
             
+            // Call the handler to process the command, and then send the response
+            // back to the caller on the reply queue:
             await commandHandler.Handle(context, eventArgs.CancellationToken);
             await SendReplyToCommand(commandHandler, context, eventArgs);
         }

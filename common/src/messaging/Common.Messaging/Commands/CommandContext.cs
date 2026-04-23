@@ -4,28 +4,40 @@ using Common.Messaging.Entities;
 
 namespace Common.Messaging.Commands;
 
+/// <summary>
+/// Represents a received command and associated metadata passed to command handlers. 
+/// </summary>
+/// <param name="correlationId">Unique identity used to identify the command.</param>
+/// <param name="sendingServiceId">The identity of the service sending the command.</param>
+/// <param name="commandNamespace">A hierarchical period separated value identifying the command.</param>
 public class CommandContext(
     string correlationId,
     string sendingServiceId,
     string commandNamespace)
 {
-    private BinaryData? _commandData = BinaryData.Empty;
     private ICommandMessage? _command;
-    
-    private BinaryData? _responseData = BinaryData.Empty;
-
     private ICommandRepository? _commandRepository;
 
+    /// <summary>
+    /// Unique identity used to identify the command.
+    /// </summary>
     public string CorrelationId { get; } = correlationId;
+    
+    /// <summary>
+    /// The identity of the service sending the command.
+    /// </summary>
     public string SendingServiceId { get; } = sendingServiceId;
+    
+    /// <summary>
+    /// A hierarchical period separated value identifying the command.
+    /// </summary>
     public string CommandNamespace { get; } = commandNamespace;
 
     public ICommandMessage Command => _command ?? throw new InvalidOperationException("Command not set.");
-    public BinaryData CommandData => _commandData ?? throw new InvalidOperationException("Command data not set.");
-    public BinaryData ResponseData => _responseData ?? throw new InvalidOperationException("Response data not set.");
-    
-    public ICommandRepository CommandRepository => _commandRepository
-                                                   ?? throw new InvalidOperationException("CommandRepository not set.");
+    public ICommandRepository CommandRepository => _commandRepository ?? throw new InvalidOperationException("CommandRepository not set.");
+
+    public BinaryData CommandData { get; private set; } = BinaryData.Empty;
+    public BinaryData ResponseData { get; private set; } = BinaryData.Empty;
 
     public Type CommandType => Command.GetType();
     public object? Response { get; private set; }
@@ -37,13 +49,13 @@ public class CommandContext(
             message.GetRequiredStringProperty(MessageProperties.SendingServiceId),
             message.GetRequiredStringProperty(MessageProperties.CommandNamespace));
     }
-
+    
     public void SetCommand(BinaryData data, Type commandType)
     {
         if (_command is not null)
             throw new InvalidOperationException("Command has already been set.");
 
-        _commandData = data;
+        CommandData = data;
         
         _command = (ICommandMessage)(
             JsonSerializer.Deserialize(data, commandType)
@@ -51,28 +63,28 @@ public class CommandContext(
         );
     }
     
+    public void SetResponse(object response)
+    {
+        if (Response is not null)
+            throw new InvalidOperationException("Response has already been set.");
+        Response = response;
+    }
+    
     public void SetResponse(BinaryData data, Type responseType)
     {
         if (Response is not null)
             throw new InvalidOperationException("Response has already been set.");
 
-        _responseData = data;
+        ResponseData = data;
         
         Response = 
             JsonSerializer.Deserialize(data, responseType)
             ?? throw new InvalidOperationException($"Failed to deserialize message body to type '{responseType.Name}'.");
     }
     
-    public void SetResponse(BinaryData data)
-    {
-        _responseData = data;
-    }
+    public void SetCommandData(BinaryData data) => CommandData = data;
+    public void SetResponseData(BinaryData data) => ResponseData = data;
     
-    public void SetCommandData(BinaryData data)
-    {
-        _commandData = data;
-    }
-
     public void SetCommandRepository(ICommandRepository repository)
     {
         if (_commandRepository is not null)
@@ -80,14 +92,7 @@ public class CommandContext(
 
         _commandRepository = repository;
     }
-
-    public void SetResponse(object response)
-    {
-        if (Response is not null)
-            throw new InvalidOperationException("Response has already been set.");
-        Response = response;
-    }
-
+    
     public IDictionary<string, object> ToDictionary() => new Dictionary<string, object>
     {
         { "CorrelationId", CorrelationId },

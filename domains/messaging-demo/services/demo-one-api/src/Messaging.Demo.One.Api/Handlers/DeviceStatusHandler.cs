@@ -11,7 +11,6 @@ public class DeviceStatusHandler : CommandHandlerBase<DeviceUpdateCommand, Devic
         CancellationToken cancellationToken)
     {
         Console.WriteLine($"{nameof(DeviceUpdateCommand)} received: {JsonSerializer.Serialize(command)}");
-        
         return Task.CompletedTask;
     }
 }

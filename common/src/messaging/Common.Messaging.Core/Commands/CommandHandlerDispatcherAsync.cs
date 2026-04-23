@@ -31,7 +31,6 @@ public class CommandHandlerDispatcherAsync(
     {
         // Create service scope to execute the request within:
         using var requestScope = serviceProvider.CreateScope();
-        
         try
         {
             var context = CommandContext.Create(eventArgs.Message);
@@ -40,18 +39,24 @@ public class CommandHandlerDispatcherAsync(
             var payload = JsonSerializer.Deserialize<CommandPayload>(eventArgs.Message.Body);
             if (payload is null)
             {
-                // TODO:  log error
+                logger.LogError(
+                    "The received message could not be deserialized into type: {PayloadType}.",
+                    nameof(CommandPayload));
                 return;
             }
             
+            // Resolve the command handler and set the command on the context:
             var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
-            
             context.SetCommand(payload.Command, commandHandler.CommandType);
+            
+            // Determine if the received command is a response to a previously sent command.
             if (payload.HasResponse)
             {
                 context.SetResponse(payload.Response, commandHandler.ResponseType!);
             }
 
+            // Resolve the repository.  If this code is being invoked by the receiving service
+            // the repository is used to save the command until its response can be determined.
             var commandRepository = requestScope.ServiceProvider.GetService<ICommandRepository>();
             if (commandRepository is not null)
             {
@@ -64,6 +69,7 @@ public class CommandHandlerDispatcherAsync(
                 commandHandler,
                 commandHandler.CommandType);
             
+            // Send the command to the handler for processing.
             await commandHandler.Handle(context, eventArgs.CancellationToken);
             await eventArgs.CompleteMessageAsync(eventArgs.Message);
         }

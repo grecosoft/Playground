@@ -2,6 +2,12 @@ using Common.Messaging.Entities;
 
 namespace Common.Messaging;
 
+/// <summary>
+/// Information about a dependent service to which the executing service can send commands.
+/// </summary>
+/// <param name="ServiceName">The name representing the service.</param>
+/// <param name="ServiceId">The unique identity of the service.
+/// </param>
 public record EndpointInfo(
     string ServiceName,
     string ServiceId);

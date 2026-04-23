@@ -54,7 +54,7 @@ public class ConnectorHub(
     public async Task SendResponseToCommand(string correlationId, string response)
     {
         var context = await commandRepository.LoadCommandContext(correlationId, Context.ConnectionAborted);
-        context.SetResponse(BinaryData.FromString(response));
+        context.SetResponseData(BinaryData.FromString(response));
         
         await commandMessaging.SendResponseToCommandAsync(context, Context.ConnectionAborted);
     }
