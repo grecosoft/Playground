@@ -9,10 +9,10 @@ public class CommandContext(
     string sendingServiceId,
     string commandNamespace)
 {
-    private BinaryData? _commandData;
+    private BinaryData? _commandData = BinaryData.Empty;
     private ICommandMessage? _command;
     
-    private BinaryData? _responseData;
+    private BinaryData? _responseData = BinaryData.Empty;
 
     private ICommandRepository? _commandRepository;
 
@@ -65,21 +65,11 @@ public class CommandContext(
     
     public void SetResponse(BinaryData data)
     {
-        if (_responseData is not null)
-            throw new InvalidOperationException("ResponseData has already been set.");
-
         _responseData = data;
     }
     
-    
-
     public void SetCommandData(BinaryData data)
     {
-        if (_commandData is not null)
-        {
-            throw new InvalidOperationException("Command has already been set.");
-        }
-        
         _commandData = data;
     }
 
