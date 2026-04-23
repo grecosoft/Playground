@@ -14,7 +14,7 @@
 
   <!-- Common NuGet References: Used during service deployment -->
   <ItemGroup Condition="'$(UseProjectReferences)' != 'true'">
-    <PackageReference Include="Common.Bootstrapping" Version="1.0.0.35" />
+    <PackageReference Include="Common.Bootstrapping" Version="1.0.0.39" />
   </ItemGroup>
 
   <ItemGroup>
