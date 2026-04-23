@@ -22,6 +22,7 @@ public static class ServiceRegistrations
         
         builder.Services.AddSignalR().AddAzureSignalR(options =>
         {
+            options.ServerStickyMode = ServerStickyMode.Required;
             options.Endpoints =
             [
                 new ServiceEndpoint(new Uri(config.SignalREndpoint), credential)

@@ -18,9 +18,12 @@ public class CommandListenerService(
 
     private void HandleAgentPingCommand(HubConnection connection)
     {
-        connection.On<AgentPingCommand, AgentPingResponse>("agent.commands.ping", command =>
+        connection.On<string, AgentPingCommand, AgentPingResponse>("agent.commands.ping", (correlationId, command) =>
         {
-            logger.LogInformation("Received Ping Command: {@command}", command);
+            logger.LogInformation(
+                "Received Ping Command: {@command} for correlation {id}",
+                command, 
+                correlationId);
             
             // handle command...
             

@@ -19,7 +19,7 @@ public class AgentPingHandler(
         
         var agentResponse = await connectorHub.Clients
             .Client(agentConnectionId!)
-            .InvokeAsync<AgentPingResponse>(context.CommandNamespace, command, cancellationToken);
+            .InvokeAsync<AgentPingResponse>(context.CommandNamespace, context.CorrelationId, command, cancellationToken);
         
         context.SetResponse(agentResponse);
     }
