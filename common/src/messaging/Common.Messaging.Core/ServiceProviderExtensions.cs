@@ -6,8 +6,8 @@ namespace Common.Messaging.Core;
 public static class ServiceProviderExtensions
 {
     /// <summary>
-    /// Returns the command handler for the specified command context, which includes the
-    /// command namespace used to resolve the handler from the service provider.
+    /// Returns the command handler for the specified command context, which includes the command namespace used to
+    /// resolve the handler from the service provider.
     /// </summary>
     /// <param name="serviceProvider">The service provider.</param>
     /// <param name="commandContext">The context of the command.</param>

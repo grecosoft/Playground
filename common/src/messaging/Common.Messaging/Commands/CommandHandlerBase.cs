@@ -2,22 +2,35 @@
 
 namespace Common.Messaging.Commands;
 
+/// <summary>
+/// Base class from which specific command handlers are derived to processed received commands.
+/// </summary>
+/// <typeparam name="TCommand">The type of the command.</typeparam>
+/// <typeparam name="TResponse">The command's response type.</typeparam>
 public abstract class CommandHandlerBase<TCommand, TResponse> : ICommandMessageHandler
     where TCommand : ICommandMessage<TResponse> 
 {
     public Type CommandType { get; } = typeof(TCommand);
     public Type? ResponseType { get; } =  typeof(TResponse);
 
-    public async Task Handle(CommandContext commandContext, CancellationToken cancellationToken)
+    public async Task Handle(CommandContext commandContext, CancellationToken ct)
     {
         var command = (TCommand)commandContext.Command;
         if (commandContext.Response is not null)
         {
             command.Response = (TResponse)commandContext.Response;
         }
-        
-        await HandleMessage(command, commandContext, cancellationToken);
+
+        // Invoke derived command handler method.
+        await HandleMessage(command, commandContext, ct);
     }
     
-    protected abstract Task HandleMessage(TCommand command, CommandContext context, CancellationToken cancellationToken);
+    /// <summary>
+    /// Overridden by derived command handler to process received command.
+    /// </summary>
+    /// <param name="command">The received command.</param>
+    /// <param name="context">Metadata about the received command.</param>
+    /// <param name="ct">Cancellation Token.</param>
+    /// <returns>Future Result once processing has completed.</returns>
+    protected abstract Task HandleMessage(TCommand command, CommandContext context, CancellationToken ct);
 }

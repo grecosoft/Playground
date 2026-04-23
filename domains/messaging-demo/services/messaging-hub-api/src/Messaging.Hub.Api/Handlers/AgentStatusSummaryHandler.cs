@@ -17,7 +17,7 @@ public class AgentStatusSummaryHandler(
     {
         var agentConnectionId = connectionManager.GetConnection(command.AgentId);
         
-        await context.CommandRepository.SaveCommand(context, cancellationToken);
+        await context.CommandRepository.SaveCommandContext(context, cancellationToken);
         
         await connectorHub.Clients
             .Client(agentConnectionId!)

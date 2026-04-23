@@ -12,7 +12,7 @@ public class CommandRepository : ICommandRepository
 {
     private readonly Dictionary<string, CommandState> _commandStates = new();
     
-    public Task SaveCommand(CommandContext commandContext, CancellationToken cancellationToken)
+    public Task<Guid> SaveCommandContext(CommandContext commandContext, CancellationToken ct)
     {
         Console.WriteLine($"Command {commandContext.CorrelationId} saved.");
         
@@ -24,10 +24,10 @@ public class CommandRepository : ICommandRepository
 
         _commandStates[commandContext.CorrelationId] = commandState;
         
-        return Task.CompletedTask;
+        return Task.FromResult(Guid.NewGuid());
     }
 
-    public Task<CommandContext> LoadTypedContext<T>(string correlationId, CancellationToken cancellationToken)
+    public Task<CommandContext> LoadTypedCommandContext<T>(string correlationId, CancellationToken ct)
         where T : ICommandMessage
     {
         if (!_commandStates.TryGetValue(correlationId, out var commandState))
@@ -45,7 +45,7 @@ public class CommandRepository : ICommandRepository
         return Task.FromResult(receivedCommand);
     }
 
-    public Task<CommandContext> LoadContextContext(string correlationId, CancellationToken cancellationToken)
+    public Task<CommandContext> LoadCommandContext(string correlationId, CancellationToken ct)
     {
         if (!_commandStates.TryGetValue(correlationId, out var commandState))
         {
@@ -62,14 +62,13 @@ public class CommandRepository : ICommandRepository
         return Task.FromResult(receivedCommand);
     }
 
-    public Task DeleteCommand(string correlationId, CancellationToken cancellationToken)
+    public Task DeleteCommandCommand(string correlationId, CancellationToken ct)
     {
-        return !_commandStates.TryGetValue(correlationId, out var commandState) 
-            ? throw new KeyNotFoundException($"Command {correlationId} not found.")
-            : Task.CompletedTask;
+        _commandStates.Remove(correlationId);
+        return Task.CompletedTask;
     }
 
-    public Task<IEnumerable<CommandContext>> GetPendingCommandsAsync(CancellationToken cancellationToken)
+    public Task<IEnumerable<CommandContext>> GetPendingCommandContextsAsync(CancellationToken ct)
     {
         var pendingCommands = _commandStates.Values.Select(s => new CommandContext(
             s.CorrelationId,

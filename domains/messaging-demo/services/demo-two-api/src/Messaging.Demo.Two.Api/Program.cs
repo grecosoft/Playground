@@ -38,7 +38,7 @@ var app = builder.Build();
 
 app.MapGet("/pending/commands", async(ICommandRepository repository) =>
 {
-    var commands = await repository.GetPendingCommandsAsync(cancellationToken: CancellationToken.None);
+    var commands = await repository.GetPendingCommandContextsAsync(ct: CancellationToken.None);
     return Results.Ok(commands.Select(c => new PendingCommandModel(c)));
 });
 
@@ -49,7 +49,7 @@ app.MapPost("/send-async-response/{correlationId}", async (
     ICommandMessaging  messaging,
     CancellationToken cancellationToken) =>
 {
-    var receivedCommand = await commandRepository.LoadTypedContext<DeviceUpdateCommand>(correlationId, cancellationToken);
+    var receivedCommand = await commandRepository.LoadTypedCommandContext<DeviceUpdateCommand>(correlationId, cancellationToken);
     receivedCommand.SetResponse(deviceStatus);
     
     await messaging.SendResponseToCommandAsync(

@@ -52,7 +52,7 @@ app.MapConnectorHub();
 
 app.MapGet("/pending/commands", async(ICommandRepository repository) =>
 {
-    var commands = await repository.GetPendingCommandsAsync(cancellationToken: CancellationToken.None);
+    var commands = await repository.GetPendingCommandContextsAsync(ct: CancellationToken.None);
     return Results.Ok(commands.Select(c => new PendingCommandModel(c)));
 });
 

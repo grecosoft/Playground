@@ -9,6 +9,6 @@ public class DeviceStatusHandler : CommandHandlerBase<DeviceUpdateCommand, Devic
         CommandContext context,
         CancellationToken cancellationToken)
     {
-        await context.CommandRepository.SaveCommand(context, cancellationToken);
+        await context.CommandRepository.SaveCommandContext(context, cancellationToken);
     }
 }

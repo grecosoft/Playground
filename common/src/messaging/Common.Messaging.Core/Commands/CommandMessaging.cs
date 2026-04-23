@@ -98,7 +98,7 @@ public class CommandMessaging: ICommandMessaging
         };
         
         await _asyncCommandSender.SendMessageAsync(message, ct);
-        await _commandRepository.DeleteCommand(context.CorrelationId, ct);
+        await _commandRepository.DeleteCommandCommand(context.CorrelationId, ct);
     }
     
     private CommandPayload CreateCommandPayload(CommandContext context)
