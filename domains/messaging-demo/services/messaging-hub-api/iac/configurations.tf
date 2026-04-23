@@ -11,6 +11,14 @@ locals {
     {
       key    = "SignalREndpoint"
       value = local.solution.signalr.endpoint
+    },
+    {
+      key   = "ServiceName"
+      value = local.service_name
+    },
+    {
+      key   = "SolutionEnvironment"
+      value = local.solution_env_name
     }
   ]
 

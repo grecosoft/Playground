@@ -16,7 +16,7 @@ resource "azurerm_signalr_service" "signalr" {
     capacity = 1
   }
 
-  public_network_access_enabled = false
+  public_network_access_enabled = true
 
   connectivity_logs_enabled = true
   messaging_logs_enabled    = true

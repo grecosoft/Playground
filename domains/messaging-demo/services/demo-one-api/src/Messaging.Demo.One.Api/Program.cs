@@ -15,7 +15,10 @@ builder.AddConfiguration(credential);
 
 var boostrapLogger = builder.AddLogging(logConfig =>
 {
-    logConfig.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
+    logConfig.AddServiceProperties(builder.Configuration);
+    
+    logConfig.WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
      
     var seqUrl = builder.Configuration.GetValue<string>("Logging:SeqUrl") ?? string.Empty;
     if (!string.IsNullOrWhiteSpace(seqUrl))

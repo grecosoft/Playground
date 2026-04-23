@@ -3,6 +3,7 @@ using Common.Messaging;
 using Common.Messaging.Commands;
 using Common.Messaging.Core;
 using Common.Messaging.Core.Commands;
+using Messaging.Demo.Common;
 using Messaging.Demo.Common.Commands;
 using Messaging.Demo.Two.Api.Models;
 using Serilog;
@@ -14,7 +15,10 @@ builder.AddConfiguration(credential);
 
 var boostrapLogger = builder.AddLogging(logConfig =>
 {
-    logConfig.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
+    logConfig.AddServiceProperties(builder.Configuration);
+    
+    logConfig.WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
      
     var seqUrl = builder.Configuration.GetValue<string>("Logging:SeqUrl") ?? string.Empty;
     if (!string.IsNullOrWhiteSpace(seqUrl))

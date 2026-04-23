@@ -21,4 +21,4 @@ env_app_configs = [
   }
 ]
 
-Serilog_Log_Level = "Information"
+Serilog_Log_Level = "Debug"

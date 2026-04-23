@@ -13,6 +13,11 @@ builder.AddConfiguration(credential);
 
 var boostrapLogger = builder.AddLogging(logConfig =>
 {
+    logConfig
+        .Enrich.WithProperty("Service", builder.Configuration["ServiceName"])
+        .Enrich.WithProperty("Service", builder.Configuration["SolutionEnvironment"])
+        .Enrich.WithProperty("Host", Environment.MachineName);
+    
      logConfig.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
      
      var seqUrl = builder.Configuration.GetValue<string>("Logging:SeqUrl") ?? string.Empty;

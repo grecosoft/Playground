@@ -7,6 +7,14 @@ locals {
     {
       key   = "Serilog:MinimumLevel:Default"
       value = var.Serilog_Log_Level
+    },
+    {
+      key   = "ServiceName"
+      value = local.service_name
+    },
+    {
+      key   = "SolutionEnvironment"
+      value = local.solution_env_name
     }
   ]
 

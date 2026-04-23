@@ -9,6 +9,14 @@ locals {
       value = var.Serilog_Log_Level
     },
     {
+      key   = "ServiceName"
+      value = local.service_name
+    },
+    {
+      key   = "SolutionEnvironment"
+      value = local.solution_env_name
+    },
+    {
       key    = "DatabaseHost"
       isJson = true
       value = jsonencode({

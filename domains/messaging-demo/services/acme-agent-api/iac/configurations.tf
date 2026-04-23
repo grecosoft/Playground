@@ -17,6 +17,14 @@ locals {
       value = "E6B2BFA1-851B-4DCC-B4A3-CBCAF8FFE138"
     },
     {
+      key   = "ServiceName"
+      value = local.service_name
+    },
+    {
+      key   = "SolutionEnvironment"
+      value = local.solution_env_name
+    },
+    {
       key = "AgentIdentity"
       value = "agent1"
     }

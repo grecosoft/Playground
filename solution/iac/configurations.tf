@@ -1,13 +1,20 @@
 locals {
   common_configs = [
-    {
-      key = "Serilog:MinimumLevel:Default"
+    { key = "Serilog:MinimumLevel:Default"
       value = var.Serilog_Log_Level
     },
     {
       key   = "Logging:SeqUrl"
       value = var.Logging_SEQ_URL
-    }
+    },
+    {
+      key   = "Serilog:MinimumLevel:Override:Microsoft.AspNetCore"
+      value = "Warning"
+    },
+    {
+      key   = "Serilog:MinimumLevel:Override:Microsoft.IdentityModel"
+      value = "Warning"
+     }
   ]
 }
 
