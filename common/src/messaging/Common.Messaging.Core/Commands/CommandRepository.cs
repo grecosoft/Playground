@@ -19,6 +19,7 @@ public class CommandRepository : ICommandRepository
         var commandState = new CommandState(
             commandContext.CorrelationId,
             commandContext.SendingServiceId,
+            commandContext.SendingServiceName,
             commandContext.CommandNamespace,
             JsonSerializer.Serialize(commandContext.Command, commandContext.CommandType));
 
@@ -37,7 +38,8 @@ public class CommandRepository : ICommandRepository
 
         var receivedCommand = new CommandContext(
             commandState.CorrelationId,
-            commandState.ReplyToService,
+            commandState.ReplyToServiceId,
+            commandState.ReplyToServiceName,
             commandState.CommandNamespace);
         
         receivedCommand.SetCommand(BinaryData.FromString(commandState.Command), typeof(T));
@@ -54,7 +56,8 @@ public class CommandRepository : ICommandRepository
 
         var receivedCommand = new CommandContext(
             commandState.CorrelationId,
-            commandState.ReplyToService,
+            commandState.ReplyToServiceId,
+            commandState.ReplyToServiceName,
             commandState.CommandNamespace);
         
         receivedCommand.SetCommandData(BinaryData.FromString(commandState.Command));
@@ -72,7 +75,8 @@ public class CommandRepository : ICommandRepository
     {
         var pendingCommands = _commandStates.Values.Select(s => new CommandContext(
             s.CorrelationId,
-            s.ReplyToService,
+            s.ReplyToServiceId,
+            s.ReplyToServiceName,
             s.CommandNamespace));
         
         return Task.FromResult(pendingCommands);
@@ -80,7 +84,8 @@ public class CommandRepository : ICommandRepository
 
     private record CommandState(
         string CorrelationId, 
-        string ReplyToService,
+        string ReplyToServiceId,
+        string ReplyToServiceName,
         string CommandNamespace,
         string Command);
 }

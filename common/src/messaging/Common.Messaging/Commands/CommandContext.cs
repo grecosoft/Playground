@@ -9,10 +9,12 @@ namespace Common.Messaging.Commands;
 /// </summary>
 /// <param name="correlationId">Unique identity used to identify the command.</param>
 /// <param name="sendingServiceId">The identity of the service sending the command.</param>
+/// <param name="sendingServiceName">A friendly name for the service sending the command used for logging.</param>
 /// <param name="commandNamespace">A hierarchical period separated value identifying the command.</param>
 public class CommandContext(
     string correlationId,
     string sendingServiceId,
+    string sendingServiceName,
     string commandNamespace)
 {
     private ICommandMessage? _command;
@@ -27,6 +29,11 @@ public class CommandContext(
     /// The identity of the service sending the command.
     /// </summary>
     public string SendingServiceId { get; } = sendingServiceId;
+    
+    /// <summary>
+    /// A friendly name for the service sending the command used for logging.
+    /// </summary>
+    public string SendingServiceName { get; } = sendingServiceName;
     
     /// <summary>
     /// A hierarchical period separated value identifying the command.
@@ -47,6 +54,7 @@ public class CommandContext(
         return new CommandContext(
             message.CorrelationId,
             message.GetRequiredStringProperty(MessageProperties.SendingServiceId),
+            message.GetRequiredStringProperty(MessageProperties.SendingServiceName),
             message.GetRequiredStringProperty(MessageProperties.CommandNamespace));
     }
     

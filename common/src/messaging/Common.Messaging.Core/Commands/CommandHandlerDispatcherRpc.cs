@@ -4,6 +4,7 @@ using Common.Messaging.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Common.Messaging.Core.Commands;
 
@@ -12,16 +13,20 @@ namespace Common.Messaging.Core.Commands;
 /// and dispatches them to the appropriate command handlers for processing.  After the handler is invoked,
 /// the response is returned to the originating service on the reply queue.
 /// </summary>
+/// <param name="messagingOptions">Messaging related configurations.</param>
 /// <param name="logger">Logger.</param>
 /// <param name="serviceProvider">Service provider used to create scope to execute handler within.</param>
 /// <param name="requestTopicProcessor">The processor on which the commands are received.</param>
 /// <param name="replyQueueSender">Used to sent replay to command back to calling service.</param>
 public class CommandHandlerDispatcherRpc(
+    IOptions<MessagingConfig> messagingOptions,
     ILogger<CommandHandlerDispatcherRpc> logger,
     IServiceProvider serviceProvider,
     [FromKeyedServices("rpc")]ServiceBusProcessor requestTopicProcessor,
     [FromKeyedServices("rpc-reply")]ServiceBusSender replyQueueSender) : BackgroundService
 {
+    private readonly MessagingConfig _msgConfig = messagingOptions.Value;
+    
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         requestTopicProcessor.ProcessMessageAsync += OnProcessMessageAsync;
@@ -38,6 +43,13 @@ public class CommandHandlerDispatcherRpc(
         {
             var context = CommandContext.Create(eventArgs.Message);
             using var _ = logger.BeginScope(context.ToDictionary());
+            
+            logger.LogDebug(
+                "Received Response[{Destination}<={Source}]({Namespace}:{CorrelationId})", 
+                _msgConfig.ServiceName,
+                context.SendingServiceName,
+                context.CommandNamespace,
+                context.CorrelationId);
             
             var payload = JsonSerializer.Deserialize<CommandPayload>(eventArgs.Message.Body);
             if (payload is null)
@@ -81,6 +93,8 @@ public class CommandHandlerDispatcherRpc(
         }
         
         var payload = new CommandPayload(
+            context.SendingServiceId,
+            context.SendingServiceName,
             BinaryData.FromObjectAsJson(context.Command),
             BinaryData.FromObjectAsJson(context.Response));
         

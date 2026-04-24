@@ -93,7 +93,8 @@ public class CommandMessaging: ICommandMessaging
                 
                 // Message metadata:
                 { MessageProperties.CommandNamespace, context.CommandNamespace },
-                { MessageProperties.SendingServiceId, _msgConfig.ServiceId }
+                { MessageProperties.SendingServiceId, _msgConfig.ServiceId },
+                { MessageProperties.SendingServiceName, _msgConfig.ServiceName }
             }
         };
 
@@ -123,12 +124,18 @@ public class CommandMessaging: ICommandMessaging
         // command type used by internal services isn't known.
         if (!context.ResponseData.IsEmpty)
         {
-            return new CommandPayload(context.CommandData, context.ResponseData);
+            return new CommandPayload(
+                context.SendingServiceId,
+                context.SendingServiceName,
+                context.CommandData,
+                context.ResponseData);
         }
         
         // This is the case when the response originates from an internal service that has access to the command type,
         // and can serialize the response based on the command handler's response type.
         return new CommandPayload(
+            context.SendingServiceId,
+            context.SendingServiceName,
             BinaryData.FromBytes(JsonSerializer.SerializeToUtf8Bytes(context.Command, context.Command.GetType())),
             BinaryData.FromObjectAsJson(context.Response));
     }
@@ -230,6 +237,8 @@ public class CommandMessaging: ICommandMessaging
         var correlationId = Activity.Current?.TraceId.ToString() ?? Guid.NewGuid().ToString();
       
         var payload = new CommandPayload(
+            _msgConfig.ServiceId,
+            _msgConfig.ServiceName,
             BinaryData.FromBytes(JsonSerializer.SerializeToUtf8Bytes(command, command.GetType())),
             BinaryData.Empty);
         
@@ -242,7 +251,8 @@ public class CommandMessaging: ICommandMessaging
             {
                 { MessageProperties.EndpointServiceId, endpointInfo.ServiceId },
                 { MessageProperties.CommandNamespace, messageMetadata.MessageNamespace },
-                { MessageProperties.SendingServiceId, _msgConfig.ServiceId }
+                { MessageProperties.SendingServiceId, _msgConfig.ServiceId },
+                { MessageProperties.SendingServiceName, _msgConfig.ServiceName }
             }
         };
         

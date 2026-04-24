@@ -11,6 +11,11 @@ public static class MessageProperties
     public const string SendingServiceId = "sending-service-id";
     
     /// <summary>
+    /// Key name used to reference service by name in code and also used within log messages.
+    /// </summary>
+    public const string SendingServiceName = "sending-service-name";
+    
+    /// <summary>
     /// The identity of the service to which the command should be delivered.
     /// </summary>
     public const string EndpointServiceId = "service_id";
