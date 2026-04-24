@@ -161,9 +161,9 @@ public class CommandMessaging: ICommandMessaging
        _logger.LogDebug(
             "Waiting Response: [{Destination}<={Source}]({Namespace}:{CorrelationId})", 
             _msgConfig.ServiceName,
+            endpointInfo.ServiceName,
             messageMetadata.MessageNamespace,
-            correlationId, 
-            endpointInfo.ServiceName);
+            correlationId);
         
         await using var sessionReceiver = await _client.AcceptSessionAsync(
             _msgConfig.RpcReplyQueue,
@@ -189,11 +189,11 @@ public class CommandMessaging: ICommandMessaging
         }
         
         _logger.LogDebug(
-            "[{Destination}<={Source}]({Namespace}:{CorrelationId})", 
+            "Received Response[{Destination}<={Source}]({Namespace}:{CorrelationId})", 
             _msgConfig.ServiceName,
+            endpointInfo.ServiceName,
             messageMetadata.MessageNamespace,
-            correlationId, 
-            endpointInfo.ServiceName);
+            correlationId);
         
         var payload = JsonSerializer.Deserialize<CommandPayload>(replyMessage.Body) 
             ?? throw new InvalidOperationException("Failed to deserialize CommandPayload.");
@@ -249,9 +249,9 @@ public class CommandMessaging: ICommandMessaging
         _logger.LogDebug(
             "Sending Command: [{Source}=>{Destination}]({Namespace}:{CorrelationId})",
             _msgConfig.ServiceName,
+            endpointInfo.ServiceName,
             messageMetadata.MessageNamespace,
-            message.CorrelationId,
-            endpointInfo.ServiceName);
+            message.CorrelationId);
 
         try
         {
