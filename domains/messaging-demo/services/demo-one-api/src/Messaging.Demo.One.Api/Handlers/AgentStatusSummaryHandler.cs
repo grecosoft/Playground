@@ -1,18 +1,18 @@
 ﻿using System.Text.Json;
 using Common.Messaging.Commands;
 using Messaging.Demo.Common.Commands;
+using Serilog;
 
 namespace Messaging.Demo.One.Api.Handlers;
 
-public class AgentStatusSummaryHandler(
-    ILogger<AgentStatusSummaryHandler> logger) 
+public class AgentStatusSummaryHandler() 
     : CommandHandlerBase<AgentStatusSummaryCommand, AgentStatusSummaryResponse>
 {
     protected override Task HandleMessage(AgentStatusSummaryCommand command,
         CommandContext context,
         CancellationToken cancellationToken)
     {
-        logger.LogWarning("Response Message: {message}", JsonSerializer.Serialize(command));
+        Log.Logger.Warning("Response Message: {message}", JsonSerializer.Serialize(command));
         return Task.CompletedTask;
     }
 }
