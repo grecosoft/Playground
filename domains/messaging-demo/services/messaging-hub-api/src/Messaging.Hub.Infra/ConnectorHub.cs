@@ -2,15 +2,20 @@
 using Common.Messaging.Commands;
 using Messaging.Hub.Domain;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Messaging.Hub.Infra;
 
 public class ConnectorHub(
+    IOptions<MessagingConfig> messagingOptions,
     ILogger<ConnectorHub> logger,
     IConnectionManager connectionManager,
     ICommandRepository commandRepository,
     ICommandMessaging commandMessaging) : Microsoft.AspNetCore.SignalR.Hub
 {
+        
+    private readonly MessagingConfig _msgConfig = messagingOptions.Value;
+    
     public override Task OnConnectedAsync()
     {
         logger.LogDebug(
@@ -54,8 +59,15 @@ public class ConnectorHub(
     public async Task SendResponseToCommand(string correlationId, string response)
     {
         var context = await commandRepository.LoadCommandContext(correlationId, Context.ConnectionAborted);
-        context.SetResponseData(BinaryData.FromString(response));
         
+        logger.LogDebug(
+            "Received Response[{Destination}<={Source}]({Namespace}:{CorrelationId})", 
+            _msgConfig.ServiceName,
+            Context.UserIdentifier,
+            context.CommandNamespace,
+            correlationId);
+        
+        context.SetResponseData(BinaryData.FromString(response));
         await commandMessaging.SendResponseToCommandAsync(context, Context.ConnectionAborted);
     }
 }
