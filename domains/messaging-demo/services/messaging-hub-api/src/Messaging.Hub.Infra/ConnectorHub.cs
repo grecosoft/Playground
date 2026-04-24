@@ -61,7 +61,7 @@ public class ConnectorHub(
         var context = await commandRepository.LoadCommandContext(correlationId, Context.ConnectionAborted);
         
         logger.LogDebug(
-            "Received Response[{Destination}<={Source}]({Namespace}:{CorrelationId})", 
+            "Received Response: [{Destination}<={Source}]({Namespace}:{CorrelationId})", 
             _msgConfig.ServiceName,
             Context.UserIdentifier,
             context.CommandNamespace,
