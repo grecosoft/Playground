@@ -4,13 +4,15 @@ using Messaging.Demo.Common.Commands;
 
 namespace Messaging.Demo.One.Api.Handlers;
 
-public class DeviceStatusHandler : CommandHandlerBase<DeviceUpdateCommand, DeviceStatus>
+public class DeviceStatusHandler(
+    Logger<DeviceStatusHandler> logger)
+    : CommandHandlerBase<DeviceUpdateCommand, DeviceStatus>
 {
     protected override Task HandleMessage(DeviceUpdateCommand command,
         CommandContext context,
         CancellationToken cancellationToken)
     {
-        Console.WriteLine($"{nameof(DeviceUpdateCommand)} received: {JsonSerializer.Serialize(command)}");
+        logger.LogWarning("Response Message: {message}", JsonSerializer.Serialize(command));
         return Task.CompletedTask;
     }
 }

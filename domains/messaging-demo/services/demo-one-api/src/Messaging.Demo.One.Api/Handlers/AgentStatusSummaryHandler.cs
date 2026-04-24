@@ -4,13 +4,15 @@ using Messaging.Demo.Common.Commands;
 
 namespace Messaging.Demo.One.Api.Handlers;
 
-public class AgentStatusSummaryHandler() : CommandHandlerBase<AgentStatusSummaryCommand, AgentStatusSummaryResponse>
+public class AgentStatusSummaryHandler(
+    ILogger<AgentStatusSummaryHandler> logger) 
+    : CommandHandlerBase<AgentStatusSummaryCommand, AgentStatusSummaryResponse>
 {
     protected override Task HandleMessage(AgentStatusSummaryCommand command,
         CommandContext context,
         CancellationToken cancellationToken)
     {
-        Console.WriteLine($"{nameof(DeviceUpdateCommand)} received: {JsonSerializer.Serialize(command)}");
+        logger.LogWarning("Response Message: {message}", JsonSerializer.Serialize(command));
         return Task.CompletedTask;
     }
 }
