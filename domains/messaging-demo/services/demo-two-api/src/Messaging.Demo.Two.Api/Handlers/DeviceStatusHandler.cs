@@ -3,7 +3,8 @@ using Messaging.Demo.Common.Commands;
 
 namespace Messaging.Demo.Two.Api.Handlers;
 
-public class DeviceStatusHandler : CommandHandlerBase<DeviceUpdateCommand, DeviceStatus>
+public class DeviceStatusHandler 
+    : CommandHandlerBase<DeviceUpdateCommand, DeviceStatus>
 {
     protected override async Task HandleMessage(DeviceUpdateCommand command,
         CommandContext context,
