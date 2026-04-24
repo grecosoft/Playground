@@ -99,6 +99,12 @@ public class CommandMessaging: ICommandMessaging
 
         try
         {
+            _logger.LogDebug(
+                "Sending Response: ({Source}=>[{Namespace}:{CorrelationId}])", 
+                _msgConfig.ServiceName,
+                context.CommandNamespace,
+                context.CorrelationId);
+            
             await _asyncCommandSender.SendMessageAsync(message, ct);
             await _commandRepository.DeleteCommandCommand(context.CorrelationId, ct);
         }
@@ -134,24 +140,30 @@ public class CommandMessaging: ICommandMessaging
         EndpointInfo endpointInfo,
         CancellationToken ct)
     {
+        var messageMetadata = GetMessageMetadata(command.GetType());
+        
         var correlationId = await SendCommandMessage(
             _rpcCommandSender,
             endpointInfo,
+            messageMetadata,
             command,
             ct);
 
-        return await WaitCommandResponse<TResponse>(correlationId, endpointInfo, ct);
+        return await WaitCommandResponse<TResponse>(correlationId, endpointInfo, messageMetadata, ct);
     }
     
     private async Task<TResponse> WaitCommandResponse<TResponse>(
         string correlationId,
         EndpointInfo endpointInfo,
+        MessageMetadata messageMetadata,
         CancellationToken ct)
     {
        _logger.LogDebug(
-            "Waiting for response for {CorrelationId} from service {DestinationServiceId}", 
+            "Waiting Response: [{Destination}<={Source}]({Namespace}:{CorrelationId})", 
+            _msgConfig.ServiceName,
+            messageMetadata.MessageNamespace,
             correlationId, 
-            endpointInfo.ServiceId);
+            endpointInfo.ServiceName);
         
         await using var sessionReceiver = await _client.AcceptSessionAsync(
             _msgConfig.RpcReplyQueue,
@@ -177,9 +189,11 @@ public class CommandMessaging: ICommandMessaging
         }
         
         _logger.LogDebug(
-            "Received response for {CorrelationId} from service {DestinationServiceId}", 
+            "[{Destination}<={Source}]({Namespace}:{CorrelationId})", 
+            _msgConfig.ServiceName,
+            messageMetadata.MessageNamespace,
             correlationId, 
-            endpointInfo.ServiceId);
+            endpointInfo.ServiceName);
         
         var payload = JsonSerializer.Deserialize<CommandPayload>(replyMessage.Body) 
             ?? throw new InvalidOperationException("Failed to deserialize CommandPayload.");
@@ -196,9 +210,12 @@ public class CommandMessaging: ICommandMessaging
         EndpointInfo endpointInfo,
         CancellationToken token)
     {
+        var messageMetadata = GetMessageMetadata(command.GetType());
+        
         return SendCommandMessage(
             _asyncCommandSender,
             endpointInfo,
+            messageMetadata,
             command,
             token);
     }
@@ -206,12 +223,12 @@ public class CommandMessaging: ICommandMessaging
     private async Task<string> SendCommandMessage(
         ServiceBusSender sender,
         EndpointInfo endpointInfo,
+        MessageMetadata messageMetadata,
         ICommandMessage command,
         CancellationToken token)
     {
         var correlationId = Activity.Current?.TraceId.ToString() ?? Guid.NewGuid().ToString();
-        var messageMetadata = GetMessageMetadata(command.GetType());
-
+      
         var payload = new CommandPayload(
             BinaryData.FromBytes(JsonSerializer.SerializeToUtf8Bytes(command, command.GetType())),
             BinaryData.Empty);
@@ -230,10 +247,11 @@ public class CommandMessaging: ICommandMessaging
         };
         
         _logger.LogDebug(
-            "Sending command message for {Namespace} with correlation id {CorrelationId} to service {DestinationServiceId}",
+            "Sending Command: [{Source}=>{Destination}]({Namespace}:{CorrelationId})",
+            _msgConfig.ServiceName,
             messageMetadata.MessageNamespace,
             message.CorrelationId,
-            endpointInfo.ServiceId);
+            endpointInfo.ServiceName);
 
         try
         {
