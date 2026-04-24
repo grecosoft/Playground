@@ -42,7 +42,7 @@ public class CommandHandlerDispatcherAsync(
             using var _ = logger.BeginScope(context.ToDictionary());
             
             logger.LogDebug(
-                "Received Response[{Destination}<={Source}]({Namespace}:{CorrelationId})", 
+                "Received Response: [{Destination}<={Source}]({Namespace}:{CorrelationId})", 
                 _msgConfig.ServiceName,
                 context.SendingServiceName,
                 context.CommandNamespace,
@@ -75,7 +75,7 @@ public class CommandHandlerDispatcherAsync(
                 context.SetCommandRepository(commandRepository);
             }
             
-            logger.LogDebug(
+            logger.LogTrace(
                 "Dispatching command message {MessageId} to handler {Handler} of type {CommandType}.",
                 eventArgs.Message.MessageId, 
                 commandHandler,

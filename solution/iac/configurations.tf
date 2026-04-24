@@ -14,10 +14,13 @@ locals {
     {
       key   = "Serilog:MinimumLevel:Override:Microsoft.IdentityModel"
       value = "Warning"
+    },
+    {
+      key   = "Serilog:MinimumLevel:Override:Microsoft.Azure.SignalR"
+      value = "Warning"
      }
   ]
 }
-
 
 module "solution_configs" {
   source               = "../../common/iac/modules/service_configuration"

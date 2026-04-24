@@ -101,7 +101,8 @@ public class CommandMessaging: ICommandMessaging
         try
         {
             _logger.LogDebug(
-                "Sending Response: ({Source}=>[{Namespace}:{CorrelationId}])", 
+                "Replaying Command: [{Destination}<={Source}]({Namespace}:{CorrelationId})", 
+                context.SendingServiceName,
                 _msgConfig.ServiceName,
                 context.CommandNamespace,
                 context.CorrelationId);
@@ -196,7 +197,7 @@ public class CommandMessaging: ICommandMessaging
         }
         
         _logger.LogDebug(
-            "Received Response[{Destination}<={Source}]({Namespace}:{CorrelationId})", 
+            "Received Response: [{Destination}<={Source}]({Namespace}:{CorrelationId})", 
             _msgConfig.ServiceName,
             endpointInfo.ServiceName,
             messageMetadata.MessageNamespace,
