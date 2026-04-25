@@ -60,6 +60,7 @@ public class CommandHandlerDispatcherAsync(
             // Resolve the command handler and set the command on the context:
             var commandHandler = requestScope.ServiceProvider.GetCommandHandler(context);
             context.SetCommand(payload.Command, commandHandler.CommandType);
+            context.SetResponseError(payload.ResponseError);
             
             // Determine if the received command is a response to a previously sent command.
             if (payload.HasResponse)

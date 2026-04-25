@@ -39,6 +39,22 @@ public abstract class CommandHandlerBase<TCommand, TResponse> : ICommandMessageH
         
         context.SetResponse(response);
     }
+
+    /// <summary>
+    /// Invoked by derived command handler to throw exception if returned command
+    /// response resulted in an exception.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <exception cref="CommandResultException"></exception>
+    protected void ThrowIfErrorResponse(CommandContext context)
+    {
+        if (!string.IsNullOrWhiteSpace(context.ResponseError))
+        {
+            throw new CommandResultException(
+                $"Response {nameof(TResponse)} for command {nameof(TCommand)} with correlation id " + 
+                $"{context.CorrelationId} resulted in an error {context.ResponseError}");
+        }
+    }
     
     /// <summary>
     /// Overridden by derived command handler to process received command.
