@@ -3,8 +3,8 @@ using Common.Messaging.Commands;
 using Common.Messaging.Core;
 using Common.Messaging.Core.Commands;
 using Messaging.Demo.Common;
-using Messaging.Demo.Two.Api.Models;
 using Messaging.Hub.Api;
+using Messaging.Hub.Api.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

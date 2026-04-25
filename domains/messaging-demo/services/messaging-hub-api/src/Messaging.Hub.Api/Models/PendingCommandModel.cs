@@ -1,6 +1,6 @@
 ﻿using Common.Messaging.Commands;
 
-namespace Messaging.Demo.Two.Api.Models;
+namespace Messaging.Hub.Api.Models;
 
 public class PendingCommandModel(CommandContext context)
 {

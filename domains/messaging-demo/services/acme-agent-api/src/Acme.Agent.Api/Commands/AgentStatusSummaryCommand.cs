@@ -4,8 +4,8 @@ namespace Acme.Agent.Api.Commands;
 
 public record AgentStatusSummaryCommand(
     [property: JsonPropertyName("companyId")] Guid CompanyId,
-    [property: JsonPropertyName("AgentId")] string AgentId,
-    [property: JsonPropertyName("MinLogLevel")] LogSeverityType MinLogLevel);
+    [property: JsonPropertyName("agentId")] string AgentId,
+    [property: JsonPropertyName("minLogLevel")] LogSeverityType MinLogLevel);
 
 public record AgentStatusSummaryResponse(
     [property: JsonPropertyName("generatedTimestamp")] DateTimeOffset GeneratedTimestamp,

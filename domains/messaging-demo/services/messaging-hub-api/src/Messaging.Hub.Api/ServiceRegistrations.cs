@@ -2,6 +2,7 @@
 using Azure.Identity;
 using Messaging.Hub.Domain;
 using Messaging.Hub.Infra;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.Azure.SignalR;
 
 namespace Messaging.Hub.Api;
@@ -23,6 +24,7 @@ public static class ServiceRegistrations
         builder.Services.AddSignalR().AddAzureSignalR(options =>
         {
             options.ServerStickyMode = ServerStickyMode.Required;
+       
             options.Endpoints =
             [
                 new ServiceEndpoint(new Uri(config.SignalREndpoint), credential)
@@ -47,9 +49,13 @@ public static class ServiceRegistrations
     
     public static IApplicationBuilder MapConnectorHub(this IApplicationBuilder appBuilder)
     {
+        appBuilder.UseWebSockets();
         appBuilder.UseEndpoints(endpoints =>
         {
-            endpoints.MapHub<ConnectorHub>("/connectorhub");
+            endpoints.MapHub<ConnectorHub>("/connectorhub", options =>
+            {
+                options.Transports = HttpTransportType.WebSockets;
+            });
         });
         
         return appBuilder;
