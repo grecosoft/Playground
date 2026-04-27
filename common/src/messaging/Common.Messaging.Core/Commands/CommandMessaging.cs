@@ -143,7 +143,7 @@ public class CommandMessaging: ICommandMessaging
     
     // Sends a command to a destination service and waits for a max specific
     // amount of time for a response before timing out.
-    internal async Task<TResponse> SendCommandWithReplyAsync<TResponse>(
+    internal async Task<CommandResult<TResponse>> SendCommandWithReplyAsync<TResponse>(
         ICommandMessage command,
         EndpointInfo endpointInfo,
         CancellationToken ct)
@@ -160,7 +160,7 @@ public class CommandMessaging: ICommandMessaging
         return await WaitCommandResponse<TResponse>(correlationId, endpointInfo, messageMetadata, ct);
     }
     
-    private async Task<TResponse> WaitCommandResponse<TResponse>(
+    private async Task<CommandResult<TResponse>> WaitCommandResponse<TResponse>(
         string correlationId,
         EndpointInfo endpointInfo,
         MessageMetadata messageMetadata,
@@ -206,9 +206,11 @@ public class CommandMessaging: ICommandMessaging
         var payload = JsonSerializer.Deserialize<CommandPayload>(replyMessage.Body) 
             ?? throw new InvalidOperationException("Failed to deserialize CommandPayload.");
 
-        var response = JsonSerializer.Deserialize<TResponse>(payload.Response);
-        return response ?? throw new InvalidOperationException(
-            $"Failed to deserialize response message body to type '{typeof(TResponse).Name}'.");
+        var response = JsonSerializer.Deserialize<TResponse>(payload.Response) 
+                       ?? throw new InvalidOperationException(
+                           $"Failed to deserialize response message body to type '{typeof(TResponse).Name}'.");
+
+        return new CommandResult<TResponse>(response, payload.ResponseError);
     }
 
     // Sends a command to a destination service and expects a response to be sent back on the reply queue, but does not

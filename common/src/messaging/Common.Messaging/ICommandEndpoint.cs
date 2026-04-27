@@ -25,17 +25,19 @@ public interface ICommandEndpoint
     /// the command topic so the dependent service will receive command messages sent to this endpoint.
     /// </summary>
     public EndpointInfo EndpointInfo { get; }
-    
+
     /// <summary>
     /// Used to send a command to the endpoint and wait for a specified number of seconds for a response.
     /// </summary>
     /// <param name="command">The command to be sent.</param>
     /// <param name="ct">Cancellation Token</param>
+    /// <param name="options">Options used when sending command or evaluating its results.</param>
     /// <typeparam name="TResponse">The response inferred from the command.</typeparam>
     /// <returns>The response of the command.</returns>
-    Task<TResponse> SendCommandWithReplyAsync<TResponse>(
+    Task<CommandResult<TResponse>> SendCommandWithReplyAsync<TResponse>(
         ICommandMessage<TResponse> command,
-        CancellationToken ct);
+        CancellationToken ct,
+        CommandOptions? options = null);
     
     /// <summary>
     /// Used to send a command to the endpoint and does not wait for an immediate response. Once the response of the

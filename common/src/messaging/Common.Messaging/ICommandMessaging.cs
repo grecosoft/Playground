@@ -1,7 +1,27 @@
 using Common.Messaging.Commands;
-using Common.Messaging.Entities;
 
 namespace Common.Messaging;
+
+/// <summary>
+/// Options that can be passed to determine how a command is sent and how its response is handled.
+/// </summary>
+/// <param name="ThrowIfErrorResponse">For a command for which a response is awaited, determines
+/// if an exception should be thrown if the response indicates an error.</param>
+public record CommandOptions(bool ThrowIfErrorResponse = false);
+
+/// <summary>
+/// Returned for an awaited command's response.
+/// </summary>
+/// <param name="Response">The response of the command.</param>
+/// <param name="ErrorMessage">Error messaged retured by service if handeling command resulted in error.</param>
+/// <typeparam name="TResponse">The type of the response.</typeparam>
+public record CommandResult<TResponse>(TResponse Response, string? ErrorMessage = null);
+
+/// <summary>
+/// Exception thrown if the service processing the command resulted in an exception.
+/// </summary>
+/// <param name="message">The error message returned by the service.</param>
+public class CommandResultException(string message) : Exception(message);
 
 /// <summary>
 /// Interface for resolving a service endpoint by name or sending responses to previously received commands

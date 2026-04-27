@@ -21,6 +21,6 @@ public class AgentPingHandler(
             .Client(agentConnectionId!)
             .InvokeAsync<AgentPingResponse>(context.CommandNamespace, context.CorrelationId, command, cancellationToken);
         
-        context.SetResponse(agentResponse);
+        SetResponse(context, agentResponse);
     }
 }

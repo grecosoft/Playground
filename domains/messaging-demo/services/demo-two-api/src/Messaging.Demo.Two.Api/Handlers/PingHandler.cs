@@ -11,7 +11,10 @@ public class PingMessageHandler : CommandHandlerBase<PingCommand, PingResponse>
         CancellationToken cancellationToken)
     {
 
-        context.SetResponse(new PingResponse($"Pong-{command.ValueOne}/{command.ValueOne}-{Guid.NewGuid()}"));
+        SetResponse(
+            context, 
+            new PingResponse($"Pong-{command.ValueOne}/{command.ValueOne}-{Guid.NewGuid()}"));
+        
         return Task.CompletedTask;
     }
 }

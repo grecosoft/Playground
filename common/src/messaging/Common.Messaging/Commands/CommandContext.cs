@@ -48,6 +48,7 @@ public class CommandContext(
 
     public Type CommandType => Command.GetType();
     public object? Response { get; private set; }
+    public string? ResponseError { get; private set; }
 
     public static CommandContext Create(ServiceBusReceivedMessage message)
     {
@@ -88,6 +89,11 @@ public class CommandContext(
         Response = 
             JsonSerializer.Deserialize(data, responseType)
             ?? throw new InvalidOperationException($"Failed to deserialize message body to type '{responseType.Name}'.");
+    }
+
+    public void SetResponseError(string? error)
+    {
+        ResponseError = error;
     }
     
     public void SetCommandData(BinaryData data) => CommandData = data;

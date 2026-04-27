@@ -24,6 +24,37 @@ public abstract class CommandHandlerBase<TCommand, TResponse> : ICommandMessageH
         // Invoke derived command handler method.
         await HandleMessage(command, commandContext, ct);
     }
+
+    /// <summary>
+    /// Invoked by derived command handler to set command's response.
+    /// </summary>
+    /// <param name="context">The current context of the received command.</param>
+    /// <param name="response">The commands associated response.</param>
+    protected void SetResponse(CommandContext context, TResponse response)
+    {
+        if (response is null)
+        {
+            throw new ArgumentNullException(nameof(response));
+        }
+        
+        context.SetResponse(response);
+    }
+
+    /// <summary>
+    /// Invoked by derived command handler to throw exception if returned command
+    /// response resulted in an exception.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <exception cref="CommandResultException"></exception>
+    protected void ThrowIfErrorResponse(CommandContext context)
+    {
+        if (!string.IsNullOrWhiteSpace(context.ResponseError))
+        {
+            throw new CommandResultException(
+                $"Response {nameof(TResponse)} for command {nameof(TCommand)} with correlation id " + 
+                $"{context.CorrelationId} resulted in an error {context.ResponseError}");
+        }
+    }
     
     /// <summary>
     /// Overridden by derived command handler to process received command.

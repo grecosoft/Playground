@@ -15,10 +15,22 @@ public class CommandEndpoint(
 {
     public EndpointInfo EndpointInfo { get; } = endpointInfo;
     
-    public Task<TResponse> SendCommandWithReplyAsync<TResponse>(
+    public async Task<CommandResult<TResponse>> SendCommandWithReplyAsync<TResponse>(
         ICommandMessage<TResponse> command,
-        CancellationToken ct) => messaging.SendCommandWithReplyAsync<TResponse>(command, EndpointInfo, ct);
-    
+        CancellationToken ct,
+        CommandOptions? options = null)
+    {
+        options ??= new CommandOptions();
+        
+        var result = await messaging.SendCommandWithReplyAsync<TResponse>(command, EndpointInfo, ct);
+        if (options.ThrowIfErrorResponse && !string.IsNullOrWhiteSpace(result.ErrorMessage))
+        {
+            throw new CommandResultException(result.ErrorMessage);
+        }
+
+        return result;
+    }
+
     public Task SendCommandAsync<TResponse>(
         ICommandMessage<TResponse> command,
         CancellationToken ct) => messaging.SendCommandAsync(command, EndpointInfo, ct);
