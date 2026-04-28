@@ -1,6 +1,7 @@
 ﻿using Common.Messaging;
 using Common.Messaging.Commands;
 using Messaging.Hub.Domain;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -83,7 +84,8 @@ public class ConnectorHub(
             context.CommandNamespace,
             correlationId);
         
-        // TODO:  Notify controller:
+        // Notify the external service that the submitted response failed validation:
+        await Clients.Caller.SendAsync("command.error", "Invalid Response");
     }
 }
 

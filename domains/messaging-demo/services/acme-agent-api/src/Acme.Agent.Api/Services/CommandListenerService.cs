@@ -12,9 +12,21 @@ public class CommandListenerService(
     {
         HandleAgentPingCommand(hubConnection);
         HandleAgentStatusSummaryCommand(hubConnection);
+        HandleValidationErrors(hubConnection);
 
         await hubConnection.StartAsync(stoppingToken);
         await Task.Delay(Timeout.Infinite, stoppingToken);
+    }
+
+    private void HandleValidationErrors(HubConnection connection)
+    {
+        connection.On<string, string>("command.error", (correlationId, message) =>
+        {
+            logger.LogWarning(
+                "Received validation error for correlation {id}: {message}",
+                correlationId, 
+                message);
+        });
     }
 
     private void HandleAgentPingCommand(HubConnection connection)

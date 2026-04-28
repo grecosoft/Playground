@@ -26,7 +26,15 @@ public class AgentPingHandler(
         var valResults = validationService.ValidateResponse(context.CommandNamespace, agentResponse);
         if (!valResults.IsValid)
         {
+            // Let service sending command know that the response the connector replied
+            // with was not valid. 
             context.SetResponseError(valResults.ErrorMessage);
+            
+            // Notify connector that the response they sent was invalid.  Since this is an RPC method, there
+            // is really nothing the client can do at this point, so sending validation error so they can log.
+            await connectorHub.Clients
+                .Client(agentConnectionId!)
+                .SendAsync("command.error", context.CorrelationId, "Invalid", cancellationToken);
             return;
         }
         
