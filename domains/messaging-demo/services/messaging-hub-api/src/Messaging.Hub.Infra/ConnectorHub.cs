@@ -69,16 +69,21 @@ public class ConnectorHub(
             correlationId);
         
         var valResults = validationService.ValidateResponse(context.CommandNamespace, response);
-        if (!valResults.IsValid)
-        {
-            context.SetResponseError(valResults.ErrorMessage);
-        }
-        else
+        if (valResults.IsValid)
         {
             context.SetResponseData(BinaryData.FromString(response));
+            await commandMessaging.SendResponseToCommandAsync(context, Context.ConnectionAborted);
+            return;
         }
+ 
+        logger.LogDebug(
+            "Validation failed for response: [{Destination}<={Source}]({Namespace}:{CorrelationId}",
+            _msgConfig.ServiceName,
+            Context.UserIdentifier,
+            context.CommandNamespace,
+            correlationId);
         
-        await commandMessaging.SendResponseToCommandAsync(context, Context.ConnectionAborted);
+        // TODO:  Notify controller:
     }
 }
 
