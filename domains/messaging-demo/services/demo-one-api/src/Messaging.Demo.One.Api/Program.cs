@@ -83,19 +83,27 @@ app.MapPost("/company/{companyId:guid}/{agentId}/ping", async (
 {
     var command = new AgentPingCommand(companyId, agentId, message);
     var endPoint = commandMessaging.GetServiceEndpoint(ServiceEndpoints.MessagingHubApi);
+
+    try
+    {
+        var response = await endPoint.SendCommandWithReplyAsync(command, ct, new CommandOptions { ThrowIfErrorResponse = true });
+        return Results.Ok(response);
+    }
+    catch (Exception ex)
+    {
+        return  Results.BadRequest(ex.Message);
+    }
     
-    var response = await endPoint.SendCommandWithReplyAsync(command, ct);
-    return Results.Ok(response);
 });
 
 app.MapPost("/company/{companyId:guid}/{agentId}/status", async (
     Guid companyId,
     string  agentId,
-    LogSeverityType minLogSeverity,
+    string minLogSeverity,
     ICommandMessaging commandMessaging,
     CancellationToken ct) =>
 {
-    var command = new AgentStatusSummaryCommand(companyId, agentId, minLogSeverity);
+    var command = new AgentStatusCommand(companyId, agentId, minLogSeverity);
     var endPoint = commandMessaging.GetServiceEndpoint(ServiceEndpoints.MessagingHubApi);
     
     await endPoint.SendCommandAsync(command, ct);

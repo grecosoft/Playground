@@ -1,4 +1,5 @@
-﻿using Acme.Agent.Api.Commands;
+﻿using System.Text.Json;
+using Acme.Agent.Api.Commands;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Acme.Agent.Api.Services;
@@ -18,7 +19,7 @@ public class CommandListenerService(
 
     private void HandleAgentPingCommand(HubConnection connection)
     {
-        connection.On<string, AgentPingCommand, AgentPingResponse>("agent.commands.ping", (correlationId, command) =>
+        connection.On<string, AgentPingCommand, string>("agent.commands.ping", (correlationId, command) =>
         {
             logger.LogInformation(
                 "Received Ping Command: {@command} for correlation {id}",
@@ -27,9 +28,9 @@ public class CommandListenerService(
             
             // handle command...
             
-            return new AgentPingResponse(
+            return JsonSerializer.Serialize(new AgentPingResponse(
                 $"Echo: {command.EchoMessage}", 
-                Guid.NewGuid().ToString());
+                Guid.NewGuid().ToString()));
         });
     }
     

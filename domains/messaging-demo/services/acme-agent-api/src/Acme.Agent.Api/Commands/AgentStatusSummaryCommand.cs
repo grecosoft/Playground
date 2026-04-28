@@ -5,23 +5,16 @@ namespace Acme.Agent.Api.Commands;
 public record AgentStatusSummaryCommand(
     [property: JsonPropertyName("companyId")] Guid CompanyId,
     [property: JsonPropertyName("agentId")] string AgentId,
-    [property: JsonPropertyName("minLogLevel")] LogSeverityType MinLogLevel);
+    [property: JsonPropertyName("minLogLevel")] string MinLogLevel);
 
 public record AgentStatusSummaryResponse(
     [property: JsonPropertyName("generatedTimestamp")] DateTimeOffset GeneratedTimestamp,
-    [property: JsonPropertyName("overallSeverity")] LogSeverityType OverallSeverity,
+    [property: JsonPropertyName("overallSeverity")] string OverallSeverity,
     [property: JsonPropertyName("componentStatuses")] ComponentStatus[] ComponentStatuses);
     
 public record ComponentStatus(
     [property: JsonPropertyName("componentId")] string  ComponentId, 
     [property: JsonPropertyName("createdTimestamp")] DateTimeOffset CreatedTimestamp,
     [property: JsonPropertyName("lastLogMessage")] string LastLogMessage,
-    [property: JsonPropertyName("logSeverity")] LogSeverityType LogSeverity);
+    [property: JsonPropertyName("logSeverity")] string LogSeverity);
     
-public enum LogSeverityType
-{
-    Debug = 1,
-    Info,
-    Warning,
-    Error
-}

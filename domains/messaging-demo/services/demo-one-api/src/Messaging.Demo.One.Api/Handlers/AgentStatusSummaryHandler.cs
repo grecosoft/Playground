@@ -6,9 +6,9 @@ namespace Messaging.Demo.One.Api.Handlers;
 
 public class AgentStatusSummaryHandler(
     ILogger<AgentStatusSummaryHandler> logger) 
-    : CommandHandlerBase<AgentStatusSummaryCommand, AgentStatusSummaryResponse>
+    : CommandHandlerBase<AgentStatusCommand, AgentStatusSummaryResponse>
 {
-    protected override Task HandleMessage(AgentStatusSummaryCommand command,
+    protected override Task HandleMessage(AgentStatusCommand command,
         CommandContext context,
         CancellationToken cancellationToken)
     {

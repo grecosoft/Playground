@@ -50,10 +50,10 @@ app.MapPost("/send-status-summary/{correlationId}/", async (string correlationId
 {
     var response = new AgentStatusSummaryResponse(
         DateTime.UtcNow,
-        LogSeverityType.Warning,
+        "Warning",
         [
-            new ComponentStatus("typewriter", DateTime.UtcNow, "Disk space low", LogSeverityType.Warning),
-            new ComponentStatus("coffee-machine", DateTime.UtcNow, "Out of coffee", LogSeverityType.Error)
+            new ComponentStatus("typewriter", DateTime.UtcNow, "Disk space low", "Warning"),
+            new ComponentStatus("coffee-machine", DateTime.UtcNow, "Out of coffee", "Error")
         ]);
     
     await hub.SendAsync(

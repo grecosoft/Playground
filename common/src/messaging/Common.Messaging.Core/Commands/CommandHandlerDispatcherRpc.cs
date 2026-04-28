@@ -86,7 +86,7 @@ public class CommandHandlerDispatcherRpc(
         CommandContext context,
         ProcessMessageEventArgs eventArgs)
     {
-        if (context.Response is null)
+        if (context.Response is null && string.IsNullOrEmpty(context.ResponseError))
         {
             throw new InvalidOperationException(
                 $"Command handler {handler.GetType().Name} did not set a response on the command context.");
@@ -96,7 +96,8 @@ public class CommandHandlerDispatcherRpc(
             context.SendingServiceId,
             context.SendingServiceName,
             BinaryData.FromObjectAsJson(context.Command),
-            BinaryData.FromObjectAsJson(context.Response));
+            BinaryData.FromObjectAsJson(context.Response),
+            context.ResponseError);
         
         var replyMessage = new ServiceBusMessage(JsonSerializer.SerializeToUtf8Bytes(payload))
         {

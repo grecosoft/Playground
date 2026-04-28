@@ -44,7 +44,25 @@ public static class ServiceRegistrations
         
         builder.Services.AddSingleton<IAgentRepository, AgentRepository>();
         builder.Services.AddSingleton<IConnectionManager, ConnectionManager>();
+        
+        AddSchemaValidation(bootstrapLogger, builder, config);
         return builder;
+    }
+    
+    private static void AddSchemaValidation(
+        ILogger bootstrapLogger,
+        IHostApplicationBuilder builder,
+        MessagingHubConfig config)
+    {
+        var commandSchemaPath = Path.Join(AppContext.BaseDirectory, config.CommandSchemaRootPath);
+        var commandValidation = new CommandValidationService(commandSchemaPath);        
+        
+        commandValidation.LoadSchemas(bootstrapLogger,[
+            new CommandSchema("agent.commands.ping", "AgentPing"),
+            new CommandSchema("agent.commands.status", "AgentStatusSummary")
+        ]);
+        
+        builder.Services.AddSingleton<ICommandValidationService>(commandValidation);
     }
     
     public static IApplicationBuilder MapConnectorHub(this IApplicationBuilder appBuilder)

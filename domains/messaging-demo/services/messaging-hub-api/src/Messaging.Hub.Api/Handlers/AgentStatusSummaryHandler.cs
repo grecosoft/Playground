@@ -8,10 +8,10 @@ namespace Messaging.Hub.Api.Handlers;
 
 public class AgentStatusSummaryHandler(
     IHubContext<ConnectorHub> connectorHub,
-    IConnectionManager connectionManager) : CommandHandlerBase<AgentStatusSummaryCommand, AgentStatusSummaryResponse>
+    IConnectionManager connectionManager) : CommandHandlerBase<AgentStatusCommand, AgentStatusSummaryResponse>
 {
     protected override async Task HandleMessage(
-        AgentStatusSummaryCommand command,
+        AgentStatusCommand command,
         CommandContext context,
         CancellationToken cancellationToken)
     {

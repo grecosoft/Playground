@@ -9,6 +9,7 @@ namespace Messaging.Hub.Infra;
 public class ConnectorHub(
     IOptions<MessagingConfig> messagingOptions,
     ILogger<ConnectorHub> logger,
+    ICommandValidationService validationService,
     IConnectionManager connectionManager,
     ICommandRepository commandRepository,
     ICommandMessaging commandMessaging) : Microsoft.AspNetCore.SignalR.Hub
@@ -67,7 +68,16 @@ public class ConnectorHub(
             context.CommandNamespace,
             correlationId);
         
-        context.SetResponseData(BinaryData.FromString(response));
+        var valResults = validationService.ValidateResponse(context.CommandNamespace, response);
+        if (!valResults.IsValid)
+        {
+            context.SetResponseError(valResults.ErrorMessage);
+        }
+        else
+        {
+            context.SetResponseData(BinaryData.FromString(response));
+        }
+        
         await commandMessaging.SendResponseToCommandAsync(context, Context.ConnectionAborted);
     }
 }

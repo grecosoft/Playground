@@ -1,0 +1,76 @@
+{
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$defs": {
+        "ComponentStatus": {
+          "type": "object",
+          "title": "ComponentStatus",
+          "required": ["componentId", "createdTimestamp", "lastLogMessage", "logSeverity"],
+          "properties": {
+            "componentId": {
+              "type": "string",
+              "description": "The unique identifier of the component."
+            },
+            "createdTimestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "The timestamp when the component status was created."
+            },
+            "lastLogMessage": {
+              "type": "string",
+              "description": "The last log message recorded by the component."
+            },
+            "logSeverity": {
+              "type": "string",
+              "description": "The severity level of the last log message."
+            }
+          },
+          "additionalProperties": false
+        },
+        "AgentStatusSummaryResponse": {
+          "type": "object",
+          "title": "AgentStatusSummaryResponse",
+          "required": ["generatedTimestamp", "overallSeverity", "componentStatuses"],
+          "properties": {
+            "generatedTimestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "The timestamp when the status summary was generated."
+            },
+            "overallSeverity": {
+              "type": "string",
+              "description": "The overall severity level across all components."
+            },
+            "componentStatuses": {
+              "type": "array",
+              "description": "The list of individual component statuses.",
+              "items": {
+                "$ref": "#/$defs/ComponentStatus"
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "AgentStatusSummaryCommand": {
+          "type": "object",
+          "title": "AgentStatusSummaryCommand",
+          "required": ["companyId", "AgentId", "MinLogLevel"],
+          "properties": {
+            "companyId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "The unique identifier of the company."
+            },
+            "AgentId": {
+              "type": "string",
+              "description": "The unique identifier of the agent."
+            },
+            "MinLogLevel": {
+              "type": "string",
+              "description": "The minimum log severity level to include in the summary."
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
