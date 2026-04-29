@@ -25,14 +25,14 @@ RUN --mount=type=secret,id=READ_PACKAGE_TOKEN \
       --password $READ_PACKAGE_TOKEN \
       --store-password-in-clear-text 
 
-# Restore dependencies for both the API and the tests:
+# # Restore dependencies for both the API and the tests:
 RUN dotnet restore ./${SERVICE_SRC}/Messaging.Hub.Api/Messaging.Hub.Api.csproj
 RUN dotnet restore ./${SERVICE_SRC}/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj
 
 # Copy all the source code:
 COPY ["Messaging.Demo.Common/", "./Messaging.Demo.Common/"]  
 COPY ["${SERVICE_SRC}/", "./${SERVICE_SRC}/"]
-COPY ["${JSON_SCHEMAS}/", "./service/publish"]
+
 
 # Run tests and publish the API:
 RUN dotnet test ./${SERVICE_SRC}/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj \
@@ -48,10 +48,17 @@ RUN dotnet publish ./${SERVICE_SRC}/Messaging.Hub.Api/Messaging.Hub.Api.csproj \
   --no-restore \
   -p:UseProjectReferences=false
 
+# Copy JSON schemas to the image for use at runtime.  
+COPY ["${JSON_SCHEMAS}/", "/service/schemas"]
+
 FROM scratch AS test-results
 COPY --from=build /test-results .
 
 FROM runtime AS image
+ENV CommandSchemaRootPath=schemas/commands
 WORKDIR /service
-COPY --from=build /service/publish ./   
+COPY --from=build /service/publish ./  
+COPY --from=build /service/schemas ./schemas
 ENTRYPOINT ["dotnet", "Messaging.Hub.Api.dll"]
+
+
