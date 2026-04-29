@@ -206,7 +206,7 @@ public class CommandMessaging: ICommandMessaging
         var payload = JsonSerializer.Deserialize<CommandPayload>(replyMessage.Body) 
             ?? throw new InvalidOperationException("Failed to deserialize CommandPayload.");
 
-        var response = JsonSerializer.Deserialize<TResponse>(payload.Response) 
+        var response = payload.HasError ? default : JsonSerializer.Deserialize<TResponse>(payload.Response) 
                        ?? throw new InvalidOperationException(
                            $"Failed to deserialize response message body to type '{typeof(TResponse).Name}'.");
 

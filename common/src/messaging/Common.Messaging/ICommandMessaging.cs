@@ -13,9 +13,9 @@ public record CommandOptions(bool ThrowIfErrorResponse = false);
 /// Returned for an awaited command's response.
 /// </summary>
 /// <param name="Response">The response of the command.</param>
-/// <param name="ErrorMessage">Error messaged retured by service if handeling command resulted in error.</param>
+/// <param name="ErrorMessage">Error messaged returned by service if handling command resulted in error.</param>
 /// <typeparam name="TResponse">The type of the response.</typeparam>
-public record CommandResult<TResponse>(TResponse Response, string? ErrorMessage = null);
+public record CommandResult<TResponse>(TResponse? Response, string? ErrorMessage = null);
 
 /// <summary>
 /// Exception thrown if the service processing the command resulted in an exception.
