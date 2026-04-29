@@ -23,5 +23,5 @@ public record CommandPayload(
     /// <summary>
     /// Indicates the handling the error resulted in an error.
     /// </summary>
-    public bool HasError => string.IsNullOrEmpty(ResponseError);
+    public bool HasError => !string.IsNullOrEmpty(ResponseError);
 }
