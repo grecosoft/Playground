@@ -5,7 +5,7 @@ EXPOSE 8080
 FROM  mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 ENV SERVICE_SRC=services/messaging-hub-api/src
-ENV JSON_SCHEMAS=services/messaging-hub-api/src/schemas
+ENV JSON_SCHEMAS=services/messaging-hub-api/schemas
 
 WORKDIR /src
 
