@@ -35,7 +35,7 @@ public interface ICommandRepository
     /// <param name="correlationId">The correlation id of the received command.</param>
     /// <param name="ct">Cancellation Context.</param>
     /// <returns>Command context containing the original command and associated metadata.</returns>
-    Task<CommandContext> LoadCommandContext(string correlationId, CancellationToken ct);
+    Task<CommandContext?> LoadCommandContext(string correlationId, CancellationToken ct);
     
     /// <summary>
     /// Deletes a previously save command context.

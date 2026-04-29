@@ -47,11 +47,11 @@ public class CommandRepository : ICommandRepository
         return Task.FromResult(receivedCommand);
     }
 
-    public Task<CommandContext> LoadCommandContext(string correlationId, CancellationToken ct)
+    public Task<CommandContext?> LoadCommandContext(string correlationId, CancellationToken ct)
     {
         if (!_commandStates.TryGetValue(correlationId, out var commandState))
         {
-            throw new KeyNotFoundException($"Command {correlationId} not found.");
+            return Task.FromResult<CommandContext?>(null);
         }
 
         var receivedCommand = new CommandContext(
@@ -62,7 +62,7 @@ public class CommandRepository : ICommandRepository
         
         receivedCommand.SetCommandData(BinaryData.FromString(commandState.Command));
         
-        return Task.FromResult(receivedCommand);
+        return Task.FromResult<CommandContext?>(receivedCommand);
     }
 
     public Task DeleteCommandCommand(string correlationId, CancellationToken ct)

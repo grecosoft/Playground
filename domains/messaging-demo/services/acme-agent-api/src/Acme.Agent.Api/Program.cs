@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Acme.Agent.Api;
 using Acme.Agent.Api.Commands;
+using Acme.Agent.Api.Models;
 using Common.Bootstrapping;
 using Microsoft.AspNetCore.SignalR.Client;
 using Serilog;
@@ -56,7 +57,7 @@ app.MapPost("/send-status-summary/{correlationId}/", async (string correlationId
             new ComponentStatus("coffee-machine", DateTime.UtcNow, "Out of coffee", "Error")
         ]);
     
-    await hub.SendAsync(
+    var results = await hub.InvokeAsync<CommandReplyResultModel>(
         "SendResponseToCommand",
         correlationId, 
         JsonSerializer.Serialize(response));
