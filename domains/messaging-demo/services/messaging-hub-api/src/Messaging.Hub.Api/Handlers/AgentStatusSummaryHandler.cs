@@ -1,5 +1,6 @@
 ﻿using Common.Messaging.Commands;
 using Messaging.Demo.Common.Commands;
+using Messaging.Hub.Api.Services;
 using Messaging.Hub.Domain;
 using Messaging.Hub.Infra;
 using Microsoft.AspNetCore.SignalR;

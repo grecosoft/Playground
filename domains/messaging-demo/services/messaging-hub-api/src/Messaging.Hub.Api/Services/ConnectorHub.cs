@@ -4,7 +4,7 @@ using Messaging.Hub.Api.Models;
 using Messaging.Hub.Domain;
 using Microsoft.Extensions.Options;
 
-namespace Messaging.Hub.Api;
+namespace Messaging.Hub.Api.Services;
 
 /// <summary>
 /// SignalR Hub used to send commands received from internal services to external clients.

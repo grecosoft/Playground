@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Azure.Identity;
+using Messaging.Hub.Api.Services;
 using Messaging.Hub.Domain;
 using Messaging.Hub.Infra;
 using Microsoft.AspNetCore.Http.Connections;
