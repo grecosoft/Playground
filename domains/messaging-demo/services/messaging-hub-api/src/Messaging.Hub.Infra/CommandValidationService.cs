@@ -55,7 +55,10 @@ public class CommandValidationService(
             return ValidationResult.Valid(commandNamespace);
         }
     
-        return ToValidationResult(commandNamespace, results);
+        return ValidationResult.Invalid(
+            commandNamespace, 
+            "Response validation failed.",
+            results.ToErrorList());
     }
 
     public ValidationResult ValidateResponse(string commandNamespace, string json)
@@ -74,21 +77,14 @@ public class CommandValidationService(
             return ValidationResult.Valid(commandNamespace);
         }
         
-        return ToValidationResult(commandNamespace, results);
+        return ValidationResult.Invalid(
+            commandNamespace, 
+            "Response validation failed.",
+            results.ToErrorList());
     }
     
     private static EvaluationOptions DefaultOptions => new EvaluationOptions {  OutputFormat = OutputFormat.List };
     
-    private static ValidationResult ToValidationResult(string commandNamespace, EvaluationResults results)
-    {
-        var errors = results.Details!
-            .Where(d => d is { IsValid: false, Errors: not null })
-            .SelectMany(d => d.Errors!)
-            .ToDictionary(e => e.Key, e => e.Value.ToString());
-        
-        return ValidationResult.Invalid(commandNamespace, "Validation failed.", errors);
-    }
-
     private JsonSchema? GetDefinitionSchema(
         ILogger logger,
         string definitionName,

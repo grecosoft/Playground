@@ -4,13 +4,13 @@ namespace Common.Messaging.Commands;
 
 /// <summary>
 /// Repository for saving received commands and their associated state.  Used to store commands by the receiving
-/// service until a response is known and can be sent back to the caller of the command, at which point the command
+/// service until a response is known and can be sent back to the sender of the command, at which point the command
 /// can be deleted from the repository.
 /// </summary>
 public interface ICommandRepository
 {
     /// <summary>
-    /// Save a received command and its associated metadata so a response can be sent back to the caller of the
+    /// Save a received command and its associated metadata so a response can be sent back to the sender of the
     /// command at a later time when the response is known.
     /// </summary>
     /// <param name="commandContext">The command and associated metadata.</param>

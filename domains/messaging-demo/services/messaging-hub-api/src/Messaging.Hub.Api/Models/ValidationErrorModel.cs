@@ -9,4 +9,4 @@ namespace Messaging.Hub.Api.Models;
 /// the list of validation errors that occurred during the validation process.
 /// </summary>
 public record ValidationErrorModel(
-    [property: JsonPropertyName("errors")]IDictionary<string, string> Errors);
+    [property: JsonPropertyName("errors")]IDictionary<string, IList<string>> Errors);
