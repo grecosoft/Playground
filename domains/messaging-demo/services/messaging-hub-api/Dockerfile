@@ -5,6 +5,7 @@ EXPOSE 8080
 FROM  mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 ENV SERVICE_SRC=services/messaging-hub-api/src
+ENV JSON_SCHEMAS=services/messaging-hub-api/src/schemas
 
 WORKDIR /src
 
@@ -31,6 +32,7 @@ RUN dotnet restore ./${SERVICE_SRC}/Messaging.Hub.Tests/Messaging.Hub.Tests.cspr
 # Copy all the source code:
 COPY ["Messaging.Demo.Common/", "./Messaging.Demo.Common/"]  
 COPY ["${SERVICE_SRC}/", "./${SERVICE_SRC}/"]
+COPY ["${JSON_SCHEMAS}/", "./service/publish"]
 
 # Run tests and publish the API:
 RUN dotnet test ./${SERVICE_SRC}/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj \
