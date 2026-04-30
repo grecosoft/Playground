@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using Common.Messaging.Commands;
@@ -25,7 +26,8 @@ public static class ServiceRegistrations
                          ?? throw new NullReferenceException("BusMessagingConfig is null");
             
             bootstrapLogger.LogInformation(
-                "Configuring Service Messaging: {@Configuration}", config.ToLoggableProperties());
+                "Configuring Service Messaging: {Configuration}",
+                JsonSerializer.Serialize(config.ToLoggableProperties()));
             
             services.Configure<MessagingConfig>(configSection);
             
@@ -46,7 +48,7 @@ public static class ServiceRegistrations
             new DefaultAzureCredential(),
             new ServiceBusClientOptions
             {
-                // TODO:  Determine which settings to expose as configurations.
+                Identifier = config.ServiceName
             }));
     }
     
@@ -64,8 +66,10 @@ public static class ServiceRegistrations
                 config.RpcCommandSubscription, 
                 new ServiceBusProcessorOptions
                 {
-                    // TODO:  Determine which settings to expose as configurations.
+                    Identifier = $"{config.ServiceName}-rpc-command-processor",
                     ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete,
+                    PrefetchCount = config.RpcProcesser.PrefetchCount,
+                    MaxConcurrentCalls = config.RpcProcesser.MaxConcurrentCalls,
                 });
         });
         
@@ -91,7 +95,9 @@ public static class ServiceRegistrations
                 config.AsyncCommandSubscription, 
                 new ServiceBusProcessorOptions
                 {
-                    // TODO:  Determine which settings to expose as configurations.
+                    Identifier = $"{config.ServiceName}-async-command-processor",
+                    PrefetchCount = config.AsyncProcesser.PrefetchCount,
+                    MaxConcurrentCalls = config.AsyncProcesser.MaxConcurrentCalls,
                 });
         });
         

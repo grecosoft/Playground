@@ -36,8 +36,16 @@ public class MessagingConfig
     /// The number of seconds to wait for a response to an RPC style of command.
     /// </summary>
     public int RpcReplyTimeoutSeconds { get; set; } = 10;
+
+    /// <summary>
+    /// Options for the processing RPC style of commands.
+    /// </summary>
+    public CommandProcesserOptions RpcProcesser { get; set; } = new();
     
-    
+    /// <summary>
+    /// Options for the processing of Async style of commands.
+    /// </summary>
+    public CommandProcesserOptions AsyncProcesser { get; set; } = new();
     
     /// <summary>
     /// The name of the topic used to send RPC style commands between a solution's services.
@@ -70,9 +78,28 @@ public class MessagingConfig
     {
         ServiceId,
         ServiceBusHostName,
+        DependentServices,
+        
         RpcCommandTopic,
         RpcCommandSubscription,
         RpcReplyQueue,
-        RpcReplyTimeoutSeconds
+        RpcReplyTimeoutSeconds,
+        RpcProcessor = RpcProcesser.ToLoggableProperties(),
+        
+        AsyncCommandTopic,
+        AsyncCommandSubscription,
+        AsyncProcessor = AsyncProcesser.ToLoggableProperties()
     };
+
+    public class CommandProcesserOptions
+    {
+        public int PrefetchCount { get; set; } = 0;
+        public int MaxConcurrentCalls { get; set; } = 1;
+
+        public object ToLoggableProperties() => new
+        {
+            PrefetchCount,
+            MaxConcurrentCalls
+        };
+    }
 }
