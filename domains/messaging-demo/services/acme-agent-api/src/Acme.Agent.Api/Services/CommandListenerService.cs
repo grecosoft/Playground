@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Acme.Agent.Api.Commands;
+using Acme.Agent.Api.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Acme.Agent.Api.Services;
@@ -20,12 +21,12 @@ public class CommandListenerService(
 
     private void HandleValidationErrors(HubConnection connection)
     {
-        connection.On<string, string>("command.error", (correlationId, message) =>
+        connection.On<string, CommandReplyResultModel>("command.reply.validation.error", (correlationId, result) =>
         {
             logger.LogWarning(
                 "Received validation error for correlation {id}: {message}",
                 correlationId, 
-                message);
+                result.Message);
         });
     }
 
