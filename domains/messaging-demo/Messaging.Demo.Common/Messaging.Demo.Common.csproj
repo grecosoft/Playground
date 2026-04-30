@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(UseProjectReferences)' != 'true'">
-    <PackageReference Include="Common.Messaging.Entities" Version="1.0.0.50" />
+    <PackageReference Include="Common.Messaging.Entities" Version="1.0.0.51" />
   </ItemGroup>
 
   <ItemGroup>
