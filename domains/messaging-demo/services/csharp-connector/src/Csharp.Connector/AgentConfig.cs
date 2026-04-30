@@ -1,4 +1,4 @@
-﻿namespace Acme.Agent.Api;
+﻿namespace CSharp.Connector;
 
 public class AgentConfig
 {

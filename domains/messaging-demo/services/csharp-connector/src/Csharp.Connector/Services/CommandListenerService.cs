@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
-using Acme.Agent.Api.Commands;
-using Acme.Agent.Api.Models;
+using CSharp.Connector.Commands;
+using CSharp.Connector.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace Acme.Agent.Api.Services;
+namespace CSharp.Connector.Services;
 
 public class CommandListenerService(
     ILogger<CommandListenerService> logger,

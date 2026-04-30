@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Acme.Agent.Api.Models;
+namespace CSharp.Connector.Models;
 
 public record CommandReplyResultModel(
     [property: JsonPropertyName("correlationId")]string CorrelationId, 

@@ -1,4 +1,4 @@
-﻿# acme-agent-api
+﻿# csharp-connector
 
 This is a simple API representing a service participating in receiving cloud commands sent from services and communicating responses back to the cloud.
 

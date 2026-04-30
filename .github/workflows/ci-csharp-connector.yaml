@@ -1,11 +1,11 @@
-name: CI-Demo-One-Api
+name: ci-csharp-connector
 on: 
   workflow_dispatch:
   push:
     branches: 
       - main
     paths:
-        - 'domains/messaging-demo/services/demo-one-api/**'
+        - 'domains/messaging-demo/services/csharp-connector/**'
 
 permissions:
   id-token: write
@@ -18,7 +18,7 @@ jobs:
       with:
         solution-name: 'playground'
         domain-root: './domains/messaging-demo'
-        service-name: 'demo-one-api'
+        service-name: 'csharp-connector'
         image-registry: 'registryworkingstork.azurecr.io'
         image-tag: "1.0.0.${{ github.run_number }}"
       secrets:
@@ -31,7 +31,7 @@ jobs:
       uses: ./.github/workflows/deploy-service-artifacts.yaml
       with:
         domain-root: './domains/messaging-demo'
-        service-name: 'demo-one-api'
+        service-name: 'csharp-connector'
     deploy-k8s:
       needs: deploy-artifacts
       uses: ./.github/workflows/kube-service-deploy.yaml
@@ -42,7 +42,7 @@ jobs:
         k8s-cluster-name: 'aks-cluster' 
         k8s-namespace: 'playground-dev-eastus'
         solution-name: 'playground'
-        service-name: 'demo-one-api'
+        service-name: 'csharp-connector'
         image-registry: 'registryworkingstork.azurecr.io'
         image-tag: "1.0.0.${{ github.run_number }}"
       secrets:

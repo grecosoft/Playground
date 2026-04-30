@@ -1,8 +1,8 @@
 using System.Text.Json;
-using Acme.Agent.Api;
-using Acme.Agent.Api.Commands;
-using Acme.Agent.Api.Models;
 using Common.Bootstrapping;
+using CSharp.Connector;
+using CSharp.Connector.Commands;
+using CSharp.Connector.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 using Serilog;
 

@@ -1,4 +1,4 @@
-﻿namespace Acme.Agent.Tests;
+﻿namespace CSharp.Connector.Tests;
 
 public class UnitTest1
 {

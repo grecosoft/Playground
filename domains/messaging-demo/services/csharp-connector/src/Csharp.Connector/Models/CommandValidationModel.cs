@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Acme.Agent.Api.Models;
+namespace CSharp.Connector.Models;
 
 public record ValidationErrorModel(
     [property: JsonPropertyName("errors")]IDictionary<string, string[]> Errors);

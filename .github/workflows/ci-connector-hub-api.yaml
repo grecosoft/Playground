@@ -1,4 +1,4 @@
-name: CI-connector-hub-api
+name: ci-connector-hub-api
 on: 
   workflow_dispatch:
   push:

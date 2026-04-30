@@ -4,13 +4,13 @@ kind: Kustomization
 resources:
   - ../../../../k8s/api
 
-namePrefix: acme-agent-api-
+namePrefix: csharp-connector-
 
 labels:
   # Add domain and service labels are used to identify resources specific to this service for selection.
   - pairs:
       domain: messaging-demo
-      service: acme-agent-api
+      service: csharp-connector
     includeTemplates: true 
     includeSelectors: true 
 
@@ -35,30 +35,30 @@ patches:
       apiVersion: azconfig.io/v1
       kind: AzureAppConfigurationProvider
       metadata:
-        name: acme-agent-api-appconfig-provider
+        name: csharp-connector-appconfig-provider
       spec:
         target:
-          configMapName: acme-agent-api-appconfig
+          configMapName: csharp-connector-appconfig
         configuration:
           selectors:
             - keyFilter: "*"
               labelFilter: solution-configs
             - keyFilter: "*"
-              labelFilter: acme-agent-api
+              labelFilter: csharp-connector
           refresh:
             monitoring:
               keyValues:
                 - key: "update_sentinel" 
-                  label: acme-agent-api
+                  label: csharp-connector
         auth:
           workloadIdentity:
-            serviceAccountName: acme-agent-api-sa
+            serviceAccountName: csharp-connector-sa
         secret:
           target:
-            secretName: acme-agent-api-appconfig-secrets
+            secretName: csharp-connector-appconfig-secrets
           auth:
             workloadIdentity:
-              serviceAccountName: acme-agent-api-sa
+              serviceAccountName: csharp-connector-sa
 
   # Patch the following on the deployment:
   #   - Patch the name of the service account to the service's associated workload identity.
@@ -71,22 +71,22 @@ patches:
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: acme-agent-api
+        name: csharp-connector
       spec:
         template:
           spec:
-            serviceAccountName: acme-agent-api-sa
+            serviceAccountName: csharp-connector-sa
             containers:
               - name: service-api
-                image: registryworkingstork.azurecr.io/playground/acme-agent-api:0.0.0.0
+                image: registryworkingstork.azurecr.io/playground/csharp-connector:0.0.0.0
                 envFrom:
                   - secretRef:
-                      name: acme-agent-api-appconfig-secrets
+                      name: csharp-connector-appconfig-secrets
             volumes:
               - name: appconfig-volume 
                 configMap: 
-                  name: acme-agent-api-appconfig
+                  name: csharp-connector-appconfig
               - name: appconfig-secrets-volume 
                 secret: 
-                  secretName: acme-agent-api-appconfig-secrets
+                  secretName: csharp-connector-appconfig-secrets
 

@@ -1,7 +1,7 @@
-﻿using Acme.Agent.Api.Services;
+﻿using CSharp.Connector.Services;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace Acme.Agent.Api;
+namespace CSharp.Connector;
 
 public static class ServiceRegistrations
 {

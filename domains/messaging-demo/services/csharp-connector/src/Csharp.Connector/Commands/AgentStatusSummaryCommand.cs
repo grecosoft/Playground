@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Acme.Agent.Api.Commands;
+namespace CSharp.Connector.Commands;
 
 public record AgentStatusSummaryCommand(
     [property: JsonPropertyName("companyId")] Guid CompanyId,

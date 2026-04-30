@@ -1,6 +1,6 @@
 locals {
   solution_name = "playground"
-  service_name = "acme-agent-api"
+  service_name = "csharp-connector"
 
   # Service configurations consisting of common and module level settings:
   service_configs = concat(

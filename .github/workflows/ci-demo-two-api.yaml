@@ -1,4 +1,4 @@
-name: CI-Demo-Two-Api
+name: ci-demo-two-api
 on: 
   workflow_dispatch:
   push:
