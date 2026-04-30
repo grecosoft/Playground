@@ -74,14 +74,13 @@ app.MapPost("/send-async-command", async (
     return Results.Ok();
 });
 
-app.MapPost("/company/{companyId:guid}/{agentId}/ping", async (
-    Guid companyId,
-    string  agentId,
+app.MapPost("commands/{connectorId}/ping", async (
+    string  connectorId,
     string message,
     ICommandMessaging commandMessaging,
     CancellationToken ct) =>
 {
-    var command = new AgentPingCommand(companyId, agentId, message);
+    var command = new ConnectorPingCommand(connectorId, message);
     var endPoint = commandMessaging.GetServiceEndpoint(ServiceEndpoints.MessagingHubApi);
 
     try
@@ -96,14 +95,13 @@ app.MapPost("/company/{companyId:guid}/{agentId}/ping", async (
     
 });
 
-app.MapPost("/company/{companyId:guid}/{agentId}/status", async (
-    Guid companyId,
-    string  agentId,
+app.MapPost("commands/{connectorId}/status", async (
+    string  connectorId,
     string minLogSeverity,
     ICommandMessaging commandMessaging,
     CancellationToken ct) =>
 {
-    var command = new AgentStatusCommand(companyId, agentId, minLogSeverity);
+    var command = new ConnectorStatusCommand(connectorId, minLogSeverity);
     var endPoint = commandMessaging.GetServiceEndpoint(ServiceEndpoints.MessagingHubApi);
     
     await endPoint.SendCommandAsync(command, ct);

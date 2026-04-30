@@ -1,4 +1,4 @@
-module peak-agent-api
+module go-connector
 
 go 1.24
 

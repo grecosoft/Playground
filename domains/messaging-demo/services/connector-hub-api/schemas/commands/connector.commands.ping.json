@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$defs": {
-    "AgentPingResponse": {
+    "ConnectorPingResponse": {
       "type": "object",
-      "title": "AgentPingResponse",
+      "title": "ConnectorPingResponse",
       "required": ["message", "status"],
       "properties": {
         "message": {
@@ -17,23 +17,19 @@
       },
       "additionalProperties": false
     },
-    "AgentPingCommand": {
+    "ConnectorPingCommand": {
       "type": "object",
-      "title": "AgentPingCommand",
-      "required": ["companyId", "agentId", "echoMessage"],
+      "title": "ConnectorPingCommand",
+      "required": ["connectorId", "echoMessage"],
       "properties": {
-        "companyId": {
+        "connectorId": {
           "type": "string",
           "format": "uuid",
-          "description": "The unique identifier of the company."
-        },
-        "agentId": {
-          "type": "string",
-          "description": "The unique identifier of the agent."
+          "description": "The unique identifier of the connector."
         },
         "echoMessage": {
           "type": "string",
-          "description": "The message to be echoed back by the agent."
+          "description": "The message to be echoed back by the connector."
         }
       },
       "additionalProperties": false

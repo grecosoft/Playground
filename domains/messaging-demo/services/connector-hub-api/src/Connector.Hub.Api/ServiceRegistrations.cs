@@ -58,8 +58,8 @@ public static class ServiceRegistrations
         var commandValidation = new CommandValidationService(commandSchemaPath);        
         
         commandValidation.LoadSchemas(bootstrapLogger,[
-            new CommandSchema("agent.commands.ping", "AgentPing"),
-            new CommandSchema("agent.commands.status", "AgentStatusSummary")
+            new CommandSchema("connector.commands.ping", "ConnectorPing"),
+            new CommandSchema("connector.commands.status", "ConnectorStatus")
         ]);
         
         builder.Services.AddSingleton<ICommandValidationService>(commandValidation);

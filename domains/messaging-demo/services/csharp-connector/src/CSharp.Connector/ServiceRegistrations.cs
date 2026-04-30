@@ -10,7 +10,7 @@ public static class ServiceRegistrations
         ILogger bootstrapLogger)
     {
         var config = builder.Configuration.Get<ConnectorConfig>()
-                     ?? throw new NullReferenceException("AgentConfig is null");
+                     ?? throw new NullReferenceException("ConnectorConfig is null");
 
         bootstrapLogger.LogInformation(
             "Configuring Service Messaging: {@Configuration}", config.ToLoggableProperties());

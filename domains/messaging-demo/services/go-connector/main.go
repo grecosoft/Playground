@@ -145,7 +145,7 @@ func handleInvocation(ctx context.Context, conn *websocket.Conn, msg signalRMess
 		"result":        "command processed",
 	})
 
-	//sendHubMessage(ctx, conn, "SendResponseToCommand", "agent.commands.ping", `{"status":"ok"}`)
+	//sendHubMessage(ctx, conn, "SendResponseToCommand", "connector.commands.ping", `{"status":"ok"}`)
 
 	//switch msg.Target {
 	//case "ReceiveCommand":

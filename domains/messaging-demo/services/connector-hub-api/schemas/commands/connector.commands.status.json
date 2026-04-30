@@ -26,9 +26,9 @@
           },
           "additionalProperties": false
         },
-        "AgentStatusSummaryResponse": {
+        "ConnectorStatusResponse": {
           "type": "object",
-          "title": "AgentStatusSummaryResponse",
+          "title": "ConnectorStatusResponse",
           "required": ["generatedTimestamp", "overallSeverity", "componentStatuses"],
           "properties": {
             "generatedTimestamp": {
@@ -51,19 +51,14 @@
           },
           "additionalProperties": false
         },
-        "AgentStatusSummaryCommand": {
+        "ConnectorStatusCommand": {
           "type": "object",
-          "title": "AgentStatusSummaryCommand",
-          "required": ["companyId", "AgentId", "MinLogLevel"],
+          "title": "ConnectorStatusCommand",
+          "required": ["ConnectorId", "MinLogLevel"],
           "properties": {
-            "companyId": {
+            "ConnectorId": {
               "type": "string",
-              "format": "uuid",
-              "description": "The unique identifier of the company."
-            },
-            "AgentId": {
-              "type": "string",
-              "description": "The unique identifier of the agent."
+              "description": "The unique identifier of the connector."
             },
             "MinLogLevel": {
               "type": "string",

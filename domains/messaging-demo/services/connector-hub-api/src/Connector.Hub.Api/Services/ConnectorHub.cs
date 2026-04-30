@@ -34,7 +34,7 @@ public class ConnectorHub(
     public override Task OnConnectedAsync()
     {
         logger.LogDebug(
-            "Agent: {Identifier} Connected as: {ConnectionId}",
+            "Connector: {Identifier} Connected as: {ConnectionId}",
             Context.UserIdentifier, 
             Context.ConnectionId);
         
@@ -49,7 +49,7 @@ public class ConnectorHub(
         if (exception == null)
         {
             logger.LogDebug(
-                "Agent: {Identifier} with: {ConnectionId} disconnected",
+                "Connector: {Identifier} with: {ConnectionId} disconnected",
                 Context.UserIdentifier, 
                 Context.ConnectionId);
             
@@ -57,7 +57,7 @@ public class ConnectorHub(
         }
         
         logger.LogError(exception,
-            "Agent: {Identifier} with: {ConnectionId} disconnected",
+            "Connector: {Identifier} with: {ConnectionId} disconnected",
             Context.UserIdentifier, 
             Context.ConnectionId);
          

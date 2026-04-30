@@ -49,7 +49,7 @@ app.UseSwaggerUI();
 
 app.MapPost("/send-status-summary/{correlationId}/", async (string correlationId, HubConnection hub) =>
 {
-    var response = new AgentStatusSummaryResponse(
+    var response = new ConnectorStatusResponse(
         DateTime.UtcNow,
         "Warning",
         [

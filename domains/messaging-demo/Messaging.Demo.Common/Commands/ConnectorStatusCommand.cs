@@ -3,17 +3,16 @@ using Common.Messaging.Entities;
 
 namespace Messaging.Demo.Common.Commands;
 
-[MessageNamespace("agent.commands.status")]
-public record AgentStatusCommand(
-    Guid CompanyId,
-    string AgentId,
-    [property: JsonPropertyName("minLogLevel")] string MinLogLevel) : AgentCommand(CompanyId, AgentId), 
-    ICommandMessage<AgentStatusSummaryResponse>
+[MessageNamespace("connector.commands.status")]
+public record ConnectorStatusCommand(
+    string ConnectorId,
+    [property: JsonPropertyName("minLogLevel")] string MinLogLevel) : ConnectorCommand(ConnectorId), 
+    ICommandMessage<ConnectorStatusResponse>
 {
-    public AgentStatusSummaryResponse? Response { get; set; }
+    public ConnectorStatusResponse? Response { get; set; }
 }
 
-public record AgentStatusSummaryResponse(
+public record ConnectorStatusResponse(
     [property: JsonPropertyName("generatedTimestamp")] DateTimeOffset GeneratedTimestamp,
     [property: JsonPropertyName("componentStatuses")] ComponentStatus[] ComponentStatuses);
     

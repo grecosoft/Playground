@@ -2,12 +2,11 @@
 
 namespace CSharp.Connector.Commands;
 
-public record AgentStatusSummaryCommand(
-    [property: JsonPropertyName("companyId")] Guid CompanyId,
-    [property: JsonPropertyName("agentId")] string AgentId,
+public record ConnectorStatusCommand(
+    [property: JsonPropertyName("connectorId")] string ConnectorId,
     [property: JsonPropertyName("minLogLevel")] string MinLogLevel);
 
-public record AgentStatusSummaryResponse(
+public record ConnectorStatusResponse(
     [property: JsonPropertyName("generatedTimestamp")] DateTimeOffset GeneratedTimestamp,
     [property: JsonPropertyName("overallSeverity")] string OverallSeverity,
     [property: JsonPropertyName("componentStatuses")] ComponentStatus[] ComponentStatuses);

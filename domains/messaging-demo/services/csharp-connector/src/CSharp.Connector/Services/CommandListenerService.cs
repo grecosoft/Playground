@@ -11,8 +11,8 @@ public class CommandListenerService(
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        HandleAgentPingCommand(hubConnection);
-        HandleAgentStatusSummaryCommand(hubConnection);
+        HandlePingCommand(hubConnection);
+        HandleStatusCommand(hubConnection);
         HandleValidationErrors(hubConnection);
 
         await hubConnection.StartAsync(stoppingToken);
@@ -30,9 +30,9 @@ public class CommandListenerService(
         });
     }
 
-    private void HandleAgentPingCommand(HubConnection connection)
+    private void HandlePingCommand(HubConnection connection)
     {
-        connection.On<string, AgentPingCommand, string>("agent.commands.ping", (correlationId, command) =>
+        connection.On<string, ConnectorPingCommand, string>("connector.commands.ping", (correlationId, command) =>
         {
             logger.LogInformation(
                 "Received Ping Command: {@command} for correlation {id}",
@@ -41,15 +41,15 @@ public class CommandListenerService(
             
             // handle command...
             
-            return JsonSerializer.Serialize(new AgentPingResponse(
+            return JsonSerializer.Serialize(new ConnectorPingResponse(
                 $"Echo: {command.EchoMessage}", 
                 Guid.NewGuid().ToString()));
         });
     }
     
-    private void HandleAgentStatusSummaryCommand(HubConnection connection)
+    private void HandleStatusCommand(HubConnection connection)
     {
-        connection.On<string, AgentStatusSummaryCommand>("agent.commands.status.summary", (correlationId, command) =>
+        connection.On<string, ConnectorStatusCommand>("connector.commands.status", (correlationId, command) =>
         {
             logger.LogInformation(
                 "Received Status Summary Command: {@command} for correlation {id}",
@@ -57,7 +57,7 @@ public class CommandListenerService(
                 correlationId);
             
             // Queue command for processing....
-            // This will be work done by the agent and reported back when complete, so no response is returned here.
+            // This will be work done by connector and reported back when complete, so no response is returned here.
         });
     }
     
