@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "azurerm" {
-    key = "messaging-hub-api.tfstate"
+    key = "connector-hub-api.tfstate"
   }
 }
 

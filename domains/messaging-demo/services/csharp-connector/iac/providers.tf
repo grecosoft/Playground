@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "azurerm" {
-    key = "acme-agent-api.tfstate"
+    key = "csharp-connector.tfstate"
   }
 }
 
