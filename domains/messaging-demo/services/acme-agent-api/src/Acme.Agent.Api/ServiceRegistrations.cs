@@ -19,7 +19,7 @@ public static class ServiceRegistrations
         builder.Services.AddHostedService<CommandListenerService>();
         
         var connection = new HubConnectionBuilder()
-            .WithUrl($"{config.MessagingHubApi}/connectorhub?agentIdentity={config.AgentIdentity}")
+            .WithUrl($"{config.ConnectorHubApi}/connectorhub?agentIdentity={config.AgentIdentity}")
             .WithAutomaticReconnect([
                 TimeSpan.FromSeconds(0),
                 TimeSpan.FromSeconds(5),

@@ -4,5 +4,5 @@ public static class ServiceEndpoints
 {
     public const string DemoServiceOne = "demo-one-api";
     public const string DemoServiceTwo = "demo-two-api";
-    public const string MessagingHubApi = "messaging-hub-api";
+    public const string MessagingHubApi = "connector-hub-api";
 }

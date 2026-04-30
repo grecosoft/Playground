@@ -9,8 +9,8 @@ locals {
       value = var.serilog_log_level
     },
     {
-      key = "MessagingHubApi"
-      value = "http://messaging-hub-api-service"
+      key = "ConnectorHubApi"
+      value = "http://connector-hub-api-service"
     },
     {
       key = "CustomerId"

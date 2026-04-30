@@ -10,6 +10,13 @@
     <File Path="services/acme-agent-api/README.md" />
     <Project Path="services/acme-agent-api/src/Acme.Agent.Api/Acme.Agent.Api.csproj" />
   </Folder>
+  <Folder Name="/services/connector-hub-api/">
+    <File Path="services/connector-hub-api/Dockerfile" />
+    <File Path="services/connector-hub-api/README.md" />
+    <Project Path="services/connector-hub-api/src/Connector.Hub.Api/Connector.Hub.Api.csproj" />
+    <Project Path="services/connector-hub-api/src/Connector.Hub.Domain/Connector.Hub.Domain.csproj" />
+    <Project Path="services/connector-hub-api/src/Connector.Hub.Infra/Connector.Hub.Infra.csproj" />
+  </Folder>
   <Folder Name="/services/demo-one-api/">
     <File Path="services/demo-one-api/README.md" />
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Api/Messaging.Demo.One.Api.csproj" />
@@ -22,17 +29,11 @@
     <Project Path="services/demo-two-api/src/Messaging.Demo.Two.Domain/Messaging.Demo.Two.Domain.csproj" />
     <Project Path="services/demo-two-api/src/Messaging.Demo.Two.Infra/Messaging.Demo.Two.Infra.csproj" />
   </Folder>
-  <Folder Name="/services/messaging-hub-api/">
-    <File Path="services/messaging-hub-api/README.md" />
-    <Project Path="services/messaging-hub-api/src/Messaging.Hub.Api/Messaging.Hub.Api.csproj" />
-    <Project Path="services/messaging-hub-api/src/Messaging.Hub.Domain/Messaging.Hub.Domain.csproj" />
-    <Project Path="services/messaging-hub-api/src/Messaging.Hub.Infra/Messaging.Hub.Infra.csproj" />
-  </Folder>
   <Folder Name="/tests/">
     <Project Path="services/acme-agent-api/src/Acme.Agent.Tests/Acme.Agent.Tests.csproj" />
+    <Project Path="services/connector-hub-api/src/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj" />
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Tests/Messaging.Demo.One.Tests.csproj" />
     <Project Path="services/demo-two-api/src/Messaging.Demo.Two.Tests/Messaging.Demo.Two.Tests.csproj" />
-    <Project Path="services/messaging-hub-api/src/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj" />
   </Folder>
   <Project Path="Messaging.Demo.Common/Messaging.Demo.Common.csproj" />
 </Solution>
