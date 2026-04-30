@@ -7,21 +7,25 @@ using Microsoft.Extensions.Options;
 namespace Messaging.Hub.Api.Services;
 
 /// <summary>
-/// SignalR Hub used to send commands received from internal services to external clients.
-/// Once an external service replies with a response, its routed back to the original service
-/// who sent the command.
+/// SignalR Hub defining methods that can be invoked from external Cloud Connectors providing
+/// integration with internal platform services.
+///
+/// - Used to send commands received from internal services to external Cloud Connectors.
+/// - Allows external Cloud connector to respond to a previously received command, which is
+///   then routed back to the originating service.
+/// 
 /// </summary>
 /// <param name="messagingOptions">Configuration options.</param>
 /// <param name="logger">Configured logger.</param>
 /// <param name="validationService">Allows validation of commands and response.</param>
-/// <param name="connectionManager">Service that manages the currently connected clients.</param>
+/// <param name="connectorHubManager">Service that manages the currently connected connectors.</param>
 /// <param name="commandRepository">Repository used to load commands having pending responses.</param>
 /// <param name="commandMessaging">Service used to delegate responds back to the originating service.</param>
 public class ConnectorHub(
     IOptions<MessagingConfig> messagingOptions,
     ILogger<ConnectorHub> logger,
     ICommandValidationService validationService,
-    IConnectionManager connectionManager,
+    IConnectorHubManager connectorHubManager,
     ICommandRepository commandRepository,
     ICommandMessaging commandMessaging) : Microsoft.AspNetCore.SignalR.Hub
 {
@@ -34,13 +38,13 @@ public class ConnectorHub(
             Context.UserIdentifier, 
             Context.ConnectionId);
         
-        connectionManager.AddConnection(Context.UserIdentifier!, Context.ConnectionId);
+        connectorHubManager.AddConnection(Context.UserIdentifier!, Context.ConnectionId);
         return base.OnConnectedAsync();
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
-        connectionManager.RemoveConnection(Context.UserIdentifier!);
+        connectorHubManager.RemoveConnection(Context.UserIdentifier!, Context.ConnectionId);
 
         if (exception == null)
         {
@@ -133,7 +137,6 @@ public class ConnectorHub(
                 context.CommandNamespace,
                 "Unexpected error processing response");
         }
-        
     }
 }
 

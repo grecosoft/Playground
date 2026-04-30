@@ -35,7 +35,7 @@ public class MessagingConfig
     /// <summary>
     /// The number of seconds to wait for a response to an RPC style of command.
     /// </summary>
-    public int RpcReplyTimeoutSeconds { get; set; } = 50;
+    public int RpcReplyTimeoutSeconds { get; set; } = 10;
     
     
     

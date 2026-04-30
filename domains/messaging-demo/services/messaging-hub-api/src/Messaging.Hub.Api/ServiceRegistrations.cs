@@ -14,7 +14,7 @@ public static class ServiceRegistrations
         this IHostApplicationBuilder builder,
         ILogger bootstrapLogger)
     {
-        var config = builder.Configuration.Get<MessagingHubConfig>() 
+        var config = builder.Configuration.Get<ConnectorHubConfig>() 
                      ?? throw new NullReferenceException("MessagingHubConfig is null");
         
         bootstrapLogger.LogInformation(
@@ -44,7 +44,7 @@ public static class ServiceRegistrations
         });
         
         builder.Services.AddSingleton<IAgentRepository, AgentRepository>();
-        builder.Services.AddSingleton<IConnectionManager, ConnectionManager>();
+        builder.Services.AddSingleton<IConnectorHubManager, ConnectorHubManager>();
         
         AddSchemaValidation(bootstrapLogger, builder, config);
         return builder;
@@ -53,7 +53,7 @@ public static class ServiceRegistrations
     private static void AddSchemaValidation(
         ILogger bootstrapLogger,
         IHostApplicationBuilder builder,
-        MessagingHubConfig config)
+        ConnectorHubConfig config)
     {
         var commandSchemaPath = Path.Join(AppContext.BaseDirectory, config.CommandSchemaRootPath);
         var commandValidation = new CommandValidationService(commandSchemaPath);        
