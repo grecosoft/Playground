@@ -1,4 +1,5 @@
 using Common.Messaging.Commands;
+using Common.Messaging.Entities;
 
 namespace Common.Messaging;
 
@@ -49,4 +50,32 @@ public interface ICommandMessaging
     Task SendResponseToCommandAsync(
         CommandContext commandContext,
         CancellationToken tc);
+
+    /// <summary>
+    ///  Used to send a command to the endpoint and wait for a specified number of seconds for a response.
+    /// </summary>
+    /// <param name="command">The command to be sent.</param>
+    /// <param name="endpointInfo"></param>
+    /// <param name="ct">Cancellation Token</param>
+    /// <typeparam name="TResponse">The response inferred from the command.</typeparam>
+    /// <returns>The response of the command.</returns>
+    Task<CommandResult<TResponse>> SendCommandWithReplyAsync<TResponse>(
+        ICommandMessage<TResponse> command,
+        EndpointInfo endpointInfo,
+        CancellationToken ct);
+
+    /// <summary>
+    /// Used to send a command to the endpoint and does not wait for an immediate response. Once the response of the
+    /// command is known by the dependent service, it sends the response back to the originating service by calling
+    /// the method named SendResponseToCommandAsync defined on ICommandMessaging. 
+    /// </summary>
+    /// <param name="command">The command to be sent.</param>
+    /// <param name="endpointInfo"></param>
+    /// <param name="ct">The cancellation token.</param>
+    /// <typeparam name="TResponse">The response type of the command inferred from the command.</typeparam>
+    /// <returns>Future result.</returns>
+    public Task SendCommandAsync<TResponse>(
+        ICommandMessage<TResponse> command,
+        EndpointInfo endpointInfo,
+        CancellationToken ct);
 }

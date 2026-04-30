@@ -143,8 +143,8 @@ public class CommandMessaging: ICommandMessaging
     
     // Sends a command to a destination service and waits for a max specific
     // amount of time for a response before timing out.
-    internal async Task<CommandResult<TResponse>> SendCommandWithReplyAsync<TResponse>(
-        ICommandMessage command,
+    public async Task<CommandResult<TResponse>> SendCommandWithReplyAsync<TResponse>(
+        ICommandMessage<TResponse> command,
         EndpointInfo endpointInfo,
         CancellationToken ct)
     {
@@ -215,7 +215,7 @@ public class CommandMessaging: ICommandMessaging
 
     // Sends a command to a destination service and expects a response to be sent back on the reply queue, but does not
     // wait for the response.  
-    internal Task SendCommandAsync<TResponse>(
+    public Task SendCommandAsync<TResponse>(
         ICommandMessage<TResponse> command,
         EndpointInfo endpointInfo,
         CancellationToken token)
