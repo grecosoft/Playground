@@ -14,7 +14,7 @@ resource "azurerm_role_assignment" "command_async_topic_receiver" {
 resource "azurerm_servicebus_subscription" "command_async_topic_subscription" {  
   name               = "${var.service_name}-async-commands"
   topic_id           = var.solution_messaging.command_async_topic_id
-  max_delivery_count = 1
+  max_delivery_count = var.async_max_delivery_count
 }
 
 resource "azurerm_servicebus_subscription_rule" "command_async_topic_rule" {

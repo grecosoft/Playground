@@ -39,6 +39,12 @@ variable "rpc_reply_timeout_seconds" {
   default = 5
 }
 
+variable "async_max_delivery_count" {
+  description = "The maximum number of times a message can be delivered before being dead-lettered."
+  type = number
+  default = 5
+}
+
 variable "dependent_services" {
   type        = map(string)
   default     = {}
