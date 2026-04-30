@@ -9,17 +9,17 @@ public static class ServiceRegistrations
         this IHostApplicationBuilder builder,
         ILogger bootstrapLogger)
     {
-        var config = builder.Configuration.Get<AgentConfig>()
+        var config = builder.Configuration.Get<ConnectorConfig>()
                      ?? throw new NullReferenceException("AgentConfig is null");
 
         bootstrapLogger.LogInformation(
             "Configuring Service Messaging: {@Configuration}", config.ToLoggableProperties());
         
-        builder.Services.Configure<AgentConfig>(builder.Configuration);
+        builder.Services.Configure<ConnectorConfig>(builder.Configuration);
         builder.Services.AddHostedService<CommandListenerService>();
         
         var connection = new HubConnectionBuilder()
-            .WithUrl($"{config.ConnectorHubApi}/connectorhub?agentIdentity={config.AgentIdentity}")
+            .WithUrl($"{config.ConnectorHubApi}/connectorhub?connectorid={config.ConnectorId}")
             .WithAutomaticReconnect([
                 TimeSpan.FromSeconds(0),
                 TimeSpan.FromSeconds(5),

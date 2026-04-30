@@ -35,15 +35,14 @@ public static class ServiceRegistrations
             {
                 // NOTE:  This is just for the POC.  The first step is that the client needs to
                 // Call an api of the service to obtain a JTW containing these claims.
-                var agentIdentity = context.Request.Query["agentIdentity"].ToString();
+                var connectorId = context.Request.Query["connectorid"].ToString();
                 return
                 [
-                    new Claim(ClaimTypes.NameIdentifier, agentIdentity)
+                    new Claim(ClaimTypes.NameIdentifier, connectorId)
                 ];
             };
         });
         
-        builder.Services.AddSingleton<IAgentRepository, AgentRepository>();
         builder.Services.AddSingleton<IConnectorHubManager, ConnectorHubManager>();
         
         AddSchemaValidation(bootstrapLogger, builder, config);

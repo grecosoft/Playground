@@ -18,14 +18,14 @@ import (
 func main() {
 	address := "http://localhost:8087/connectorhub"
 
-	negotiateURL := address + "/negotiate?negotiateVersion=1&agentIdentity=agent1"
+	negotiateURL := address + "/negotiate?negotiateVersion=1&connectorid=go-connector"
 	slog.Info("Negotiating", "url", negotiateURL)
 	resp, err := http.Post(negotiateURL, "application/json", nil)
 
 	slog.Info("Negotiated", "resp", resp, "err", err)
 
 	// Step 1: Negotiate to get Azure SignalR Service URL and token
-	wsURL, token, err := negotiate(address, "agent1")
+	wsURL, token, err := negotiate(address, "go-connector")
 	if err != nil {
 		slog.Error("Negotiate failed", "error", err)
 		os.Exit(1)
@@ -108,9 +108,9 @@ type signalRMessage struct {
 	Error        string          `json:"error,omitempty"`
 }
 
-func negotiate(hubURL string, agentIdentity string) (string, string, error) {
+func negotiate(hubURL string, connectorId string) (string, string, error) {
 	resp, err := http.Post(
-		hubURL+"/negotiate?negotiateVersion=1&agentIdentity="+agentIdentity,
+		hubURL+"/negotiate?negotiateVersion=1&connectorid="+connectorId,
 		"application/json",
 		nil,
 	)

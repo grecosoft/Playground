@@ -25,8 +25,8 @@ locals {
       value = local.solution_env_name
     },
     {
-      key = "AgentIdentity"
-      value = "agent1"
+      key = "ConnectorId"
+      value = "csharp-connector"
     }
   ]
 
