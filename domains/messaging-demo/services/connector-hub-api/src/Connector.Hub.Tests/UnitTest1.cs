@@ -1,4 +1,4 @@
-﻿namespace Messaging.Hub.Tests;
+﻿namespace Connector.Hub.Tests;
 
 public class UnitTest1
 {

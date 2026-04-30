@@ -31,7 +31,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="services/acme-agent-api/src/Acme.Agent.Tests/Acme.Agent.Tests.csproj" />
-    <Project Path="services/connector-hub-api/src/Messaging.Hub.Tests/Messaging.Hub.Tests.csproj" />
+    <Project Path="services/connector-hub-api/src/Connector.Hub.Tests/Connector.Hub.Tests.csproj" />
     <Project Path="services/demo-one-api/src/Messaging.Demo.One.Tests/Messaging.Demo.One.Tests.csproj" />
     <Project Path="services/demo-two-api/src/Messaging.Demo.Two.Tests/Messaging.Demo.Two.Tests.csproj" />
   </Folder>
