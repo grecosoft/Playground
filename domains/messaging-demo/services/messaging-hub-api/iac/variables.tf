@@ -56,7 +56,13 @@ variable "solution_container_name" {
 }
 
 // Environment level configuration variables:
-variable "Serilog_Log_Level" {
+variable "serilog_log_level" {
   description = "The default log level defined at the environment level."
   default = "Information"
+}
+
+variable "connector_reply_timeout_seconds" {
+  description = "The timeout value for connector replies in seconds."
+  type        = number
+  default     = 10
 }

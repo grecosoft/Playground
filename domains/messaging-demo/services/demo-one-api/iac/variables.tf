@@ -56,7 +56,7 @@ variable "solution_container_name" {
 }
 
 // Environment level configuration variables:
-variable "Serilog_Log_Level" {
+variable "serilog_log_level" {
   description = "The default log level defined at the environment level."
   default = "Information"
 }

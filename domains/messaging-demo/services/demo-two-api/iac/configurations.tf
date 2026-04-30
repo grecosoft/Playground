@@ -6,7 +6,7 @@ locals {
     },
     {
       key   = "Serilog:MinimumLevel:Default"
-      value = var.Serilog_Log_Level
+      value = var.serilog_log_level
     },
     {
       key   = "ServiceName"

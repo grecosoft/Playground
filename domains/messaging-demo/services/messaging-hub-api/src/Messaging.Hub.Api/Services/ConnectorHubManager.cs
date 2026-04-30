@@ -124,7 +124,7 @@ public class ConnectorHubManager(
         ICommandMessage<TResponse> command,
         CancellationToken ct)
     {
-        using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(_connectorHubConfig.RpcReplyTimeoutSeconds));
+        using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(_connectorHubConfig.ConnectorReplyTimeoutSeconds));
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutCts.Token);
         
         try

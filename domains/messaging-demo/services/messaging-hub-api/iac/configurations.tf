@@ -6,7 +6,7 @@ locals {
     },
     {
       key   = "Serilog:MinimumLevel:Default"
-      value = var.Serilog_Log_Level
+      value = var.serilog_log_level
     },
     {
       key    = "SignalREndpoint"
@@ -19,6 +19,10 @@ locals {
     {
       key   = "SolutionEnvironment"
       value = local.solution_env_name
+    },
+    {
+      key   = "ConnectorReplyTimeoutSeconds"
+      value = var.connector_reply_timeout_seconds
     }
   ]
 
