@@ -35,7 +35,7 @@ module "messaging" {
   rpc_reply_timeout_seconds = 50
   dependent_services = {
     "demo-two-api": "bae5fa24-b552-a42c-0e16-1d94b2c62f2d"
-    "messaging-hub-api": "92475bce-091c-33da-6e0a-f104fc39e64b"
+    "connector-hub-api": "92475bce-091c-33da-6e0a-f104fc39e64b"
   }
 }
 
